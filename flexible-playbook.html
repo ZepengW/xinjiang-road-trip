@@ -751,8 +751,11 @@ footer .footer-links a.current {
 </div>
 
 <div class="tip-box strategy">
-  <strong>使用方法：</strong>每天晚上 21:00 左右，打开和风天气App查看次日目的地天气，同时搜索"独库公路今日路况"（抖音/小红书即时信息比官方更及时）。根据下方决策树确定次日走法。
+  <strong>使用方法：</strong>每天晚上 21:00 左右，查看次日目的地天气（下方实时预报组件自动加载最新数据），同时搜索"独库公路今日路况"（抖音/小红书即时信息比官方更及时）。根据下方决策树确定次日走法。
 </div>
+
+<!-- 实时天气预报组件 -->
+<div data-weather-widget style="background: rgba(255,255,255,0.9); border: 2px solid #2E7D32; border-radius: 10px; padding: 1.2rem; margin: 1rem 0;"></div>
 
 <!-- Decision Point 1: D1 Evening -->
 <div class="decision-tree">
@@ -1495,5 +1498,6 @@ footer .footer-links a.current {
 </footer>
 
 </article>
+<script src="./_shared/weather-widget.js"></script>
 </body>
 </html>
