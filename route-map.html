@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>新疆自驾 · 导航路线地图 · 2026.8.2-8.7</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 @font-face { font-family:'NationalPark'; src:url('./_shared/fonts/NationalPark-Regular.ttf') format('truetype'); font-weight:400; }
 @font-face { font-family:'NationalPark'; src:url('./_shared/fonts/NationalPark-Bold.ttf') format('truetype'); font-weight:700; }
@@ -27,6 +28,14 @@ article.page{max-width:1000px;margin:0 auto;padding:0 1rem 4rem;}
 .cover{text-align:center;padding:1.5rem 1rem 0.5rem;}
 .cover-title{font-family:'NationalPark',sans-serif;font-size:2rem;font-weight:700;color:var(--accent);letter-spacing:0.04em;}
 .cover-subtitle{font-family:'Lora',serif;font-style:italic;font-size:1rem;color:var(--muted);margin-top:0.3rem;}
+
+/* Mode Tabs */
+.mode-tabs{display:flex;gap:0;margin:1rem 0;border:2px solid var(--rule);border-radius:10px;overflow:hidden;}
+.mode-tab{flex:1;font-family:'NationalPark',sans-serif;font-size:0.85rem;padding:0.6rem 1rem;border:none;background:var(--paper);color:var(--muted);cursor:pointer;transition:all 0.2s;text-align:center;}
+.mode-tab:hover{background:#F3E8D4;}
+.mode-tab.active{background:var(--accent3);color:white;}
+.mode-tab:first-child{border-right:2px solid var(--rule);}
+.mode-tab.active:first-child{border-right-color:var(--accent3);}
 
 /* API Key Panel */
 .key-panel{background:var(--paper);border:2px solid var(--accent3);border-radius:10px;padding:1.2rem;margin:1rem 0;}
@@ -53,9 +62,15 @@ article.page{max-width:1000px;margin:0 auto;padding:0 1rem 4rem;}
 .plan-btn.active.b{background:#4A7A9B;}
 .plan-btn.active.d{background:#B8860B;}
 
-/* Map */
-#map{width:100%;height:600px;border-radius:12px;border:3px solid var(--rule);box-shadow:0 4px 24px var(--shadow);margin:0.5rem 0;}
-@media(max-width:700px){#map{height:400px;}}
+/* Map containers */
+.map-container{width:100%;height:600px;border-radius:12px;border:3px solid var(--rule);box-shadow:0 4px 24px var(--shadow);margin:0.5rem 0;}
+.map-hidden{display:none;}
+@media(max-width:700px){.map-container{height:400px;}}
+
+/* Leaflet popup & marker tweaks */
+.leaflet-popup-content-wrapper{border-radius:8px;border:2px solid var(--rule);}
+.leaflet-popup-content{font-family:'Lora',Georgia,serif;margin:0.6rem 0.8rem;}
+.day-marker{background:transparent;border:none;}
 
 /* Route segments */
 .segments-section{margin:1.5rem 0;}
@@ -66,7 +81,7 @@ article.page{max-width:1000px;margin:0 auto;padding:0 1rem 4rem;}
 .segment-header:hover{opacity:0.92;}
 .segment-header .seg-day{font-family:'Mono',monospace;font-size:0.72rem;opacity:0.8;}
 .segment-header .seg-title{font-family:'NationalPark',sans-serif;font-size:1rem;flex:1;}
-.segment-header .seg-arrow{font-family:'Mono',monospace;font-size:0.8rem;}
+.segment-header .seg-arrow{font-family:'Mono',monospace;font-size:0.8rem;transition:transform 0.2s;}
 .segment-body{padding:0;display:none;}
 .segment-card.open .segment-body{display:block;}
 .segment-card.open .seg-arrow{transform:rotate(90deg);}
@@ -89,12 +104,16 @@ article.page{max-width:1000px;margin:0 auto;padding:0 1rem 4rem;}
 
 /* Turn-by-turn */
 .turn-section{padding:0.5rem 1.2rem 0.8rem;background:#F8F5EE;border-top:1px solid var(--rule);}
-.turn-title{font-family:'NationalPark',sans-serif;font-size:0.78rem;color:var(--muted);margin-bottom:0.3rem;}
+.turn-title{font-family:'NationalPark',sans-serif;font-size:0.78rem;color:var(--muted);margin-bottom:0.3rem;line-height:1.6;}
 .turn-list{list-style:none;padding:0;}
 .turn-item{display:grid;grid-template-columns:24px 1fr auto;gap:0.4rem;padding:0.2rem 0;font-size:0.75rem;color:var(--ink);align-items:start;}
 .turn-num{width:20px;height:20px;border-radius:50%;background:var(--accent3);color:white;font-size:0.65rem;display:flex;align-items:center;justify-content:center;font-family:'Mono',monospace;}
 .turn-text{line-height:1.5;}
 .turn-dist{font-family:'Mono',monospace;font-size:0.68rem;color:var(--muted);}
+
+/* Notes display for Leaflet mode */
+.notes-block{padding:0.6rem 1.2rem;background:#F8F5EE;border-top:1px solid var(--rule);font-size:0.8rem;line-height:1.7;color:var(--ink);}
+.notes-block .notes-label{font-family:'NationalPark',sans-serif;font-size:0.78rem;color:var(--muted);display:block;margin-bottom:0.2rem;}
 
 /* Hotel info in popup */
 .tip-box{background:#FFF9E8;border-left:4px solid var(--accent4);padding:0.8rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0;font-size:0.88rem;line-height:1.65;}
@@ -117,13 +136,19 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
 
 <section class="cover">
   <h1 class="cover-title">导航路线地图</h1>
-  <p class="cover-subtitle">高德地图真实道路 · 逐段导航信息 · 精确距离时间</p>
+  <p class="cover-subtitle">双模式导航 · 免Key直连 Leaflet / 高德真实道路路线</p>
 </section>
 
-<!-- API Key Panel -->
-<div class="key-panel" id="keyPanel">
-  <h3>🔑 高德地图 API Key 配置</h3>
-  <p>本页面使用高德地图 JS API 提供真实道路路线规划和导航信息。需免费注册获取 Key（个人开发者免费，每日5000次调用）。</p>
+<!-- Mode Tabs -->
+<div class="mode-tabs">
+  <button class="mode-tab active" data-mode="leaflet" onclick="switchMode('leaflet')">免Key模式 · Leaflet + OpenStreetMap</button>
+  <button class="mode-tab" data-mode="amap" onclick="switchMode('amap')">高德导航模式 · AMap API</button>
+</div>
+
+<!-- API Key Panel (AMap mode only, hidden by default) -->
+<div class="key-panel" id="keyPanel" style="display:none;">
+  <h3>高德地图 API Key 配置</h3>
+  <p>高德导航模式使用高德地图 JS API 提供真实道路路线规划和逐段导航信息。需免费注册获取 Key（个人开发者免费，每日5000次调用）。</p>
   <div class="key-steps">
     <strong>获取步骤：</strong><br>
     1. 打开 <a href="https://lbs.amap.com/" target="_blank">https://lbs.amap.com/</a> 注册/登录高德开放平台<br>
@@ -138,7 +163,7 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
   <div class="key-status" id="keyStatus"></div>
 </div>
 
-<!-- Plan Selector -->
+<!-- Plan Selector (shared by both modes) -->
 <div class="plan-selector">
   <button class="plan-btn active c" onclick="selectPlan('c')">方案C 深度草原</button>
   <button class="plan-btn a" onclick="selectPlan('a')">方案A 经典</button>
@@ -146,20 +171,21 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
   <button class="plan-btn d" onclick="selectPlan('d')">方案D 反向</button>
 </div>
 
-<!-- Map -->
-<div id="map"></div>
+<!-- Map containers -->
+<div id="mapLeaflet" class="map-container"></div>
+<div id="mapAmap" class="map-container map-hidden"></div>
 
 <!-- Route Segments -->
 <div class="segments-section">
   <h2>逐段路线详情</h2>
-  <p style="text-align:center;font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem;">点击每段展开导航信息 · 距离/时间由高德地图实时计算</p>
+  <p style="text-align:center;font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem;" id="segmentsHint">点击每段展开路线详情 · 免Key模式使用估算距离/时间</p>
   <div id="segmentsContainer">
-    <div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.88rem;">请先输入高德 API Key，路线信息将自动加载</div>
+    <div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.88rem;">正在加载路线信息...</div>
   </div>
 </div>
 
 <div class="tip-box strategy">
-  <strong>关于导航信息：</strong>距离和时间为高德地图驾车路线规划实时计算结果，已包含实际道路绕行因素。出行当天建议同时打开高德地图App导航，可获取实时路况和交通管制信息。独库公路段因山路限速，实际行驶时间可能比导航预估多20-30%。
+  <strong>关于两种模式：</strong>「免Key模式」使用 Leaflet + OpenStreetMap 瓦片，绘制直线连线和标记点，距离/时间为基于路况的估算值，页面打开即可使用。「高德导航模式」使用高德地图真实道路路线规划，提供精确距离、时间和逐步导航指令，需配置 API Key。出行当天建议同时打开高德地图App导航，可获取实时路况和交通管制信息。独库公路段因山路限速，实际行驶时间可能比导航预估多20-30%。
 </div>
 
 <footer>
@@ -175,16 +201,39 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
 
 </article>
 
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ===== API Key Management =====
-var apiKey = localStorage.getItem('amap_key') || '';
-var map = null;
-var driving = null;
+// ===== Global State =====
+var currentMode = 'leaflet';   // 'leaflet' or 'amap'
 var currentPlan = 'c';
-var routePolylines = [];
-var markers = [];
+var apiKey = localStorage.getItem('amap_key') || '';
+var amapScriptLoaded = false;
 
-// Route definitions for each plan
+// Leaflet map state
+var leafletMap = null;
+var leafletRouteLayers = [];
+
+// AMap map state
+var map = null;          // AMap instance
+var driving = null;       // AMap.Driving instance
+var routePolylines = [];  // AMap polylines + markers
+
+// ===== Coordinate Lookup Table (WGS-84, for Leaflet) =====
+var COORDS = {
+  '乌鲁木齐地窝堡国际机场': [43.907, 87.474],
+  '赛里木湖风景名胜区': [44.603, 81.145],
+  '清水河镇': [44.053, 80.762],
+  '伊宁市政府': [43.913, 81.325],
+  '果子沟大桥': [44.283, 81.167],
+  '新源县': [43.435, 83.267],
+  '那拉提草原景区': [43.330, 84.450],
+  '乔尔玛': [43.833, 84.583],
+  '独山子区': [44.327, 84.871],
+  '奎屯市': [44.423, 84.902],
+  '博乐市': [44.833, 82.033]
+};
+
+// ===== Route definitions for each plan =====
 // Each segment: from, to, via (waypoints), departure, arrival, stops, notes
 var PLANS = {
   c: {
@@ -248,7 +297,7 @@ var PLANS = {
           { time: '16:00', name: '独山子区', dur: '15min', purpose: '加油+休息' }
         ],
         hotel: { name: '乌鲁木齐机场附近 · 天缘景逸/玛贝儿', price: '250-350元', tip: '或住独山子温泉酒店(200-400元)，D6再开240km到机场' },
-        notes: '从那拉提镇沿G218向西约20km到达G217/G218交汇处，右转北上进入独库公路(G217北段)。经乔尔玛→哈希勒根达坂(3390m)→独山子。山路限速40-60，达坂可能遇冰雹。到独山子后转G30高速回乌市。出发前务必查"新疆交警"微博确认独库通行。注意：S315是乔尔玛向东去唐布拉百里画廊的路，不是去独山子方向。',
+        notes: '从那拉提镇沿G218向东约20km到达G217/G218交汇处，左转北上进入独库公路(G217北段)。经乔尔玛→哈希勒根达坂(3390m)→独山子。山路限速40-60，达坂可能遇冰雹。到独山子后转G30高速回乌市。出发前务必查"新疆交警"微博确认独库通行。注意：S315是乔尔玛向东去唐布拉百里画廊的路，不是去独山子方向。',
         roadType: '山路+高速480km'
       }
     ]
@@ -403,7 +452,7 @@ var PLANS = {
   }
 };
 
-// Hotel markers data
+// ===== Hotel markers data =====
 var HOTEL_MARKERS = [
   { name: '乌鲁木齐机场', pos: [43.907, 87.474], price: '250-350元', hotels: '天缘景逸/玛贝儿', day: 'D1/D5' },
   { name: '赛里木湖', pos: [44.603, 81.145], price: '600-2000元', hotels: '湖边营地', day: 'D2(C)' },
@@ -414,6 +463,210 @@ var HOTEL_MARKERS = [
   { name: '独山子', pos: [44.327, 84.871], price: '200-400元', hotels: '冰峰温泉假日', day: 'D5备选' }
 ];
 
+// ===== Road info parsing for Leaflet mode =====
+function parseRoadInfo(roadType) {
+  var match = roadType.match(/(\d+)\s*km/i);
+  var distance = match ? parseInt(match[1]) : 0;
+  var hasMountain = roadType.indexOf('山路') >= 0;
+  var hasHighway = roadType.indexOf('高速') >= 0;
+  var hasNational = roadType.indexOf('国道') >= 0;
+  var speed = 70;
+  if (hasMountain && hasHighway) speed = 55;
+  else if (hasMountain) speed = 45;
+  else if (hasHighway && hasNational) speed = 78;
+  else if (hasHighway) speed = 90;
+  else if (hasNational) speed = 70;
+
+  var timeMin = distance > 0 ? Math.round(distance / speed * 60) : 0;
+  var hours = Math.floor(timeMin / 60);
+  var mins = timeMin % 60;
+
+  return {
+    distance: distance,
+    distanceStr: distance > 0 ? '≈' + distance + 'km' : roadType,
+    timeStr: distance > 0 ? (hours + 'h' + (mins > 0 ? mins + 'min' : '')) : '-'
+  };
+}
+
+// ===== Mode Switching =====
+function switchMode(mode) {
+  if (mode === currentMode) return;
+
+  // Destroy old map instance
+  destroyCurrentMap();
+
+  currentMode = mode;
+
+  // Update tab UI
+  document.querySelectorAll('.mode-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelector('.mode-tab[data-mode="' + mode + '"]').classList.add('active');
+
+  // Toggle map containers
+  document.getElementById('mapLeaflet').classList.toggle('map-hidden', mode !== 'leaflet');
+  document.getElementById('mapAmap').classList.toggle('map-hidden', mode !== 'amap');
+
+  // Toggle API Key panel
+  var keyPanel = document.getElementById('keyPanel');
+  if (mode === 'amap') {
+    keyPanel.style.display = apiKey ? 'none' : 'block';
+  } else {
+    keyPanel.style.display = 'none';
+  }
+
+  // Update hint text
+  updateSegmentsHint();
+
+  // Re-render segment cards for new mode
+  renderSegments(currentPlan);
+
+  // Initialize new map
+  if (mode === 'leaflet') {
+    initLeafletMap();
+  } else {
+    initAmapMap();
+  }
+}
+
+function destroyCurrentMap() {
+  if (currentMode === 'leaflet' && leafletMap) {
+    leafletMap.remove();
+    leafletMap = null;
+    leafletRouteLayers = [];
+  } else if (currentMode === 'amap' && map) {
+    if (driving) { driving.clear(); driving = null; }
+    routePolylines.forEach(function(p) {
+      try { map.remove(p); } catch(e) {}
+    });
+    routePolylines = [];
+    map.destroy();
+    map = null;
+  }
+}
+
+function updateSegmentsHint() {
+  var hint = document.getElementById('segmentsHint');
+  if (currentMode === 'leaflet') {
+    hint.textContent = '点击每段展开路线详情 · 免Key模式使用估算距离/时间';
+  } else {
+    hint.textContent = '点击每段展开导航信息 · 距离/时间由高德地图实时计算';
+  }
+}
+
+// ===== Leaflet Mode (Free, no API Key) =====
+function initLeafletMap() {
+  if (typeof L === 'undefined') {
+    document.getElementById('segmentsContainer').innerHTML =
+      '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.88rem;">Leaflet 库加载中，请稍候...</div>';
+    setTimeout(initLeafletMap, 500);
+    return;
+  }
+
+  if (leafletMap) {
+    leafletMap.remove();
+    leafletMap = null;
+  }
+
+  leafletMap = L.map('mapLeaflet', { scrollWheelZoom: true }).setView([43.9, 83.5], 7);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18
+  }).addTo(leafletMap);
+
+  // Add hotel markers
+  HOTEL_MARKERS.forEach(function(h) {
+    var icon = L.divIcon({
+      html: '<div style="background:white;border:2px solid #6A4C93;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.2);">&#127976;</div>',
+      className: 'hotel-marker-icon',
+      iconSize: [26, 26],
+      iconAnchor: [13, 13]
+    });
+    var marker = L.marker(h.pos, { icon: icon }).addTo(leafletMap);
+    marker.bindPopup(
+      '<div style="min-width:180px;">' +
+      '<strong style="font-size:14px;color:#6A4C93;">&#127976; ' + h.name + '</strong><br>' +
+      '<span style="font-size:12px;color:#666;">' + h.day + '</span><br>' +
+      '<span style="font-size:13px;">' + h.hotels + '</span><br>' +
+      '<strong style="font-size:14px;color:#C65D3A;">&#128176; ' + h.price + '/晚</strong>' +
+      '</div>'
+    );
+  });
+
+  // Draw route for current plan
+  drawLeafletRoute(currentPlan);
+}
+
+function drawLeafletRoute(planKey) {
+  if (!leafletMap) return;
+
+  // Clear existing route layers
+  leafletRouteLayers.forEach(function(layer) {
+    try { leafletMap.removeLayer(layer); } catch(e) {}
+  });
+  leafletRouteLayers = [];
+
+  var plan = PLANS[planKey];
+  var allCoords = [];
+
+  plan.segments.forEach(function(seg) {
+    // Build coordinate array: from -> via[] -> to
+    var coords = [];
+    var fromCoord = COORDS[seg.from.keyword];
+    if (fromCoord) { coords.push(fromCoord); allCoords.push(fromCoord); }
+    if (seg.via) {
+      seg.via.forEach(function(v) {
+        var vc = COORDS[v.keyword];
+        if (vc) { coords.push(vc); allCoords.push(vc); }
+      });
+    }
+    var toCoord = COORDS[seg.to.keyword];
+    if (toCoord) { coords.push(toCoord); allCoords.push(toCoord); }
+
+    if (coords.length >= 2) {
+      // Draw straight polyline connecting all points
+      var polyline = L.polyline(coords, {
+        color: plan.color,
+        weight: 4,
+        opacity: 0.8,
+        lineJoin: 'round',
+        lineCap: 'round',
+        dashArray: '8, 6'
+      }).addTo(leafletMap);
+      leafletRouteLayers.push(polyline);
+
+      // Add segment waypoints as small dots
+      coords.forEach(function(c, ci) {
+        if (ci === 0 || ci === coords.length - 1) return; // skip start/end (start gets Day marker)
+        var wpIcon = L.divIcon({
+          html: '<div style="background:' + plan.color + ';width:10px;height:10px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>',
+          className: 'waypoint-icon',
+          iconSize: [10, 10],
+          iconAnchor: [5, 5]
+        });
+        var wpMarker = L.marker(c, { icon: wpIcon }).addTo(leafletMap);
+        leafletRouteLayers.push(wpMarker);
+      });
+
+      // Add start marker with Day label
+      var startIcon = L.divIcon({
+        html: '<div style="background:' + plan.color + ';color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-family:sans-serif;">' + seg.day + '</div>',
+        className: 'day-marker',
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+      var startMarker = L.marker(coords[0], { icon: startIcon }).addTo(leafletMap);
+      startMarker.bindTooltip(seg.title, { permanent: false, direction: 'top', offset: [0, -15] });
+      leafletRouteLayers.push(startMarker);
+    }
+  });
+
+  // Fit bounds to show entire route
+  if (allCoords.length > 0) {
+    leafletMap.fitBounds(allCoords, { padding: [50, 50] });
+  }
+}
+
+// ===== AMap Mode (requires API Key) =====
 function saveApiKey() {
   var input = document.getElementById('apiKeyInput');
   var key = input.value.trim();
@@ -423,24 +676,21 @@ function saveApiKey() {
   }
   localStorage.setItem('amap_key', key);
   apiKey = key;
-  document.getElementById('keyStatus').innerHTML = '<span class="ok">✅ Key 已保存！正在加载地图...</span>';
+  document.getElementById('keyStatus').innerHTML = '<span class="ok">Key 已保存！正在加载地图...</span>';
   document.getElementById('keyPanel').style.display = 'none';
-  initMap();
+  initAmapMap();
 }
 
-function checkSavedKey() {
-  if (apiKey) {
-    document.getElementById('apiKeyInput').value = apiKey;
-    document.getElementById('keyPanel').style.display = 'none';
-    initMap();
+function loadAMapScript(key, callback) {
+  if (amapScriptLoaded && typeof AMap !== 'undefined') {
+    callback();
+    return;
   }
-}
-
-function loadAMapScript(key) {
   var script = document.createElement('script');
   script.src = 'https://webapi.amap.com/maps?v=2.0&key=' + key + '&plugin=AMap.Driving,AMap.PlaceSearch';
   script.onload = function() {
-    initMapContent();
+    amapScriptLoaded = true;
+    callback();
   };
   script.onerror = function() {
     document.getElementById('keyStatus').innerHTML = '<span class="err">高德地图加载失败，请检查 Key 是否正确</span>';
@@ -449,51 +699,59 @@ function loadAMapScript(key) {
   document.head.appendChild(script);
 }
 
-function initMap() {
-  if (!apiKey) return;
+function initAmapMap() {
+  if (!apiKey) {
+    document.getElementById('keyPanel').style.display = 'block';
+    return;
+  }
   if (typeof AMap !== 'undefined') {
-    initMapContent();
+    initAmapMapContent();
   } else {
-    loadAMapScript(apiKey);
+    loadAMapScript(apiKey, initAmapMapContent);
   }
 }
 
-function initMapContent() {
-  // Initialize map
-  map = new AMap.Map('map', {
+function initAmapMapContent() {
+  if (map) {
+    map.destroy();
+    map = null;
+  }
+  routePolylines = [];
+
+  map = new AMap.Map('mapAmap', {
     zoom: 7,
     center: [83.5, 43.9],
     mapStyle: 'amap://styles/whitesmoke',
     viewMode: '2D'
   });
 
-  // Add hotel markers
+  // Add hotel markers (AMap uses [lng, lat], HOTEL_MARKERS stores [lat, lng])
   HOTEL_MARKERS.forEach(function(h) {
+    var amapPos = [h.pos[1], h.pos[0]]; // swap to [lng, lat]
     var marker = new AMap.Marker({
-      position: h.pos,
+      position: amapPos,
       title: h.name,
-      content: '<div style="width:20px;height:20px;border-radius:50%;background:#6A4C93;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',
-      offset: new AMap.Pixel(-10, -10)
+      content: '<div style="background:white;border:2px solid #6A4C93;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.2);">&#127976;</div>',
+      offset: new AMap.Pixel(-13, -13)
     });
     marker.setMap(map);
-    marker.setContent('<div style="background:white;border:2px solid #6A4C93;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.2);">🏨</div>');
     marker.setLabel({
       content: '<div style="background:rgba(255,255,255,0.9);padding:2px 6px;border-radius:4px;font-size:11px;color:#3D2B1F;border:1px solid #D4C4A8;white-space:nowrap;">' + h.name + '</div>',
-      offset: new AMap.Pixel(15, -5)
+      offset: new AMap.Pixel(16, -5)
     });
     var infoWindow = new AMap.InfoWindow({
       content: '<div style="padding:8px;min-width:180px;font-family:Lora,serif;">' +
-        '<strong style="font-size:14px;color:#6A4C93;">🏨 ' + h.name + '</strong><br>' +
+        '<strong style="font-size:14px;color:#6A4C93;">&#127976; ' + h.name + '</strong><br>' +
         '<span style="font-size:12px;color:#666;">' + h.day + '</span><br>' +
         '<span style="font-size:13px;">' + h.hotels + '</span><br>' +
-        '<span style="font-size:14px;color:#C65D3A;font-weight:bold;">💰 ' + h.price + '/晚</span>' +
+        '<span style="font-size:14px;color:#C65D3A;font-weight:bold;">&#128176; ' + h.price + '/晚</span>' +
         '</div>',
       offset: new AMap.Pixel(0, -20)
     });
     marker.on('click', function() {
-      infoWindow.open(map, h.pos);
+      infoWindow.open(map, amapPos);
     });
-    markers.push(marker);
+    routePolylines.push(marker);
   });
 
   // Initialize driving
@@ -506,109 +764,27 @@ function initMapContent() {
   });
 
   // Load route for current plan
-  loadPlanRoute(currentPlan);
+  loadAmapPlanRoute(currentPlan);
 }
 
-function selectPlan(planKey) {
-  // Update buttons
-  document.querySelectorAll('.plan-btn').forEach(function(btn) {
-    btn.classList.remove('active');
-  });
-  document.querySelector('.plan-btn.' + planKey).classList.add('active');
-  currentPlan = planKey;
-
-  if (map && driving) {
-    loadPlanRoute(planKey);
+function loadAmapPlanRoute(planKey) {
+  if (!driving) return;
+  driving.clear();
+  // Remove old route polylines (keep hotel markers)
+  var hotelMarkerCount = HOTEL_MARKERS.length;
+  for (var i = routePolylines.length - 1; i >= hotelMarkerCount; i--) {
+    try { map.remove(routePolylines[i]); } catch(e) {}
+    routePolylines.splice(i, 1);
   }
-}
 
-function clearRoute() {
-  if (driving) driving.clear();
-  routePolylines.forEach(function(p) { map.remove(p); });
-  routePolylines = [];
-}
-
-function loadPlanRoute(planKey) {
-  clearRoute();
   var plan = PLANS[planKey];
-  var segmentsContainer = document.getElementById('segmentsContainer');
-  segmentsContainer.innerHTML = '';
 
-  var allPoints = [];
-
-  // Process each segment
   plan.segments.forEach(function(seg, idx) {
-    // Create segment card
-    var card = document.createElement('div');
-    card.className = 'segment-card';
-    if (idx === 0) card.classList.add('open');
-
-    var headerColor = plan.color;
-    card.innerHTML = createSegmentCard(seg, headerColor, idx);
-    segmentsContainer.appendChild(card);
-
-    // Search route
-    searchRoute(seg, idx, plan.color, card);
-
-    // Collect points for fit view
-    allPoints.push(seg);
-  });
-
-  // Add click handler for expand/collapse
-  document.querySelectorAll('.segment-header').forEach(function(h, i) {
-    h.onclick = function() {
-      h.parentElement.classList.toggle('open');
-    };
+    searchAmapRoute(seg, idx, plan.color);
   });
 }
 
-function createSegmentCard(seg, color, idx) {
-  var stopsHtml = '';
-  if (seg.stops && seg.stops.length > 0) {
-    stopsHtml = seg.stops.map(function(s) {
-      return '<div class="tl-row">' +
-        '<div class="tl-time">' + s.time + '</div>' +
-        '<div class="tl-place"><strong>' + s.name + '</strong><br><span>' + s.purpose + ' · 停' + s.dur + '</span></div>' +
-        '</div>';
-    }).join('');
-  }
-
-  var hotelHtml = '';
-  if (seg.hotel) {
-    hotelHtml = '<div class="tl-row" style="background:rgba(106,76,147,0.05);">' +
-      '<div class="tl-time">🏨</div>' +
-      '<div class="tl-place"><strong style="color:#6A4C93;">住宿：' + seg.hotel.name + '</strong><br><span>' + seg.hotel.tip + '</span></div>' +
-      '<div class="tl-dist" style="color:#6A4C93;font-weight:bold;">' + seg.hotel.price + '</div>' +
-      '</div>';
-  }
-
-  return '<div class="segment-header" style="background:' + color + ';">' +
-    '<span class="seg-day">' + seg.day + ' ' + seg.date + '</span>' +
-    '<span class="seg-title">' + seg.title + '</span>' +
-    '<span class="seg-arrow">▶</span>' +
-    '</div>' +
-    '<div class="segment-body">' +
-    '<div class="seg-stats">' +
-    '<span class="seg-stat green"><strong>出发</strong> ' + seg.departure + '</span>' +
-    '<span class="seg-stat orange"><strong>预计到达</strong> ' + seg.expectedArrival + '</span>' +
-    '<span class="seg-stat blue"><strong>路况</strong> ' + seg.roadType + '</span>' +
-    '<span class="seg-stat" id="seg-dist-' + idx + '"><strong>距离</strong> 计算中...</span>' +
-    '<span class="seg-stat" id="seg-time-' + idx + '"><strong>预计用时</strong> 计算中...</span>' +
-    '</div>' +
-    '<div class="seg-timeline">' +
-    '<div class="tl-row"><div class="tl-time">' + seg.departure + '</div><div class="tl-place"><strong>出发</strong><br><span>' + seg.from.keyword + '</span></div></div>' +
-    stopsHtml +
-    '<div class="tl-row"><div class="tl-time">' + seg.expectedArrival + '</div><div class="tl-place"><strong>到达</strong><br><span>' + seg.to.keyword + '</span></div></div>' +
-    hotelHtml +
-    '</div>' +
-    '<div class="turn-section">' +
-    '<div class="turn-title">📝 ' + seg.notes + '</div>' +
-    '<div id="turn-list-' + idx + '"></div>' +
-    '</div>' +
-    '</div>';
-}
-
-function searchRoute(seg, idx, color, card) {
+function searchAmapRoute(seg, idx, color) {
   if (!driving) return;
 
   var points = [seg.from];
@@ -625,7 +801,7 @@ function searchRoute(seg, idx, color, card) {
       var hours = Math.floor(duration / 60);
       var mins = duration % 60;
 
-      // Update distance/time
+      // Update distance/time in segment card
       var distEl = document.getElementById('seg-dist-' + idx);
       var timeEl = document.getElementById('seg-time-' + idx);
       if (distEl) distEl.innerHTML = '<strong>距离</strong> ' + distance + 'km';
@@ -634,11 +810,10 @@ function searchRoute(seg, idx, color, card) {
       // Show turn-by-turn
       var turnEl = document.getElementById('turn-list-' + idx);
       if (turnEl && route.steps) {
-        var turnHtml = '<div class="turn-title">🧭 逐步导航 (' + route.steps.length + '步)</div><ul class="turn-list">';
+        var turnHtml = '<div class="turn-title" style="margin-top:0.5rem;">逐步导航 (' + route.steps.length + '步)</div><ul class="turn-list">';
         route.steps.forEach(function(step, si) {
           var stepDist = step.distance > 1000 ? (step.distance / 1000).toFixed(1) + 'km' : step.distance + 'm';
           var instruction = step.instruction || '';
-          // Clean up instruction - remove HTML tags
           instruction = instruction.replace(/<[^>]+>/g, '');
           if (instruction.length > 80) instruction = instruction.substring(0, 80) + '...';
           turnHtml += '<li class="turn-item">' +
@@ -651,7 +826,7 @@ function searchRoute(seg, idx, color, card) {
         turnEl.innerHTML = turnHtml;
       }
 
-      // Draw custom polyline
+      // Draw custom polyline on map
       var path = [];
       route.steps.forEach(function(step) {
         step.path.forEach(function(p) { path.push(p); });
@@ -669,7 +844,7 @@ function searchRoute(seg, idx, color, card) {
       polyline.setMap(map);
       routePolylines.push(polyline);
 
-      // Add start/end markers for this segment
+      // Add start marker with Day label
       var startMarker = new AMap.Marker({
         position: path[0],
         content: '<div style="background:' + color + ';color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' + seg.day + '</div>',
@@ -678,9 +853,12 @@ function searchRoute(seg, idx, color, card) {
       startMarker.setMap(map);
       routePolylines.push(startMarker);
 
-      // Fit view after first segment
-      if (idx === 0) {
-        map.setFitView(routePolylines, false, [60, 60, 60, 60]);
+      // Fit view after last segment
+      if (idx === PLANS[currentPlan].segments.length - 1) {
+        var routeOnly = routePolylines.slice(HOTEL_MARKERS.length);
+        if (routeOnly.length > 0) {
+          map.setFitView(routeOnly, false, [60, 60, 60, 60]);
+        }
       }
     } else {
       var distEl = document.getElementById('seg-dist-' + idx);
@@ -691,9 +869,145 @@ function searchRoute(seg, idx, color, card) {
   });
 }
 
-// Check for saved key on page load
+// ===== Shared: Plan Selection =====
+function selectPlan(planKey) {
+  document.querySelectorAll('.plan-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  document.querySelector('.plan-btn.' + planKey).classList.add('active');
+  currentPlan = planKey;
+
+  // Re-render segment cards
+  renderSegments(planKey);
+
+  // Redraw map route
+  if (currentMode === 'leaflet' && leafletMap) {
+    drawLeafletRoute(planKey);
+  } else if (currentMode === 'amap' && map && driving) {
+    loadAmapPlanRoute(planKey);
+  }
+}
+
+// ===== Shared: Segment Card Rendering =====
+function renderSegments(planKey) {
+  var plan = PLANS[planKey];
+  var container = document.getElementById('segmentsContainer');
+
+  // AMap mode without key: show prompt
+  if (currentMode === 'amap' && !apiKey) {
+    container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.88rem;">请先在上方输入高德 API Key，路线信息将自动加载</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+
+  plan.segments.forEach(function(seg, idx) {
+    var card = document.createElement('div');
+    card.className = 'segment-card';
+    if (idx === 0) card.classList.add('open');
+    card.innerHTML = createSegmentCard(seg, plan.color, idx, currentMode);
+    container.appendChild(card);
+  });
+
+  // Add click handlers for expand/collapse
+  document.querySelectorAll('.segment-header').forEach(function(h) {
+    h.onclick = function() {
+      h.parentElement.classList.toggle('open');
+    };
+  });
+
+  // For AMap mode, trigger route searches to fill in distance/time/turn-by-turn
+  if (currentMode === 'amap' && map && driving) {
+    plan.segments.forEach(function(seg, idx) {
+      searchAmapRoute(seg, idx, plan.color);
+    });
+  }
+}
+
+function createSegmentCard(seg, color, idx, mode) {
+  // Stops timeline (shared)
+  var stopsHtml = '';
+  if (seg.stops && seg.stops.length > 0) {
+    stopsHtml = seg.stops.map(function(s) {
+      return '<div class="tl-row">' +
+        '<div class="tl-time">' + s.time + '</div>' +
+        '<div class="tl-place"><strong>' + s.name + '</strong><br><span>' + s.purpose + ' · 停' + s.dur + '</span></div>' +
+        '</div>';
+    }).join('');
+  }
+
+  // Hotel timeline row (shared)
+  var hotelHtml = '';
+  if (seg.hotel) {
+    hotelHtml = '<div class="tl-row" style="background:rgba(106,76,147,0.05);">' +
+      '<div class="tl-time">&#127976;</div>' +
+      '<div class="tl-place"><strong style="color:#6A4C93;">住宿：' + seg.hotel.name + '</strong><br><span>' + seg.hotel.tip + '</span></div>' +
+      '<div class="tl-dist" style="color:#6A4C93;font-weight:bold;">' + seg.hotel.price + '</div>' +
+      '</div>';
+  }
+
+  // Timeline (shared)
+  var timelineHtml = '<div class="seg-timeline">' +
+    '<div class="tl-row"><div class="tl-time">' + seg.departure + '</div><div class="tl-place"><strong>出发</strong><br><span>' + seg.from.keyword + '</span></div></div>' +
+    stopsHtml +
+    '<div class="tl-row"><div class="tl-time">' + seg.expectedArrival + '</div><div class="tl-place"><strong>到达</strong><br><span>' + seg.to.keyword + '</span></div></div>' +
+    hotelHtml +
+    '</div>';
+
+  // Header (shared)
+  var headerHtml = '<div class="segment-header" style="background:' + color + ';">' +
+    '<span class="seg-day">' + seg.day + ' ' + seg.date + '</span>' +
+    '<span class="seg-title">' + seg.title + '</span>' +
+    '<span class="seg-arrow">&#9654;</span>' +
+    '</div>';
+
+  if (mode === 'leaflet') {
+    // Leaflet mode: estimated distance/time from roadType, show notes
+    var info = parseRoadInfo(seg.roadType);
+    var statsHtml = '<div class="seg-stats">' +
+      '<span class="seg-stat green"><strong>出发</strong> ' + seg.departure + '</span>' +
+      '<span class="seg-stat orange"><strong>预计到达</strong> ' + seg.expectedArrival + '</span>' +
+      '<span class="seg-stat blue"><strong>路况</strong> ' + seg.roadType + '</span>' +
+      '<span class="seg-stat"><strong>估算距离</strong> ' + info.distanceStr + '</span>' +
+      '<span class="seg-stat"><strong>估算用时</strong> ' + info.timeStr + '</span>' +
+      '</div>';
+
+    var notesHtml = '<div class="notes-block">' +
+      '<span class="notes-label">路线说明</span>' +
+      seg.notes +
+      '</div>';
+
+    return headerHtml + '<div class="segment-body">' + statsHtml + timelineHtml + notesHtml + '</div>';
+  } else {
+    // AMap mode: placeholders filled by searchAmapRoute, turn-by-turn navigation
+    var statsHtml = '<div class="seg-stats">' +
+      '<span class="seg-stat green"><strong>出发</strong> ' + seg.departure + '</span>' +
+      '<span class="seg-stat orange"><strong>预计到达</strong> ' + seg.expectedArrival + '</span>' +
+      '<span class="seg-stat blue"><strong>路况</strong> ' + seg.roadType + '</span>' +
+      '<span class="seg-stat" id="seg-dist-' + idx + '"><strong>距离</strong> 计算中...</span>' +
+      '<span class="seg-stat" id="seg-time-' + idx + '"><strong>预计用时</strong> 计算中...</span>' +
+      '</div>';
+
+    var turnHtml = '<div class="turn-section">' +
+      '<div class="turn-title">&#128221; ' + seg.notes + '</div>' +
+      '<div id="turn-list-' + idx + '"></div>' +
+      '</div>';
+
+    return headerHtml + '<div class="segment-body">' + statsHtml + timelineHtml + turnHtml + '</div>';
+  }
+}
+
+// ===== Page Load =====
 window.addEventListener('load', function() {
-  checkSavedKey();
+  // Pre-fill API key input if saved
+  if (apiKey) {
+    document.getElementById('apiKeyInput').value = apiKey;
+  }
+
+  // Default mode is leaflet - render segments and init map
+  updateSegmentsHint();
+  renderSegments(currentPlan);
+  initLeafletMap();
 });
 </script>
 </body>
