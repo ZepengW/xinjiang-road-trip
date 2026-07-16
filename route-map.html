@@ -62,6 +62,12 @@ article.page{max-width:1000px;margin:0 auto;padding:0 1rem 4rem;}
 .plan-btn.active.b{background:#4A7A9B;}
 .plan-btn.active.d{background:#B8860B;}
 
+/* Segment Tabs */
+.segment-tabs{display:flex;gap:0.5rem;flex-wrap:wrap;margin:0.5rem 0;}
+.seg-tab{font-family:'NationalPark',sans-serif;font-size:0.8rem;padding:0.4rem 0.9rem;border:2px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.seg-tab:hover{border-color:var(--ink);}
+.seg-tab.active{color:white;border-color:transparent;}
+
 /* Map containers */
 .map-container{width:100%;height:600px;border-radius:12px;border:3px solid var(--rule);box-shadow:0 4px 24px var(--shadow);margin:0.5rem 0;}
 .map-hidden{display:none;}
@@ -136,29 +142,31 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
 
 <section class="cover">
   <h1 class="cover-title">导航路线地图</h1>
-  <p class="cover-subtitle">双模式导航 · 免Key直连 Leaflet / 高德真实道路路线</p>
+  <p class="cover-subtitle">双模式导航 · OSRM真实道路路线 / 高德地图导航</p>
 </section>
 
 <!-- Mode Tabs -->
 <div class="mode-tabs">
-  <button class="mode-tab active" data-mode="leaflet" onclick="switchMode('leaflet')">免Key模式 · Leaflet + OpenStreetMap</button>
+  <button class="mode-tab active" data-mode="leaflet" onclick="switchMode('leaflet')">免Key模式 · Leaflet + OSRM真实道路</button>
   <button class="mode-tab" data-mode="amap" onclick="switchMode('amap')">高德导航模式 · AMap API</button>
 </div>
 
 <!-- API Key Panel (AMap mode only, hidden by default) -->
 <div class="key-panel" id="keyPanel" style="display:none;">
-  <h3>高德地图 API Key 配置</h3>
-  <p>高德导航模式使用高德地图 JS API 提供真实道路路线规划和逐段导航信息。需免费注册获取 Key（个人开发者免费，每日5000次调用）。</p>
+  <h3>高德地图 API Key 及安全密钥配置</h3>
+  <p>高德导航模式使用高德地图 JS API 提供真实道路路线规划和逐段导航信息。需免费注册获取 Key 和安全密钥（个人开发者免费，每日5000次调用）。</p>
   <div class="key-steps">
     <strong>获取步骤：</strong><br>
     1. 打开 <a href="https://lbs.amap.com/" target="_blank">https://lbs.amap.com/</a> 注册/登录高德开放平台<br>
     2. 进入「控制台」→「应用管理」→「我的应用」→「创建新应用」<br>
     3. 应用类型选「Web端(JS API)」，获取 Key<br>
-    4. 将 Key 粘贴到下方输入框，点击保存
+    4. 在同一页面找到「安全密钥」(JsCode)，复制<br>
+    5. 将 Key 和安全密钥都粘贴到下方
   </div>
   <div class="key-input-row" style="margin-top:0.6rem;">
-    <input type="text" id="apiKeyInput" placeholder="在此粘贴你的高德地图 JS API Key..." />
-    <button onclick="saveApiKey()">保存 Key</button>
+    <input type="text" id="apiKeyInput" placeholder="高德地图 JS API Key..." />
+    <input type="text" id="securityCodeInput" placeholder="安全密钥 (securityJsCode)..." />
+    <button onclick="saveApiKey()">保存</button>
   </div>
   <div class="key-status" id="keyStatus"></div>
 </div>
@@ -171,6 +179,11 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
   <button class="plan-btn d" onclick="selectPlan('d')">方案D 反向</button>
 </div>
 
+<!-- Segment Tabs (per-segment route view) -->
+<div class="segment-tabs" id="segmentTabs">
+  <!-- 动态生成：D2/D3/D4/D5 按钮 -->
+</div>
+
 <!-- Map containers -->
 <div id="mapLeaflet" class="map-container"></div>
 <div id="mapAmap" class="map-container map-hidden"></div>
@@ -178,14 +191,14 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
 <!-- Route Segments -->
 <div class="segments-section">
   <h2>逐段路线详情</h2>
-  <p style="text-align:center;font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem;" id="segmentsHint">点击每段展开路线详情 · 免Key模式使用估算距离/时间</p>
+  <p style="text-align:center;font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem;" id="segmentsHint">点击每段展开路线详情 · 免Key模式使用OSRM真实道路路线规划</p>
   <div id="segmentsContainer">
     <div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.88rem;">正在加载路线信息...</div>
   </div>
 </div>
 
 <div class="tip-box strategy">
-  <strong>关于两种模式：</strong>「免Key模式」使用 Leaflet + OpenStreetMap 瓦片，绘制直线连线和标记点，距离/时间为基于路况的估算值，页面打开即可使用。「高德导航模式」使用高德地图真实道路路线规划，提供精确距离、时间和逐步导航指令，需配置 API Key。出行当天建议同时打开高德地图App导航，可获取实时路况和交通管制信息。独库公路段因山路限速，实际行驶时间可能比导航预估多20-30%。
+  <strong>关于两种模式：</strong>「免Key模式」使用 Leaflet + OpenStreetMap 瓦片，通过 OSRM 公共路线规划服务绘制真实道路路线，提供精确距离、时间和逐步导航指令，页面打开即可使用。「高德导航模式」使用高德地图真实道路路线规划，需配置 API Key 和安全密钥。出行当天建议同时打开高德地图App导航，可获取实时路况和交通管制信息。独库公路段因山路限速，实际行驶时间可能比导航预估多20-30%。
 </div>
 
 <footer>
@@ -206,7 +219,9 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
 // ===== Global State =====
 var currentMode = 'leaflet';   // 'leaflet' or 'amap'
 var currentPlan = 'c';
+var currentSegmentIdx = 0;     // 0-based index, or 'all'
 var apiKey = localStorage.getItem('amap_key') || '';
+var securityCode = localStorage.getItem('amap_scode') || '';
 var amapScriptLoaded = false;
 
 // Leaflet map state
@@ -217,6 +232,9 @@ var leafletRouteLayers = [];
 var map = null;          // AMap instance
 var driving = null;       // AMap.Driving instance
 var routePolylines = [];  // AMap polylines + markers
+
+// OSRM cache
+var osrmCache = {};
 
 // ===== Coordinate Lookup Table (WGS-84, for Leaflet) =====
 var COORDS = {
@@ -460,7 +478,7 @@ var HOTEL_MARKERS = [
   { name: '那拉提空中草原漫心酒店', pos: [43.330, 84.450], price: '已预订', hotels: '那拉提街220号 · G218旁 · 毗邻景区', day: 'D4', booked: true }
 ];
 
-// ===== Road info parsing for Leaflet mode =====
+// ===== Road info parsing (fallback, used when OSRM fails) =====
 function parseRoadInfo(roadType) {
   var match = roadType.match(/(\d+)\s*km/i);
   var distance = match ? parseInt(match[1]) : 0;
@@ -483,6 +501,67 @@ function parseRoadInfo(roadType) {
     distanceStr: distance > 0 ? '≈' + distance + 'km' : roadType,
     timeStr: distance > 0 ? (hours + 'h' + (mins > 0 ? mins + 'min' : '')) : '-'
   };
+}
+
+// ===== OSRM Route Functions =====
+function formatOSRMStep(step) {
+  var type = step.maneuver.type;
+  var modifier = step.maneuver.modifier;
+  var name = step.name || '无名道路';
+  var dist = step.distance;
+  var distStr = dist > 1000 ? (dist/1000).toFixed(1) + 'km' : Math.round(dist) + 'm';
+  var action = '';
+  if (type === 'depart') action = '出发';
+  else if (type === 'arrive') action = '到达目的地';
+  else if (type === 'turn') {
+    if (modifier === 'left') action = '左转进入';
+    else if (modifier === 'right') action = '右转进入';
+    else if (modifier === 'slight left') action = '稍左转进入';
+    else if (modifier === 'slight right') action = '稍右转进入';
+    else if (modifier === 'sharp left') action = '急左转进入';
+    else if (modifier === 'sharp right') action = '急右转进入';
+    else action = '转弯进入';
+  }
+  else if (type === 'continue') action = '继续沿';
+  else if (type === 'merge') action = '汇入';
+  else if (type === 'on ramp') action = '上匝道';
+  else if (type === 'off ramp') action = '下匝道';
+  else if (type === 'fork') action = '岔路口';
+  else if (type === 'roundabout') action = '环岛';
+  else action = '行驶';
+  return { action: action, road: name, distStr: distStr, rawType: type };
+}
+
+function fetchOSRMRoute(seg, callback) {
+  var coords = [];
+  var fromCoord = COORDS[seg.from.keyword];
+  if (fromCoord) coords.push(fromCoord);
+  if (seg.via) {
+    seg.via.forEach(function(v) {
+      var vc = COORDS[v.keyword];
+      if (vc) coords.push(vc);
+    });
+  }
+  var toCoord = COORDS[seg.to.keyword];
+  if (toCoord) coords.push(toCoord);
+
+  if (coords.length < 2) { callback(null); return; }
+
+  // OSRM expects lng,lat format (COORDS stores [lat,lng])
+  var coordStr = coords.map(function(c) { return c[1] + ',' + c[0]; }).join(';');
+  var cacheKey = coordStr;
+  if (osrmCache[cacheKey]) { callback(osrmCache[cacheKey]); return; }
+
+  var url = 'https://router.project-osrm.org/route/v1/driving/' + coordStr +
+    '?overview=full&geometries=geojson&steps=true';
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      osrmCache[cacheKey] = data;
+      callback(data);
+    })
+    .catch(function(err) { callback(null); });
 }
 
 // ===== Mode Switching =====
@@ -543,13 +622,44 @@ function destroyCurrentMap() {
 function updateSegmentsHint() {
   var hint = document.getElementById('segmentsHint');
   if (currentMode === 'leaflet') {
-    hint.textContent = '点击每段展开路线详情 · 免Key模式使用估算距离/时间';
+    hint.textContent = '点击每段展开路线详情 · 免Key模式使用OSRM真实道路路线规划';
   } else {
     hint.textContent = '点击每段展开导航信息 · 距离/时间由高德地图实时计算';
   }
 }
 
-// ===== Leaflet Mode (Free, no API Key) =====
+// ===== Segment Tabs =====
+function renderSegmentTabs(planKey) {
+  var plan = PLANS[planKey];
+  var container = document.getElementById('segmentTabs');
+  var html = '';
+
+  // "全部" button
+  var allActive = currentSegmentIdx === 'all';
+  html += '<button class="seg-tab' + (allActive ? ' active' : '') + '" onclick="selectSegment(\'all\')"' +
+    (allActive ? ' style="background:' + plan.color + ';"' : '') + '>全部</button>';
+
+  plan.segments.forEach(function(seg, idx) {
+    var isActive = currentSegmentIdx === idx;
+    html += '<button class="seg-tab' + (isActive ? ' active' : '') + '" onclick="selectSegment(' + idx + ')"' +
+      (isActive ? ' style="background:' + plan.color + ';"' : '') + '>' + seg.day + '</button>';
+  });
+
+  container.innerHTML = html;
+}
+
+function selectSegment(idx) {
+  currentSegmentIdx = idx;
+  renderSegmentTabs(currentPlan);
+
+  if (currentMode === 'leaflet' && leafletMap) {
+    drawLeafletRoute(currentPlan, idx);
+  } else if (currentMode === 'amap' && map && driving) {
+    loadAmapPlanRoute(currentPlan, idx);
+  }
+}
+
+// ===== Leaflet Mode (Free, no API Key, uses OSRM) =====
 function initLeafletMap() {
   if (typeof L === 'undefined') {
     document.getElementById('segmentsContainer').innerHTML =
@@ -589,11 +699,11 @@ function initLeafletMap() {
     );
   });
 
-  // Draw route for current plan
-  drawLeafletRoute(currentPlan);
+  // Draw route for current plan and selected segment
+  drawLeafletRoute(currentPlan, currentSegmentIdx);
 }
 
-function drawLeafletRoute(planKey) {
+function drawLeafletRoute(planKey, segmentIdx) {
   if (!leafletMap) return;
 
   // Clear existing route layers
@@ -603,82 +713,155 @@ function drawLeafletRoute(planKey) {
   leafletRouteLayers = [];
 
   var plan = PLANS[planKey];
-  var allCoords = [];
-
-  plan.segments.forEach(function(seg) {
-    // Build coordinate array: from -> via[] -> to
-    var coords = [];
-    var fromCoord = COORDS[seg.from.keyword];
-    if (fromCoord) { coords.push(fromCoord); allCoords.push(fromCoord); }
-    if (seg.via) {
-      seg.via.forEach(function(v) {
-        var vc = COORDS[v.keyword];
-        if (vc) { coords.push(vc); allCoords.push(vc); }
-      });
-    }
-    var toCoord = COORDS[seg.to.keyword];
-    if (toCoord) { coords.push(toCoord); allCoords.push(toCoord); }
-
-    if (coords.length >= 2) {
-      // Draw straight polyline connecting all points
-      var polyline = L.polyline(coords, {
-        color: plan.color,
-        weight: 4,
-        opacity: 0.8,
-        lineJoin: 'round',
-        lineCap: 'round',
-        dashArray: '8, 6'
-      }).addTo(leafletMap);
-      leafletRouteLayers.push(polyline);
-
-      // Add segment waypoints as small dots
-      coords.forEach(function(c, ci) {
-        if (ci === 0 || ci === coords.length - 1) return; // skip start/end (start gets Day marker)
-        var wpIcon = L.divIcon({
-          html: '<div style="background:' + plan.color + ';width:10px;height:10px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>',
-          className: 'waypoint-icon',
-          iconSize: [10, 10],
-          iconAnchor: [5, 5]
-        });
-        var wpMarker = L.marker(c, { icon: wpIcon }).addTo(leafletMap);
-        leafletRouteLayers.push(wpMarker);
-      });
-
-      // Add start marker with Day label
-      var startIcon = L.divIcon({
-        html: '<div style="background:' + plan.color + ';color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-family:sans-serif;">' + seg.day + '</div>',
-        className: 'day-marker',
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
-      });
-      var startMarker = L.marker(coords[0], { icon: startIcon }).addTo(leafletMap);
-      startMarker.bindTooltip(seg.title, { permanent: false, direction: 'top', offset: [0, -15] });
-      leafletRouteLayers.push(startMarker);
-    }
-  });
-
-  // Fit bounds to show entire route
-  if (allCoords.length > 0) {
-    leafletMap.fitBounds(allCoords, { padding: [50, 50] });
+  var segmentsToShow = [];
+  if (segmentIdx === 'all' || segmentIdx === undefined) {
+    plan.segments.forEach(function(s, i) { segmentsToShow.push({ seg: s, idx: i }); });
+  } else {
+    segmentsToShow.push({ seg: plan.segments[segmentIdx], idx: segmentIdx });
   }
+
+  var allCoords = [];
+  var pending = segmentsToShow.length;
+
+  if (pending === 0) return;
+
+  function onDone() {
+    pending--;
+    if (pending === 0 && allCoords.length > 0) {
+      leafletMap.fitBounds(allCoords, { padding: [50, 50] });
+    }
+  }
+
+  segmentsToShow.forEach(function(item) {
+    var seg = item.seg;
+
+    fetchOSRMRoute(seg, function(data) {
+      if (data && data.routes && data.routes[0]) {
+        var route = data.routes[0];
+        // OSRM returns [lng, lat], Leaflet needs [lat, lng]
+        var latlngs = route.geometry.coordinates.map(function(c) { return [c[1], c[0]]; });
+        allCoords = allCoords.concat(latlngs);
+
+        // Draw solid polyline (not dashed)
+        var polyline = L.polyline(latlngs, {
+          color: plan.color,
+          weight: 5,
+          opacity: 0.85,
+          lineJoin: 'round',
+          lineCap: 'round'
+        }).addTo(leafletMap);
+        leafletRouteLayers.push(polyline);
+
+        // Add via point markers
+        if (seg.via) {
+          seg.via.forEach(function(v) {
+            var vc = COORDS[v.keyword];
+            if (vc) {
+              var wpIcon = L.divIcon({
+                html: '<div style="background:' + plan.color + ';width:10px;height:10px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>',
+                className: 'waypoint-icon',
+                iconSize: [10, 10],
+                iconAnchor: [5, 5]
+              });
+              var wpMarker = L.marker(vc, { icon: wpIcon }).addTo(leafletMap);
+              wpMarker.bindTooltip(v.keyword, { permanent: false, direction: 'top', offset: [0, -8] });
+              leafletRouteLayers.push(wpMarker);
+            }
+          });
+        }
+
+        // Add start marker with Day label
+        var startCoord = COORDS[seg.from.keyword];
+        if (startCoord) {
+          var startIcon = L.divIcon({
+            html: '<div style="background:' + plan.color + ';color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-family:sans-serif;">' + seg.day + '</div>',
+            className: 'day-marker',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+          });
+          var startMarker = L.marker(startCoord, { icon: startIcon }).addTo(leafletMap);
+          startMarker.bindTooltip(seg.title, { permanent: false, direction: 'top', offset: [0, -15] });
+          leafletRouteLayers.push(startMarker);
+        }
+
+        // Add end marker
+        var endCoord = COORDS[seg.to.keyword];
+        if (endCoord) {
+          var endIcon = L.divIcon({
+            html: '<div style="background:white;color:' + plan.color + ';width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;border:3px solid ' + plan.color + ';box-shadow:0 2px 6px rgba(0,0,0,0.3);">&#127937;</div>',
+            className: 'end-marker',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+          });
+          var endMarker = L.marker(endCoord, { icon: endIcon }).addTo(leafletMap);
+          leafletRouteLayers.push(endMarker);
+        }
+      } else {
+        // Fallback: draw straight dashed line if OSRM fails
+        var coords = [];
+        var fromCoord = COORDS[seg.from.keyword];
+        if (fromCoord) coords.push(fromCoord);
+        if (seg.via) {
+          seg.via.forEach(function(v) {
+            var vc = COORDS[v.keyword];
+            if (vc) coords.push(vc);
+          });
+        }
+        var toCoord = COORDS[seg.to.keyword];
+        if (toCoord) coords.push(toCoord);
+
+        if (coords.length >= 2) {
+          allCoords = allCoords.concat(coords);
+          var polyline = L.polyline(coords, {
+            color: plan.color,
+            weight: 4,
+            opacity: 0.6,
+            lineJoin: 'round',
+            lineCap: 'round',
+            dashArray: '8, 6'
+          }).addTo(leafletMap);
+          leafletRouteLayers.push(polyline);
+
+          // Add start marker with Day label
+          var startIcon = L.divIcon({
+            html: '<div style="background:' + plan.color + ';color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-family:sans-serif;">' + seg.day + '</div>',
+            className: 'day-marker',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+          });
+          var startMarker = L.marker(coords[0], { icon: startIcon }).addTo(leafletMap);
+          startMarker.bindTooltip(seg.title, { permanent: false, direction: 'top', offset: [0, -15] });
+          leafletRouteLayers.push(startMarker);
+        }
+      }
+      onDone();
+    });
+  });
 }
 
-// ===== AMap Mode (requires API Key) =====
+// ===== AMap Mode (requires API Key + Security Code) =====
 function saveApiKey() {
-  var input = document.getElementById('apiKeyInput');
-  var key = input.value.trim();
+  var key = document.getElementById('apiKeyInput').value.trim();
+  var scode = document.getElementById('securityCodeInput').value.trim();
   if (!key) {
     document.getElementById('keyStatus').innerHTML = '<span class="err">请输入有效的 API Key</span>';
     return;
   }
   localStorage.setItem('amap_key', key);
+  localStorage.setItem('amap_scode', scode);
   apiKey = key;
-  document.getElementById('keyStatus').innerHTML = '<span class="ok">Key 已保存！正在加载地图...</span>';
+  securityCode = scode;
+  document.getElementById('keyStatus').innerHTML = '<span class="ok">Key 和安全密钥已保存！正在加载地图...</span>';
   document.getElementById('keyPanel').style.display = 'none';
   initAmapMap();
 }
 
-function loadAMapScript(key, callback) {
+function loadAMapScript(key, securityCode, callback) {
+  // Set security config BEFORE loading AMap script
+  window._AMapSecurityConfig = {
+    securityJsCode: securityCode || ''
+  };
+
   if (amapScriptLoaded && typeof AMap !== 'undefined') {
     callback();
     return;
@@ -704,7 +887,7 @@ function initAmapMap() {
   if (typeof AMap !== 'undefined') {
     initAmapMapContent();
   } else {
-    loadAMapScript(apiKey, initAmapMapContent);
+    loadAMapScript(apiKey, securityCode, initAmapMapContent);
   }
 }
 
@@ -760,11 +943,11 @@ function initAmapMapContent() {
     autoFitView: false
   });
 
-  // Load route for current plan
-  loadAmapPlanRoute(currentPlan);
+  // Load route for current plan and selected segment
+  loadAmapPlanRoute(currentPlan, currentSegmentIdx);
 }
 
-function loadAmapPlanRoute(planKey) {
+function loadAmapPlanRoute(planKey, segmentIdx) {
   if (!driving) return;
   driving.clear();
   // Remove old route polylines (keep hotel markers)
@@ -775,14 +958,30 @@ function loadAmapPlanRoute(planKey) {
   }
 
   var plan = PLANS[planKey];
+  var segmentsToShow = [];
+  if (segmentIdx === 'all' || segmentIdx === undefined) {
+    plan.segments.forEach(function(s, i) { segmentsToShow.push({ seg: s, idx: i }); });
+  } else {
+    segmentsToShow.push({ seg: plan.segments[segmentIdx], idx: segmentIdx });
+  }
 
-  plan.segments.forEach(function(seg, idx) {
-    searchAmapRoute(seg, idx, plan.color);
+  var pending = segmentsToShow.length;
+
+  segmentsToShow.forEach(function(item) {
+    searchAmapRoute(item.seg, item.idx, plan.color, function() {
+      pending--;
+      if (pending === 0) {
+        var routeOnly = routePolylines.slice(HOTEL_MARKERS.length);
+        if (routeOnly.length > 0) {
+          map.setFitView(routeOnly, false, [60, 60, 60, 60]);
+        }
+      }
+    });
   });
 }
 
-function searchAmapRoute(seg, idx, color) {
-  if (!driving) return;
+function searchAmapRoute(seg, idx, color, callback) {
+  if (!driving) { if (callback) callback(); return; }
 
   var points = [seg.from];
   if (seg.via) {
@@ -849,20 +1048,13 @@ function searchAmapRoute(seg, idx, color) {
       });
       startMarker.setMap(map);
       routePolylines.push(startMarker);
-
-      // Fit view after last segment
-      if (idx === PLANS[currentPlan].segments.length - 1) {
-        var routeOnly = routePolylines.slice(HOTEL_MARKERS.length);
-        if (routeOnly.length > 0) {
-          map.setFitView(routeOnly, false, [60, 60, 60, 60]);
-        }
-      }
     } else {
       var distEl = document.getElementById('seg-dist-' + idx);
       if (distEl) distEl.innerHTML = '<strong>距离</strong> 路线查询失败';
       var timeEl = document.getElementById('seg-time-' + idx);
       if (timeEl) timeEl.innerHTML = '<strong>用时</strong> -';
     }
+    if (callback) callback();
   });
 }
 
@@ -874,14 +1066,20 @@ function selectPlan(planKey) {
   document.querySelector('.plan-btn.' + planKey).classList.add('active');
   currentPlan = planKey;
 
+  // Reset to first segment
+  currentSegmentIdx = 0;
+
+  // Re-render segment tabs
+  renderSegmentTabs(planKey);
+
   // Re-render segment cards
   renderSegments(planKey);
 
   // Redraw map route
   if (currentMode === 'leaflet' && leafletMap) {
-    drawLeafletRoute(planKey);
+    drawLeafletRoute(planKey, currentSegmentIdx);
   } else if (currentMode === 'amap' && map && driving) {
-    loadAmapPlanRoute(planKey);
+    loadAmapPlanRoute(planKey, currentSegmentIdx);
   }
 }
 
@@ -892,7 +1090,7 @@ function renderSegments(planKey) {
 
   // AMap mode without key: show prompt
   if (currentMode === 'amap' && !apiKey) {
-    container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.88rem;">请先在上方输入高德 API Key，路线信息将自动加载</div>';
+    container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.88rem;">请先在上方输入高德 API Key 和安全密钥，路线信息将自动加载</div>';
     return;
   }
 
@@ -913,11 +1111,22 @@ function renderSegments(planKey) {
     };
   });
 
-  // For AMap mode, trigger route searches to fill in distance/time/turn-by-turn
-  if (currentMode === 'amap' && map && driving) {
+  if (currentMode === 'leaflet') {
+    // Fetch OSRM for all segments to fill cards
     plan.segments.forEach(function(seg, idx) {
-      searchAmapRoute(seg, idx, plan.color);
+      fetchOSRMRoute(seg, function(data) {
+        updateSegmentCardWithOSRM(seg, idx, data);
+      });
     });
+  } else if (currentMode === 'amap' && map && driving) {
+    // Search based on current segment selection
+    if (currentSegmentIdx === 'all') {
+      plan.segments.forEach(function(seg, idx) {
+        searchAmapRoute(seg, idx, plan.color);
+      });
+    } else {
+      searchAmapRoute(plan.segments[currentSegmentIdx], currentSegmentIdx, plan.color);
+    }
   }
 }
 
@@ -959,22 +1168,21 @@ function createSegmentCard(seg, color, idx, mode) {
     '</div>';
 
   if (mode === 'leaflet') {
-    // Leaflet mode: estimated distance/time from roadType, show notes
-    var info = parseRoadInfo(seg.roadType);
+    // Leaflet mode: distance/time filled by OSRM, show notes + turn-by-turn from OSRM
     var statsHtml = '<div class="seg-stats">' +
       '<span class="seg-stat green"><strong>出发</strong> ' + seg.departure + '</span>' +
       '<span class="seg-stat orange"><strong>预计到达</strong> ' + seg.expectedArrival + '</span>' +
       '<span class="seg-stat blue"><strong>路况</strong> ' + seg.roadType + '</span>' +
-      '<span class="seg-stat"><strong>估算距离</strong> ' + info.distanceStr + '</span>' +
-      '<span class="seg-stat"><strong>估算用时</strong> ' + info.timeStr + '</span>' +
+      '<span class="seg-stat" id="seg-dist-' + idx + '"><strong>距离</strong> 路线规划中...</span>' +
+      '<span class="seg-stat" id="seg-time-' + idx + '"><strong>预计用时</strong> 路线规划中...</span>' +
       '</div>';
 
-    var notesHtml = '<div class="notes-block">' +
-      '<span class="notes-label">路线说明</span>' +
-      seg.notes +
+    var turnHtml = '<div class="turn-section">' +
+      '<div class="turn-title">&#128221; ' + seg.notes + '</div>' +
+      '<div id="turn-list-' + idx + '"><div style="font-size:0.78rem;color:var(--muted);padding:0.3rem 0;">路线规划中...</div></div>' +
       '</div>';
 
-    return headerHtml + '<div class="segment-body">' + statsHtml + timelineHtml + notesHtml + '</div>';
+    return headerHtml + '<div class="segment-body">' + statsHtml + timelineHtml + turnHtml + '</div>';
   } else {
     // AMap mode: placeholders filled by searchAmapRoute, turn-by-turn navigation
     var statsHtml = '<div class="seg-stats">' +
@@ -994,14 +1202,78 @@ function createSegmentCard(seg, color, idx, mode) {
   }
 }
 
+// ===== Update segment card with OSRM data (Leaflet mode) =====
+function updateSegmentCardWithOSRM(seg, idx, data) {
+  if (!data || !data.routes || !data.routes[0]) {
+    // Fallback to estimated values
+    var info = parseRoadInfo(seg.roadType);
+    var distEl = document.getElementById('seg-dist-' + idx);
+    var timeEl = document.getElementById('seg-time-' + idx);
+    if (distEl) distEl.innerHTML = '<strong>距离</strong> ' + info.distanceStr;
+    if (timeEl) timeEl.innerHTML = '<strong>预计用时</strong> ' + info.timeStr;
+    var turnEl = document.getElementById('turn-list-' + idx);
+    if (turnEl) {
+      turnEl.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);padding:0.3rem 0;">OSRM路线获取失败，使用估算值</div>';
+    }
+    return;
+  }
+
+  var route = data.routes[0];
+  var distance = (route.distance / 1000).toFixed(1);
+  var duration = Math.round(route.duration / 60);
+  var hours = Math.floor(duration / 60);
+  var mins = duration % 60;
+
+  var distEl = document.getElementById('seg-dist-' + idx);
+  var timeEl = document.getElementById('seg-time-' + idx);
+  if (distEl) distEl.innerHTML = '<strong>距离</strong> ' + distance + 'km';
+  if (timeEl) timeEl.innerHTML = '<strong>预计用时</strong> ' + hours + 'h' + (mins > 0 ? mins + 'min' : '');
+
+  // Build turn-by-turn from OSRM steps
+  var turnEl = document.getElementById('turn-list-' + idx);
+  if (turnEl) {
+    var allSteps = [];
+    if (route.legs) {
+      route.legs.forEach(function(leg) {
+        if (leg.steps) {
+          leg.steps.forEach(function(step) {
+            allSteps.push(step);
+          });
+        }
+      });
+    }
+
+    if (allSteps.length > 0) {
+      var turnHtml = '<div class="turn-title" style="margin-top:0.5rem;">逐步导航 (' + allSteps.length + '步)</div><ul class="turn-list">';
+      allSteps.forEach(function(step, si) {
+        var fmt = formatOSRMStep(step);
+        turnHtml += '<li class="turn-item">' +
+          '<span class="turn-num">' + (si + 1) + '</span>' +
+          '<span class="turn-text">' + fmt.action + ' ' + fmt.road + '</span>' +
+          '<span class="turn-dist">' + fmt.distStr + '</span>' +
+          '</li>';
+      });
+      turnHtml += '</ul>';
+      turnEl.innerHTML = turnHtml;
+    } else {
+      turnEl.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);padding:0.3rem 0;">无导航步骤数据</div>';
+    }
+  }
+}
+
 // ===== Page Load =====
 window.addEventListener('load', function() {
-  // Pre-fill API key input if saved
+  // Pre-fill API key and security code inputs if saved
   if (apiKey) {
     document.getElementById('apiKeyInput').value = apiKey;
   }
+  if (securityCode) {
+    document.getElementById('securityCodeInput').value = securityCode;
+  }
 
-  // Default mode is leaflet - render segments and init map
+  // Default mode is leaflet, default segment is first
+  currentSegmentIdx = 0;
+  renderSegmentTabs(currentPlan);
   updateSegmentsHint();
   renderSegments(currentPlan);
   initLeafletMap();
