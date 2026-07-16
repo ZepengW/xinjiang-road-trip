@@ -1024,23 +1024,87 @@ function searchAmapRoute(seg, idx, color, callback) {
       if (distEl) distEl.innerHTML = '<strong>距离</strong> ' + distance + 'km';
       if (timeEl) timeEl.innerHTML = '<strong>预计用时</strong> ' + hours + 'h' + (mins > 0 ? mins + 'min' : '');
 
-      // Show turn-by-turn
+      // Show key waypoints instead of turn-by-turn
       var turnEl = document.getElementById('turn-list-' + idx);
       if (turnEl && route.steps) {
-        var turnHtml = '<div class="turn-title" style="margin-top:0.5rem;">逐步导航 (' + route.steps.length + '步)</div><ul class="turn-list">';
+        var amapWps = [];
+        var amapCumDist = 0;
+        var amapCumTime = 0;
+        var amapDepMin = parseTimeToMin(seg.departure);
+
         route.steps.forEach(function(step, si) {
-          var stepDist = step.distance > 1000 ? (step.distance / 1000).toFixed(1) + 'km' : step.distance + 'm';
-          var instruction = step.instruction || '';
-          instruction = instruction.replace(/<[^>]+>/g, '');
-          if (instruction.length > 80) instruction = instruction.substring(0, 80) + '...';
-          turnHtml += '<li class="turn-item">' +
-            '<span class="turn-num">' + (si + 1) + '</span>' +
-            '<span class="turn-text">' + instruction + '</span>' +
-            '<span class="turn-dist">' + stepDist + '</span>' +
-            '</li>';
+          var roadName = step.road || '';
+          var instruction = (step.instruction || '').replace(/<[^>]+>/g, '');
+          amapCumDist += step.distance;
+          amapCumTime += step.time;
+
+          var isStart = (si === 0);
+          var isEnd = (si === route.steps.length - 1);
+          var label = '';
+
+          if (isStart) {
+            label = seg.from.keyword;
+          } else if (isEnd) {
+            label = seg.to.keyword;
+          } else if (roadName && roadName.length >= 2) {
+            // Extract road/place names from AMap step
+            if (/^G\d|^S\d|高速|国道|省道|大桥|隧道|出口|入口|匝道|枢纽|立交/.test(roadName)) {
+              label = roadName;
+            } else if (/市|县|镇|区/.test(roadName) && roadName.length <= 8) {
+              label = roadName;
+            } else if (/服务区|收费站|景区|公园|广场/.test(roadName)) {
+              label = roadName;
+            }
+          }
+
+          if (label) {
+            var estT = amapDepMin + Math.round(amapCumTime / 60);
+            amapWps.push({
+              label: label,
+              distFromStart: amapCumDist / 1000,
+              estTime: formatMinToTime(estT),
+              isStart: isStart,
+              isEnd: isEnd
+            });
+          }
         });
-        turnHtml += '</ul>';
-        turnEl.innerHTML = turnHtml;
+
+        // Deduplicate
+        var amapDeduped = [];
+        amapWps.forEach(function(wp) {
+          if (amapDeduped.length === 0 || amapDeduped[amapDeduped.length - 1].label !== wp.label) {
+            amapDeduped.push(wp);
+          }
+        });
+
+        // Limit
+        if (amapDeduped.length > 12) {
+          var amapSampled = [amapDeduped[0]];
+          var amapStep = (amapDeduped.length - 2) / 8;
+          for (var as = 1; as <= 8; as++) {
+            var ai = Math.round(as * amapStep);
+            if (ai > 0 && ai < amapDeduped.length - 1) {
+              amapSampled.push(amapDeduped[ai]);
+            }
+          }
+          amapSampled.push(amapDeduped[amapDeduped.length - 1]);
+          amapDeduped = amapSampled;
+        }
+
+        var wpHtml = '<div class="turn-title" style="margin-top:0.5rem;">途经要点 (' + amapDeduped.length + '个关键点)</div>';
+        wpHtml += '<div class="waypoint-list">';
+        amapDeduped.forEach(function(wp) {
+          var icon = wp.isStart ? '🚗' : (wp.isEnd ? '🏁' : '📍');
+          var bg = wp.isStart ? 'rgba(46,125,111,0.08)' : (wp.isEnd ? 'rgba(198,93,58,0.08)' : 'transparent');
+          wpHtml += '<div class="waypoint-item" style="display:grid;grid-template-columns:28px 1fr auto auto;gap:0.4rem;padding:0.35rem 0.5rem;font-size:0.78rem;color:var(--ink);align-items:center;border-bottom:1px dashed #E8DDC8;background:' + bg + ';">' +
+            '<span style="font-size:14px;">' + icon + '</span>' +
+            '<span style="line-height:1.4;">' + wp.label + '</span>' +
+            '<span style="font-family:Mono,monospace;font-size:0.72rem;color:var(--accent3);font-weight:bold;">' + wp.estTime + '</span>' +
+            '<span style="font-family:Mono,monospace;font-size:0.68rem;color:var(--muted);">' + (wp.isStart ? '起点' : wp.distFromStart.toFixed(0) + 'km') + '</span>' +
+            '</div>';
+        });
+        wpHtml += '</div>';
+        turnEl.innerHTML = wpHtml;
       }
 
       // Draw custom polyline on map
@@ -1200,7 +1264,7 @@ function createSegmentCard(seg, color, idx, mode) {
 
     var turnHtml = '<div class="turn-section">' +
       '<div class="turn-title">&#128221; ' + seg.notes + '</div>' +
-      '<div id="turn-list-' + idx + '"><div style="font-size:0.78rem;color:var(--muted);padding:0.3rem 0;">路线规划中...</div></div>' +
+      '<div id="turn-list-' + idx + '"><div style="font-size:0.78rem;color:var(--muted);padding:0.3rem 0;">途经要点规划中...</div></div>' +
       '</div>';
 
     return headerHtml + '<div class="segment-body">' + statsHtml + timelineHtml + turnHtml + '</div>';
@@ -1234,7 +1298,7 @@ function updateSegmentCardWithOSRM(seg, idx, data) {
     if (timeEl) timeEl.innerHTML = '<strong>预计用时</strong> ' + info.timeStr;
     var turnEl = document.getElementById('turn-list-' + idx);
     if (turnEl) {
-      turnEl.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);padding:0.3rem 0;">OSRM路线获取失败，使用估算值</div>';
+      turnEl.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);padding:0.3rem 0;">路线获取失败，使用估算值</div>';
     }
     return;
   }
@@ -1250,7 +1314,7 @@ function updateSegmentCardWithOSRM(seg, idx, data) {
   if (distEl) distEl.innerHTML = '<strong>距离</strong> ' + distance + 'km';
   if (timeEl) timeEl.innerHTML = '<strong>预计用时</strong> ' + hours + 'h' + (mins > 0 ? mins + 'min' : '');
 
-  // Build turn-by-turn from OSRM steps
+  // Build waypoint list from OSRM steps - only show meaningful places
   var turnEl = document.getElementById('turn-list-' + idx);
   if (turnEl) {
     var allSteps = [];
@@ -1264,22 +1328,134 @@ function updateSegmentCardWithOSRM(seg, idx, data) {
       });
     }
 
-    if (allSteps.length > 0) {
-      var turnHtml = '<div class="turn-title" style="margin-top:0.5rem;">逐步导航 (' + allSteps.length + '步)</div><ul class="turn-list">';
-      allSteps.forEach(function(step, si) {
-        var fmt = formatOSRMStep(step);
-        turnHtml += '<li class="turn-item">' +
-          '<span class="turn-num">' + (si + 1) + '</span>' +
-          '<span class="turn-text">' + fmt.action + ' ' + fmt.road + '</span>' +
-          '<span class="turn-dist">' + fmt.distStr + '</span>' +
-          '</li>';
+    // Extract key waypoints from OSRM route
+    var waypoints = [];
+    var cumDist = 0;
+    var cumTime = 0;
+    var depTime = parseTimeToMin(seg.departure);
+
+    // Build via point labels for multi-leg routes
+    var viaLabels = [];
+    if (seg.via) {
+      seg.via.forEach(function(v) { viaLabels.push(v.keyword); });
+    }
+    var legStartLabels = [seg.from.keyword].concat(viaLabels);
+    var legEndLabels = viaLabels.concat([seg.to.keyword]);
+
+    for (var li = 0; li < (route.legs || []).length; li++) {
+      var legSteps = route.legs[li].steps || [];
+      var legAddedStart = false;
+      var legAddedEnd = false;
+
+      // Pre-add leg start point
+      waypoints.push({
+        label: legStartLabels[li] || seg.from.keyword,
+        distFromStart: cumDist / 1000,
+        estTime: formatMinToTime(depTime + Math.round(cumTime / 60)),
+        isStart: (li === 0), isEnd: false
       });
-      turnHtml += '</ul>';
-      turnEl.innerHTML = turnHtml;
-    } else {
-      turnEl.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);padding:0.3rem 0;">无导航步骤数据</div>';
+      legAddedStart = true;
+
+      for (var si = 0; si < legSteps.length; si++) {
+        var step = legSteps[si];
+        var name = step.name || '';
+        var type = step.maneuver.type;
+        cumDist += step.distance;
+        cumTime += step.duration;
+
+        // Skip first step (already added as leg start) and last step (will add as leg end)
+        if (si === 0) continue;
+        if (si === legSteps.length - 1) continue;
+
+        var isMeaningful = false;
+        var label = '';
+
+        if (name && name !== '无名道路' && name.length > 1) {
+          if (/^G\d|^S\d|高速|国道|省道|大桥|隧道|出口|入口|匝道|枢纽|立交/.test(name)) {
+            isMeaningful = true; label = name;
+          } else if (/市|县|镇|区/.test(name) && name.length <= 8) {
+            isMeaningful = true; label = name;
+          } else if (/服务区|收费站|景区|公园|广场/.test(name)) {
+            isMeaningful = true; label = name;
+          }
+        }
+
+        if (isMeaningful) {
+          var estTime = depTime + Math.round(cumTime / 60);
+          waypoints.push({
+            label: label, distFromStart: cumDist / 1000,
+            estTime: formatMinToTime(estTime),
+            isStart: false, isEnd: false
+          });
+        }
+      }
+
+      // Post-add leg end point
+      waypoints.push({
+        label: legEndLabels[li] || seg.to.keyword,
+        distFromStart: cumDist / 1000,
+        estTime: formatMinToTime(depTime + Math.round(cumTime / 60)),
+        isStart: false,
+        isEnd: (li === (route.legs || []).length - 1)
+      });
+    }
+
+    // Deduplicate consecutive same-label waypoints
+    var deduped = [];
+    waypoints.forEach(function(wp) {
+      if (deduped.length === 0 || deduped[deduped.length - 1].label !== wp.label) {
+        deduped.push(wp);
+      }
+    });
+
+    // Limit to reasonable number
+    if (deduped.length > 12) {
+      // Keep first, last, and evenly sample
+      var sampled = [deduped[0]];
+      var step = (deduped.length - 2) / 8;
+      for (var s = 1; s <= 8; s++) {
+        var idx2 = Math.round(s * step);
+        if (idx2 > 0 && idx2 < deduped.length - 1) {
+          sampled.push(deduped[idx2]);
+        }
+      }
+      sampled.push(deduped[deduped.length - 1]);
+      deduped = sampled;
+    }
+
+    if (deduped.length > 0) {
+      var wpHtml = '<div class="turn-title" style="margin-top:0.5rem;">途经要点 (' + deduped.length + '个关键点)</div>';
+      wpHtml += '<div class="waypoint-list">';
+      deduped.forEach(function(wp, wi) {
+        var icon = wp.isStart ? '🚗' : (wp.isEnd ? '🏁' : '📍');
+        var bg = wp.isStart ? 'rgba(46,125,111,0.08)' : (wp.isEnd ? 'rgba(198,93,58,0.08)' : 'transparent');
+        wpHtml += '<div class="waypoint-item" style="display:grid;grid-template-columns:28px 1fr auto auto;gap:0.4rem;padding:0.35rem 0.5rem;font-size:0.78rem;color:var(--ink);align-items:center;border-bottom:1px dashed #E8DDC8;background:' + bg + ';">' +
+          '<span style="font-size:14px;">' + icon + '</span>' +
+          '<span style="line-height:1.4;">' + wp.label + '</span>' +
+          '<span style="font-family:Mono,monospace;font-size:0.72rem;color:var(--accent3);font-weight:bold;">' + wp.estTime + '</span>' +
+          '<span style="font-family:Mono,monospace;font-size:0.68rem;color:var(--muted);">' + (wp.isStart ? '起点' : wp.distFromStart.toFixed(0) + 'km') + '</span>' +
+            '</div>';
+        });
+        wpHtml += '</div>';
+        turnEl.innerHTML = wpHtml;
+      } else {
+      turnEl.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);padding:0.3rem 0;">无途经要点数据</div>';
     }
   }
+}
+
+// Helper: parse "HH:MM" to minutes
+function parseTimeToMin(t) {
+  var parts = t.split(':');
+  return parseInt(parts[0]) * 60 + parseInt(parts[1] || 0);
+}
+
+// Helper: minutes to "HH:MM"
+function formatMinToTime(m) {
+  m = ((m % 1440) + 1440) % 1440;
+  var h = Math.floor(m / 60);
+  var min = m % 60;
+  return (h < 10 ? '0' : '') + h + ':' + (min < 10 ? '0' : '') + min;
 }
 
 // ===== Page Load =====
