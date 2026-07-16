@@ -4,245 +4,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>新疆自驾 · 交互路线地图 · 2026.8.2-8.7</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<title>新疆自驾 · 导航路线地图 · 2026.8.2-8.7</title>
 <style>
-@font-face {
-  font-family: 'NationalPark';
-  src: url('./_shared/fonts/NationalPark-Regular.ttf') format('truetype');
-  font-weight: 400;
-}
-@font-face {
-  font-family: 'NationalPark';
-  src: url('./_shared/fonts/NationalPark-Bold.ttf') format('truetype');
-  font-weight: 700;
-}
-@font-face {
-  font-family: 'Mono';
-  src: url('./_shared/fonts/DMMono-Regular.ttf') format('truetype');
-  font-weight: 400;
-}
+@font-face { font-family:'NationalPark'; src:url('./_shared/fonts/NationalPark-Regular.ttf') format('truetype'); font-weight:400; }
+@font-face { font-family:'NationalPark'; src:url('./_shared/fonts/NationalPark-Bold.ttf') format('truetype'); font-weight:700; }
+@font-face { font-family:'Lora'; src:url('./_shared/fonts/Lora-Regular.ttf') format('truetype'); font-weight:400; }
+@font-face { font-family:'Lora'; src:url('./_shared/fonts/Lora-Italic.ttf') format('truetype'); font-weight:400; font-style:italic; }
+@font-face { font-family:'Hand'; src:url('./_shared/fonts/NothingYouCouldDo-Regular.ttf') format('truetype'); font-weight:400; }
+@font-face { font-family:'Mono'; src:url('./_shared/fonts/DMMono-Regular.ttf') format('truetype'); font-weight:400; }
 
 :root {
-  --bg: #FAF3E7;
-  --ink: #3D2B1F;
-  --muted: #8B7355;
-  --rule: #D4C4A8;
-  --accent: #C65D3A;
-  --accent2: #2E7D6F;
-  --accent3: #4A7A9B;
-  --accent4: #B8860B;
-  --paper: #FFFCF5;
-  --shadow: rgba(61,43,31,0.1);
+  --bg:#FAF3E7; --ink:#3D2B1F; --muted:#8B7355; --rule:#D4C4A8;
+  --accent:#C65D3A; --accent2:#2E7D6F; --accent3:#4A7A9B; --accent4:#B8860B;
+  --paper:#FFFCF5; --shadow:rgba(61,43,31,0.1);
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;}
+body{font-family:'Lora',Georgia,serif;color:var(--ink);background:var(--bg);line-height:1.75;}
+article.page{max-width:1000px;margin:0 auto;padding:0 1rem 4rem;}
+.nav-back{display:inline-block;font-family:'NationalPark',sans-serif;font-size:0.85rem;padding:0.4rem 1rem;border:1.5px solid var(--rule);border-radius:16px;color:var(--muted);text-decoration:none;margin:1.5rem 0 0;transition:all 0.2s;}
+.nav-back:hover{border-color:var(--accent);color:var(--accent);}
+.cover{text-align:center;padding:1.5rem 1rem 0.5rem;}
+.cover-title{font-family:'NationalPark',sans-serif;font-size:2rem;font-weight:700;color:var(--accent);letter-spacing:0.04em;}
+.cover-subtitle{font-family:'Lora',serif;font-style:italic;font-size:1rem;color:var(--muted);margin-top:0.3rem;}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; }
+/* API Key Panel */
+.key-panel{background:var(--paper);border:2px solid var(--accent3);border-radius:10px;padding:1.2rem;margin:1rem 0;}
+.key-panel h3{font-family:'NationalPark',sans-serif;font-size:1rem;color:var(--accent3);margin-bottom:0.5rem;}
+.key-panel p{font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:0.5rem;}
+.key-input-row{display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;}
+.key-input-row input{flex:1;min-width:250px;padding:0.5rem 0.8rem;border:2px solid var(--rule);border-radius:8px;font-family:'Mono',monospace;font-size:0.85rem;}
+.key-input-row button{font-family:'NationalPark',sans-serif;font-size:0.85rem;padding:0.5rem 1.2rem;border:none;border-radius:8px;background:var(--accent3);color:white;cursor:pointer;transition:all 0.2s;}
+.key-input-row button:hover{opacity:0.9;}
+.key-status{font-size:0.78rem;margin-top:0.4rem;}
+.key-status.ok{color:var(--accent2);}
+.key-status.err{color:var(--accent);}
+.key-steps{background:#F0F7FF;border-radius:6px;padding:0.6rem 0.8rem;font-size:0.78rem;line-height:1.7;color:var(--muted);margin-top:0.5rem;}
+.key-steps strong{color:var(--ink);}
+.key-steps a{color:var(--accent3);text-decoration:underline;}
 
-body {
-  font-family: 'Lora', Georgia, serif;
-  color: var(--ink);
-  background: var(--bg);
-  line-height: 1.75;
-}
+/* Plan selector */
+.plan-selector{display:flex;gap:0.5rem;flex-wrap:wrap;margin:1rem 0;align-items:center;}
+.plan-btn{font-family:'NationalPark',sans-serif;font-size:0.82rem;padding:0.4rem 1rem;border:2px solid var(--rule);border-radius:20px;background:var(--paper);color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.plan-btn:hover{border-color:var(--ink);}
+.plan-btn.active{color:white;border-color:transparent;}
+.plan-btn.active.c{background:#2E7D6F;}
+.plan-btn.active.a{background:#C65D3A;}
+.plan-btn.active.b{background:#4A7A9B;}
+.plan-btn.active.d{background:#B8860B;}
 
-article.page { max-width: 1000px; margin: 0 auto; padding: 0 1rem 4rem; }
+/* Map */
+#map{width:100%;height:600px;border-radius:12px;border:3px solid var(--rule);box-shadow:0 4px 24px var(--shadow);margin:0.5rem 0;}
+@media(max-width:700px){#map{height:400px;}}
 
-.nav-back {
-  display: inline-block; font-family: 'NationalPark', sans-serif; font-size: 0.85rem;
-  padding: 0.4rem 1rem; border: 1.5px solid var(--rule); border-radius: 16px;
-  color: var(--muted); text-decoration: none; margin: 1.5rem 0 0; transition: all 0.2s;
-}
-.nav-back:hover { border-color: var(--accent); color: var(--accent); }
+/* Route segments */
+.segments-section{margin:1.5rem 0;}
+.segments-section h2{font-family:'NationalPark',sans-serif;font-size:1.4rem;color:var(--ink);text-align:center;margin-bottom:0.3rem;}
+.segments-section h2::after{content:'';display:block;width:50px;height:3px;background:var(--accent);margin:0.3rem auto 0;border-radius:2px;}
+.segment-card{background:var(--paper);border-radius:10px;margin:0.8rem 0;overflow:hidden;border:1px solid var(--rule);box-shadow:0 2px 8px var(--shadow);}
+.segment-header{display:flex;align-items:center;gap:0.8rem;padding:0.8rem 1.2rem;color:white;cursor:pointer;transition:opacity 0.2s;}
+.segment-header:hover{opacity:0.92;}
+.segment-header .seg-day{font-family:'Mono',monospace;font-size:0.72rem;opacity:0.8;}
+.segment-header .seg-title{font-family:'NationalPark',sans-serif;font-size:1rem;flex:1;}
+.segment-header .seg-arrow{font-family:'Mono',monospace;font-size:0.8rem;}
+.segment-body{padding:0;display:none;}
+.segment-card.open .segment-body{display:block;}
+.segment-card.open .seg-arrow{transform:rotate(90deg);}
 
-.cover { text-align: center; padding: 1.5rem 1rem 1rem; margin-bottom: 1rem; }
-.cover-title { font-family: 'NationalPark', sans-serif; font-size: 2rem; font-weight: 700; color: var(--accent); letter-spacing: 0.04em; }
-.cover-subtitle { font-family: 'Lora', serif; font-style: italic; font-size: 1rem; color: var(--muted); margin-top: 0.3rem; }
+.seg-stats{display:flex;gap:0.5rem;flex-wrap:wrap;padding:0.8rem 1.2rem;background:var(--paper);border-bottom:1px solid var(--rule);}
+.seg-stat{background:#F3E8D4;border-radius:6px;padding:0.3rem 0.7rem;font-size:0.75rem;font-family:'Mono',monospace;color:var(--ink);}
+.seg-stat strong{color:var(--accent);}
+.seg-stat.green strong{color:var(--accent2);}
+.seg-stat.blue strong{color:var(--accent3);}
+.seg-stat.orange strong{color:var(--accent4);}
 
-/* Map container */
-#map {
-  width: 100%;
-  height: 600px;
-  border-radius: 12px;
-  border: 3px solid var(--rule);
-  box-shadow: 0 4px 24px var(--shadow);
-  z-index: 1;
-}
-@media (max-width: 700px) {
-  #map { height: 450px; }
-}
+.seg-timeline{padding:0.5rem 1.2rem 0.8rem;}
+.tl-row{display:grid;grid-template-columns:60px 1fr auto;gap:0.5rem;align-items:start;padding:0.3rem 0;border-bottom:1px dashed #E8DDC8;font-size:0.8rem;}
+.tl-row:last-child{border-bottom:none;}
+.tl-time{font-family:'Mono',monospace;font-size:0.75rem;color:var(--accent3);font-weight:bold;text-align:right;}
+.tl-place{color:var(--ink);}
+.tl-place strong{font-family:'NationalPark',sans-serif;}
+.tl-place span{font-size:0.72rem;color:var(--muted);}
+.tl-dist{font-family:'Mono',monospace;font-size:0.72rem;color:var(--muted);}
 
-/* Control panel */
-.map-controls {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin: 1rem 0;
-  align-items: center;
-}
-.plan-btn {
-  font-family: 'NationalPark', sans-serif;
-  font-size: 0.82rem;
-  padding: 0.4rem 1rem;
-  border: 2px solid var(--rule);
-  border-radius: 20px;
-  background: var(--paper);
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.plan-btn:hover { border-color: var(--ink); }
-.plan-btn.active { color: var(--paper); }
-.plan-btn.active.plan-a { background: #C65D3A; border-color: #C65D3A; }
-.plan-btn.active.plan-b { background: #4A7A9B; border-color: #4A7A9B; }
-.plan-btn.active.plan-c { background: #2E7D6F; border-color: #2E7D6F; }
-.plan-btn.active.plan-d { background: #B8860B; border-color: #B8860B; }
-.plan-dot {
-  width: 10px; height: 10px; border-radius: 50%; display: inline-block;
-}
-.plan-dot.a { background: #C65D3A; }
-.plan-dot.b { background: #4A7A9B; }
-.plan-dot.c { background: #2E7D6F; }
-.plan-dot.d { background: #B8860B; }
+/* Turn-by-turn */
+.turn-section{padding:0.5rem 1.2rem 0.8rem;background:#F8F5EE;border-top:1px solid var(--rule);}
+.turn-title{font-family:'NationalPark',sans-serif;font-size:0.78rem;color:var(--muted);margin-bottom:0.3rem;}
+.turn-list{list-style:none;padding:0;}
+.turn-item{display:grid;grid-template-columns:24px 1fr auto;gap:0.4rem;padding:0.2rem 0;font-size:0.75rem;color:var(--ink);align-items:start;}
+.turn-num{width:20px;height:20px;border-radius:50%;background:var(--accent3);color:white;font-size:0.65rem;display:flex;align-items:center;justify-content:center;font-family:'Mono',monospace;}
+.turn-text{line-height:1.5;}
+.turn-dist{font-family:'Mono',monospace;font-size:0.68rem;color:var(--muted);}
 
-.toggle-btn {
-  font-family: 'NationalPark', sans-serif;
-  font-size: 0.78rem;
-  padding: 0.35rem 0.9rem;
-  border: 1.5px solid var(--rule);
-  border-radius: 16px;
-  background: var(--paper);
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.toggle-btn.active { border-color: var(--accent2); color: var(--accent2); background: rgba(46,125,111,0.06); }
-.toggle-btn.active.hotels { border-color: var(--accent4); color: var(--accent4); background: rgba(184,134,11,0.06); }
+/* Hotel info in popup */
+.tip-box{background:#FFF9E8;border-left:4px solid var(--accent4);padding:0.8rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0;font-size:0.88rem;line-height:1.65;}
+.tip-box.strategy{background:#E8F5E9;border-left-color:var(--accent2);}
+.tip-box strong{color:var(--accent);}
+.tip-box.strategy strong{color:var(--accent2);}
 
-/* Legend */
-.legend {
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  padding: 1rem 1.2rem;
-  margin: 1rem 0;
-  font-size: 0.85rem;
-}
-.legend h3 {
-  font-family: 'NationalPark', sans-serif;
-  font-size: 1rem;
-  color: var(--ink);
-  margin-bottom: 0.6rem;
-}
-.legend-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.6rem;
-}
-.legend-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-}
-.legend-icon {
-  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
-}
-.legend-text { line-height: 1.5; }
-.legend-text strong { color: var(--ink); }
-.legend-text span { color: var(--muted); font-size: 0.72rem; }
-
-/* Backtrack analysis */
-.analysis-section {
-  background: var(--paper);
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  border: 1px solid var(--rule);
-  box-shadow: 0 2px 12px var(--shadow);
-}
-.analysis-section h2 {
-  font-family: 'NationalPark', sans-serif;
-  font-size: 1.4rem;
-  color: var(--ink);
-  margin-bottom: 0.8rem;
-  text-align: center;
-}
-.analysis-section h2::after {
-  content: ''; display: block; width: 50px; height: 3px;
-  background: var(--accent); margin: 0.3rem auto 0; border-radius: 2px;
-}
-
-.analysis-table {
-  width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 0.8rem;
-}
-.analysis-table th {
-  font-family: 'NationalPark', sans-serif; font-size: 0.78rem;
-  color: var(--paper); padding: 0.5rem; text-align: center;
-}
-.analysis-table th.plan-a-h { background: #C65D3A; }
-.analysis-table th.plan-b-h { background: #4A7A9B; }
-.analysis-table th.plan-c-h { background: #2E7D6F; }
-.analysis-table th.plan-d-h { background: #B8860B; }
-.analysis-table td {
-  padding: 0.5rem; border-bottom: 1px solid var(--rule); text-align: center; font-size: 0.78rem;
-}
-.analysis-table td:first-child { text-align: left; font-family: 'NationalPark', sans-serif; color: var(--accent); }
-.analysis-table tr:last-child td { border-bottom: none; }
-
-.tip-box {
-  background: #FFF9E8; border-left: 4px solid var(--accent4);
-  padding: 0.8rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0;
-  font-size: 0.88rem; line-height: 1.65;
-}
-.tip-box.strategy { background: #E8F5E9; border-left-color: var(--accent2); }
-.tip-box strong { color: var(--accent); }
-.tip-box.strategy strong { color: var(--accent2); }
-
-/* Day detail panel */
-.day-detail {
-  background: var(--paper);
-  border-radius: 8px;
-  padding: 1rem 1.2rem;
-  margin: 0.8rem 0;
-  border-left: 4px solid var(--accent2);
-}
-.day-detail h4 {
-  font-family: 'NationalPark', sans-serif;
-  font-size: 0.95rem;
-  color: var(--accent2);
-  margin-bottom: 0.3rem;
-}
-.day-detail p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
-
-footer {
-  margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed var(--rule); text-align: center;
-}
-footer .footer-note { font-family: 'Hand', cursive; font-size: 1.2rem; color: var(--accent); }
-footer .footer-links {
-  margin-top: 1rem; display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;
-}
-footer .footer-links a {
-  font-family: 'NationalPark', sans-serif; font-size: 0.82rem;
-  padding: 0.3rem 1rem; border: 1.5px solid var(--rule); border-radius: 16px;
-  color: var(--muted); text-decoration: none; transition: all 0.2s;
-}
-footer .footer-links a:hover { border-color: var(--accent); color: var(--accent); }
-footer .footer-links a.current { border-color: var(--accent); color: var(--accent); }
-
-@font-face {
-  font-family: 'Lora';
-  src: url('./_shared/fonts/Lora-Regular.ttf') format('truetype');
-  font-weight: 400;
-}
-@font-face {
-  font-family: 'Hand';
-  src: url('./_shared/fonts/NothingYouCouldDo-Regular.ttf') format('truetype');
-  font-weight: 400;
-}
+footer{margin-top:3rem;padding-top:2rem;border-top:2px dashed var(--rule);text-align:center;}
+footer .footer-note{font-family:'Hand',cursive;font-size:1.2rem;color:var(--accent);}
+footer .footer-links{margin-top:1rem;display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;}
+footer .footer-links a{font-family:'NationalPark',sans-serif;font-size:0.82rem;padding:0.3rem 1rem;border:1.5px solid var(--rule);border-radius:16px;color:var(--muted);text-decoration:none;transition:all 0.2s;}
+footer .footer-links a:hover{border-color:var(--accent);color:var(--accent);}
+footer .footer-links a.current{border-color:var(--accent);color:var(--accent);background:rgba(198,93,58,0.06);}
 </style>
 </head>
 <body>
@@ -251,519 +116,585 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 <a href="index.html" class="nav-back">&larr; 返回首页</a>
 
 <section class="cover">
-  <h1 class="cover-title">交互式路线地图</h1>
-  <p class="cover-subtitle">真实地图 · 酒店定位 · 重复路段一目了然</p>
+  <h1 class="cover-title">导航路线地图</h1>
+  <p class="cover-subtitle">高德地图真实道路 · 逐段导航信息 · 精确距离时间</p>
 </section>
 
-<!-- Control Panel -->
-<div class="map-controls">
-  <button class="plan-btn active plan-c" onclick="togglePlan('c')"><span class="plan-dot c"></span>方案C 深度草原</button>
-  <button class="plan-btn plan-a" onclick="togglePlan('a')"><span class="plan-dot a"></span>方案A 经典</button>
-  <button class="plan-btn plan-b" onclick="togglePlan('b')"><span class="plan-dot b"></span>方案B 紧凑</button>
-  <button class="plan-btn plan-d" onclick="togglePlan('d')"><span class="plan-dot d"></span>方案D 反向</button>
-  <span style="flex:1;"></span>
-  <button class="toggle-btn active hotels" onclick="toggleLayer('hotels')">🏨 住宿点</button>
-  <button class="toggle-btn active" onclick="toggleLayer('scenic')">📸 景点</button>
+<!-- API Key Panel -->
+<div class="key-panel" id="keyPanel">
+  <h3>🔑 高德地图 API Key 配置</h3>
+  <p>本页面使用高德地图 JS API 提供真实道路路线规划和导航信息。需免费注册获取 Key（个人开发者免费，每日5000次调用）。</p>
+  <div class="key-steps">
+    <strong>获取步骤：</strong><br>
+    1. 打开 <a href="https://lbs.amap.com/" target="_blank">https://lbs.amap.com/</a> 注册/登录高德开放平台<br>
+    2. 进入「控制台」→「应用管理」→「我的应用」→「创建新应用」<br>
+    3. 应用类型选「Web端(JS API)」，获取 Key<br>
+    4. 将 Key 粘贴到下方输入框，点击保存
+  </div>
+  <div class="key-input-row" style="margin-top:0.6rem;">
+    <input type="text" id="apiKeyInput" placeholder="在此粘贴你的高德地图 JS API Key..." />
+    <button onclick="saveApiKey()">保存 Key</button>
+  </div>
+  <div class="key-status" id="keyStatus"></div>
+</div>
+
+<!-- Plan Selector -->
+<div class="plan-selector">
+  <button class="plan-btn active c" onclick="selectPlan('c')">方案C 深度草原</button>
+  <button class="plan-btn a" onclick="selectPlan('a')">方案A 经典</button>
+  <button class="plan-btn b" onclick="selectPlan('b')">方案B 紧凑</button>
+  <button class="plan-btn d" onclick="selectPlan('d')">方案D 反向</button>
 </div>
 
 <!-- Map -->
 <div id="map"></div>
 
-<!-- Legend -->
-<div class="legend">
-  <h3>地图图例</h3>
-  <div class="legend-grid">
-    <div class="legend-item">
-      <div class="legend-icon" style="background:#2E7D6F;"></div>
-      <div class="legend-text"><strong>方案C路线</strong><br><span>深度草原版（当前主选）</span></div>
-    </div>
-    <div class="legend-item">
-      <div class="legend-icon" style="background:#C65D3A;"></div>
-      <div class="legend-text"><strong>方案A路线</strong><br><span>经典均衡版</span></div>
-    </div>
-    <div class="legend-item">
-      <div class="legend-icon" style="background:#4A7A9B;"></div>
-      <div class="legend-text"><strong>方案B路线</strong><br><span>紧凑直达版</span></div>
-    </div>
-    <div class="legend-item">
-      <div class="legend-icon" style="background:#B8860B;"></div>
-      <div class="legend-text"><strong>方案D路线</strong><br><span>反向环线版</span></div>
-    </div>
-    <div class="legend-item">
-      <div class="legend-icon" style="background:#6A4C93; border:2px solid #fff; box-shadow:0 0 0 1px #6A4C93;"></div>
-      <div class="legend-text"><strong>住宿点</strong><br><span>紫色圆点 = 推荐住宿区域</span></div>
-    </div>
-    <div class="legend-item">
-      <div class="legend-icon" style="background:#E91E63; border:2px solid #fff; box-shadow:0 0 0 1px #E91E63;"></div>
-      <div class="legend-text"><strong>景点</strong><br><span>粉色圆点 = 必停景点</span></div>
-    </div>
+<!-- Route Segments -->
+<div class="segments-section">
+  <h2>逐段路线详情</h2>
+  <p style="text-align:center;font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem;">点击每段展开导航信息 · 距离/时间由高德地图实时计算</p>
+  <div id="segmentsContainer">
+    <div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.88rem;">请先输入高德 API Key，路线信息将自动加载</div>
   </div>
 </div>
 
-<!-- Backtrack Analysis -->
-<div class="analysis-section">
-  <h2>重复路段分析</h2>
-  <p style="text-align:center; font-size:0.88rem; color:var(--muted); margin-bottom:0.8rem;">
-    四个方案都是"伊犁环线"的变体，核心走法相同，区别在于方向和停留点。以下是各方案是否有重复路段（回头路）的分析。
-  </p>
-
-  <table class="analysis-table">
-    <thead>
-      <tr>
-        <th style="background:var(--ink); color:white;">方案</th>
-        <th class="plan-c-h">C 深度草原</th>
-        <th class="plan-a-h">A 经典</th>
-        <th class="plan-b-h">B 紧凑</th>
-        <th class="plan-d-h">D 反向</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>是否有回头路</td>
-        <td style="background:rgba(46,125,111,0.08);"><strong style="color:#2E7D6F;">无</strong> ✅</td>
-        <td style="background:rgba(46,125,111,0.08);"><strong style="color:#2E7D6F;">无</strong> ✅</td>
-        <td style="background:rgba(46,125,111,0.08);"><strong style="color:#2E7D6F;">无</strong> ✅</td>
-        <td style="background:rgba(46,125,111,0.08);"><strong style="color:#2E7D6F;">无</strong> ✅</td>
-      </tr>
-      <tr>
-        <td>环线方向</td>
-        <td>顺时针</td>
-        <td>顺时针</td>
-        <td>顺时针</td>
-        <td>逆时针</td>
-      </tr>
-      <tr>
-        <td>赛湖走法</td>
-        <td>去程住一晚</td>
-        <td>去程住清水河</td>
-        <td>去程路过</td>
-        <td>回程路过</td>
-      </tr>
-      <tr>
-        <td>独库走法</td>
-        <td>回程D5走</td>
-        <td>回程D5走</td>
-        <td>回程D5走</td>
-        <td>去程D2走</td>
-      </tr>
-      <tr>
-        <td>与方案C共线路段</td>
-        <td>—</td>
-        <td>D5独库段完全一致</td>
-        <td>D5独库段一致</td>
-        <td>全路段一致（反向）</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="tip-box strategy" style="margin-top:1rem;">
-    <strong>结论：四个方案都是完整环线，没有任何回头路。</strong>伊犁环线本身就是个闭环：乌市→(G30西行)→赛湖→伊宁→(G218东行)→那拉提→(独库G217北行)→乌市。无论顺时针还是逆时针，每一段路都只走一遍。方案选择只影响"在哪过夜"和"哪天走哪段"，不影响总路线。
-  </div>
-</div>
-
-<!-- Plan C Day-by-Day -->
-<div class="analysis-section">
-  <h2>方案C 逐日路线详解</h2>
-
-  <div class="day-detail">
-    <h4>D1 8/2(日) 乌鲁木齐休整 · 0km</h4>
-    <p>📍 乌鲁木齐市区 → 大巴扎 → 住宿：新市区/迎宾路（机场附近）<br>
-    🏨 推荐住宿区域：天缘景逸酒店 / 玛贝儿精品酒店（距机场5-10分钟）<br>
-    💡 地图上查看：乌鲁木齐紫色标记点</p>
-  </div>
-
-  <div class="day-detail" style="border-left-color: #C65D3A;">
-    <h4 style="color: #C65D3A;">D2 8/3(一) 乌市→赛里木湖 · 550km</h4>
-    <p>📍 G30连霍高速西行 → 石河子(休息) → 奎屯(加油) → 精河 → 赛里木湖东门<br>
-    🏨 天气好住湖边营地（地图赛湖标记点） · 天气差住清水河镇（往南85km）<br>
-    ⚠️ 这段550km是全程最长的一天，G30全程高速无回头路<br>
-    💡 地图上查看：绿色路线从乌市到赛湖</p>
-  </div>
-
-  <div class="day-detail" style="border-left-color: #B8860B;">
-    <h4 style="color: #B8860B;">D3 8/4(二) 赛湖→果子沟→伊宁 · 180km</h4>
-    <p>📍 赛湖晨雾(二次入园) → 果子沟大桥(拍照) → 清水河 → 伊宁<br>
-    🏨 推荐住宿区域：伊宁开发区（希尔顿欢朋/亚朵）<br>
-    💡 赛湖到伊宁这段路是环线的南转折点，从G30转G218，方向从西行转东行</p>
-  </div>
-
-  <div class="day-detail" style="border-left-color: #4A7A9B;">
-    <h4 style="color: #4A7A9B;">D4 8/5(三) 伊宁→那拉提 · 270km</h4>
-    <p>📍 G218沿巩乃斯河东行 → 巩留 → 新源 → 那拉提景区<br>
-    🏨 推荐住宿：新源县城(省钱30km外) / 那拉泉生态园林(中间位置) / 那拉提镇(景区门口)<br>
-    💡 G218这段沿途风景好，不需要赶路。新源县城在景区和伊宁中间，住这里第二天去独库更顺</p>
-  </div>
-
-  <div class="day-detail" style="border-left-color: #6A4C93;">
-    <h4 style="color: #6A4C93;">D5 8/6(四) 那拉提→独库→乌市 · 480km</h4>
-    <p>📍 G217独库公路北段 → 乔尔玛(致敬) → 哈希勒根达坂(3390m) → 独山子 → G30 → 乌市<br>
-    🏨 住乌鲁木齐机场附近（或住独山子温泉酒店，D6再开240km到机场）<br>
-    💡 独库这段是环线的北转折点，从G217转G30，方向从北行转东行<br>
-    💡 地图上查看：绿色路线从那拉提向北到独山子再向东到乌市</p>
-  </div>
-</div>
-
-<!-- Hotel location tips -->
-<div class="analysis-section">
-  <h2>酒店选址要点</h2>
-
-  <div class="tip-box strategy">
-    <strong>核心原则：酒店选在"明天出发的方向"上</strong><br>
-    自驾环线的酒店不需要在景区门口，而应该在"今晚到达 + 明天出发"的路线上。例如那拉提：景区在西边，明天走独库往北，住新源县城（东北方向）比住景区门口更顺路，且省200-350元/晚。
-  </div>
-
-  <table class="analysis-table">
-    <thead>
-      <tr>
-        <th style="background:var(--accent2); color:white;">住宿点</th>
-        <th style="background:var(--accent2); color:white;">推荐区域</th>
-        <th style="background:var(--accent2); color:white;">明天方向</th>
-        <th style="background:var(--accent2); color:white;">是否顺路</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>D1 乌鲁木齐</td>
-        <td>机场附近(新市区)</td>
-        <td>西行G30</td>
-        <td style="background:rgba(46,125,111,0.08);">✅ 顺路</td>
-      </tr>
-      <tr>
-        <td>D2 赛湖</td>
-        <td>湖边营地/清水河镇</td>
-        <td>南行转伊宁</td>
-        <td style="background:rgba(46,125,111,0.08);">✅ 顺路</td>
-      </tr>
-      <tr>
-        <td>D3 伊宁</td>
-        <td>开发区(东郊)</td>
-        <td>东行G218</td>
-        <td style="background:rgba(46,125,111,0.08);">✅ 顺路</td>
-      </tr>
-      <tr>
-        <td>D4 那拉提</td>
-        <td>新源县城/那拉泉</td>
-        <td>北行独库</td>
-        <td style="background:rgba(184,134,11,0.08);">⚠️ 新源县在景区北30km，住这里明天少开30km</td>
-      </tr>
-      <tr>
-        <td>D5 乌市/独山子</td>
-        <td>乌市机场/独山子</td>
-        <td>还车+航班</td>
-        <td style="background:rgba(46,125,111,0.08);">✅ 顺路</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="tip-box" style="margin-top:1rem;">
-    <strong>地图使用技巧：</strong>点击地图上的紫色住宿标记可查看推荐酒店名称和价格。切换方案按钮可对比不同路线。放大地图可看到更详细的道路和城镇。
-  </div>
+<div class="tip-box strategy">
+  <strong>关于导航信息：</strong>距离和时间为高德地图驾车路线规划实时计算结果，已包含实际道路绕行因素。出行当天建议同时打开高德地图App导航，可获取实时路况和交通管制信息。独库公路段因山路限速，实际行驶时间可能比导航预估多20-30%。
 </div>
 
 <footer>
-  <p class="footer-note">Follow the map, find your way</p>
+  <p class="footer-note">Follow the real road</p>
   <div class="footer-links">
     <a href="index.html">首页 · 方案对比</a>
     <a href="plan-c-detail.html">方案C · 深度</a>
     <a href="flexible-playbook.html">灵活手册</a>
     <a href="accommodation-guide.html">住宿指南</a>
-    <a href="route-map.html" class="current">路线地图</a>
+    <a href="route-map.html" class="current">导航地图</a>
   </div>
 </footer>
 
 </article>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-(function() {
-  'use strict';
+// ===== API Key Management =====
+var apiKey = localStorage.getItem('amap_key') || '';
+var map = null;
+var driving = null;
+var currentPlan = 'c';
+var routePolylines = [];
+var markers = [];
 
-  // ===== Location coordinates =====
-  var LOC = {
-    urumqi:     [43.826, 87.617],
-    airport:    [43.907, 87.474],
-    shihezi:    [44.180, 86.030],
-    kuitun:     [44.425, 84.903],
-    dushanzi:   [44.327, 84.871],
-    sayram:     [44.603, 81.145],
-    sayramGate: [44.615, 81.220],
-    guozigou:   [44.400, 81.350],
-    qingshuihe: [44.053, 80.762],
-    bole:       [44.850, 82.070],
-    yining:     [43.913, 81.325],
-    kazanqi:    [43.895, 81.330],
-    sixstar:    [43.920, 81.350],
-    iliBridge:  [43.850, 81.300],
-    gongliu:    [43.550, 82.500],
-    xinyuan:    [43.435, 83.267],
-    nalati:     [43.330, 84.450],
-    nalatiPark: [43.290, 84.420],
-    qiaoerma:   [43.72, 84.52],
-    hashilegen: [43.95, 84.65],
-    dukuView:   [44.20, 84.80]
+// Route definitions for each plan
+// Each segment: from, to, via (waypoints), departure, arrival, stops, notes
+var PLANS = {
+  c: {
+    name: '方案C 深度草原',
+    color: '#2E7D6F',
+    segments: [
+      {
+        day: 'D2', date: '8/3(一)', title: '乌鲁木齐 → 赛里木湖',
+        from: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        to: { keyword: '赛里木湖风景名胜区', city: '博尔塔拉蒙古自治州' },
+        via: [],
+        departure: '07:00', expectedArrival: '13:30',
+        stops: [
+          { time: '09:30', name: '石河子服务区', dur: '15min', purpose: '休息+洗手间' },
+          { time: '11:00', name: '奎屯服务区', dur: '10min', purpose: '加油+补给' },
+          { time: '12:30', name: '精河服务区', dur: '10min', purpose: '休息' }
+        ],
+        hotel: { name: '赛里木湖湖边营地 / 清水河镇', price: '200-2000元', tip: '天气好住湖边看星空，天气差住清水河镇' },
+        notes: 'G30连霍高速全程，限速120km/h。注意精河到赛湖最后50km从高速下到G312再转景区路。',
+        roadType: '高速550km'
+      },
+      {
+        day: 'D3', date: '8/4(二)', title: '赛里木湖 → 伊宁',
+        from: { keyword: '赛里木湖风景名胜区', city: '博尔塔拉蒙古自治州' },
+        to: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        via: [{ keyword: '果子沟大桥', city: '伊犁哈萨克自治州' }],
+        departure: '09:00', expectedArrival: '12:00',
+        stops: [
+          { time: '09:30', name: '果子沟大桥观景台', dur: '20min', purpose: '拍照' }
+        ],
+        hotel: { name: '伊宁开发区 · 希尔顿欢朋/亚朵', price: '250-400元', tip: '开发区连锁酒店停车方便' },
+        notes: 'G30→果子沟隧道→G218。果子沟大桥是新疆最美高速桥，必停拍照。下高速后沿G218到伊宁。',
+        roadType: '高速+国道180km'
+      },
+      {
+        day: 'D4', date: '8/5(三)', title: '伊宁 → 那拉提',
+        from: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        to: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        via: [{ keyword: '新源县', city: '伊犁哈萨克自治州' }],
+        departure: '08:00', expectedArrival: '11:30',
+        stops: [
+          { time: '09:30', name: '巩留县', dur: '15min', purpose: '休息+补给' },
+          { time: '10:30', name: '新源县城', dur: '0min', purpose: '路过/可住宿' }
+        ],
+        hotel: { name: '新源县城(省钱) / 那拉泉(中间) / 那拉提镇(景区)', price: '150-600元', tip: '住新源县城省200+元，开车30分钟到景区' },
+        notes: 'G218沿巩乃斯河谷东行，风景好但部分路段限速80。注意下午那拉提山区可能雷暴。',
+        roadType: '国道270km'
+      },
+      {
+        day: 'D5', date: '8/6(四)', title: '那拉提 → 独库公路 → 乌鲁木齐',
+        from: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        to: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        via: [
+          { keyword: '乔尔玛', city: '伊犁哈萨克自治州' },
+          { keyword: '独山子区', city: '克拉玛依市' }
+        ],
+        departure: '12:00', expectedArrival: '19:30',
+        stops: [
+          { time: '13:00', name: '乔尔玛烈士陵园', dur: '30min', purpose: '致敬独库筑路英雄' },
+          { time: '14:30', name: '哈希勒根达坂(3390m)', dur: '20min', purpose: '拍照+防雪廊道' },
+          { time: '16:00', name: '独山子区', dur: '15min', purpose: '加油+休息' }
+        ],
+        hotel: { name: '乌鲁木齐机场附近 · 天缘景逸/玛贝儿', price: '250-350元', tip: '或住独山子温泉酒店(200-400元)，D6再开240km到机场' },
+        notes: '从那拉提镇沿G218向西约20km到达G217/G218交汇处，右转北上进入独库公路(G217北段)。经乔尔玛→哈希勒根达坂(3390m)→独山子。山路限速40-60，达坂可能遇冰雹。到独山子后转G30高速回乌市。出发前务必查"新疆交警"微博确认独库通行。注意：S315是乔尔玛向东去唐布拉百里画廊的路，不是去独山子方向。',
+        roadType: '山路+高速480km'
+      }
+    ]
+  },
+  a: {
+    name: '方案A 经典均衡',
+    color: '#C65D3A',
+    segments: [
+      {
+        day: 'D2', date: '8/3(一)', title: '乌鲁木齐 → 清水河镇',
+        from: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        to: { keyword: '清水河镇', city: '伊犁哈萨克自治州' },
+        via: [{ keyword: '赛里木湖风景名胜区', city: '博尔塔拉蒙古自治州' }],
+        departure: '07:00', expectedArrival: '16:00',
+        stops: [
+          { time: '09:30', name: '石河子服务区', dur: '15min', purpose: '休息' },
+          { time: '11:00', name: '奎屯服务区', dur: '10min', purpose: '加油' },
+          { time: '13:00', name: '赛里木湖东门', dur: '90min', purpose: '环湖游览' }
+        ],
+        hotel: { name: '清水河镇 · 天上居大酒店', price: '200-300元', tip: '赛湖最近平价住宿点' },
+        notes: 'G30高速到赛湖环湖后，继续G30到清水河镇。赛湖到清水河约85km。',
+        roadType: '高速560km'
+      },
+      {
+        day: 'D3', date: '8/4(二)', title: '清水河 → 赛湖晨雾 → 伊宁',
+        from: { keyword: '清水河镇', city: '伊犁哈萨克自治州' },
+        to: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        via: [{ keyword: '赛里木湖风景名胜区', city: '博尔塔拉蒙古自治州' }],
+        departure: '06:30', expectedArrival: '13:00',
+        stops: [
+          { time: '07:40', name: '赛里木湖(二次入园)', dur: '90min', purpose: '拍晨雾' },
+          { time: '10:00', name: '果子沟大桥', dur: '20min', purpose: '拍照' }
+        ],
+        hotel: { name: '伊宁开发区连锁酒店', price: '250-400元', tip: '同方案C' },
+        notes: '清晨从清水河返回赛湖(85km)拍晨雾，再经果子沟到伊宁。这段有85km折返。',
+        roadType: '高速+国道270km'
+      },
+      {
+        day: 'D4', date: '8/5(三)', title: '伊宁 → 那拉提',
+        from: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        to: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        via: [], departure: '08:00', expectedArrival: '11:30',
+        stops: [{ time: '09:30', name: '巩留县', dur: '15min', purpose: '休息' }],
+        hotel: { name: '同方案C', price: '150-600元', tip: '新源县城性价比最高' },
+        notes: '同方案C D4', roadType: '国道270km'
+      },
+      {
+        day: 'D5', date: '8/6(四)', title: '那拉提 → 独库 → 乌鲁木齐',
+        from: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        to: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        via: [{ keyword: '乔尔玛', city: '伊犁哈萨克自治州' }, { keyword: '独山子区', city: '克拉玛依市' }],
+        departure: '12:00', expectedArrival: '19:30',
+        stops: [
+          { time: '13:00', name: '乔尔玛', dur: '30min', purpose: '致敬' },
+          { time: '14:30', name: '哈希勒根达坂', dur: '20min', purpose: '拍照' }
+        ],
+        hotel: { name: '乌鲁木齐机场附近', price: '250-350元', tip: '同方案C' },
+        notes: '从那拉提沿G218西行20km到G217交汇处北上独库公路，同方案C D5', roadType: '山路+高速480km'
+      }
+    ]
+  },
+  b: {
+    name: '方案B 紧凑直达',
+    color: '#4A7A9B',
+    segments: [
+      {
+        day: 'D1', date: '8/2(日)', title: '乌鲁木齐 → 奎屯',
+        from: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        to: { keyword: '奎屯市', city: '伊犁哈萨克自治州' },
+        via: [], departure: '15:00', expectedArrival: '18:00',
+        stops: [{ time: '16:30', name: '石河子服务区', dur: '10min', purpose: '休息' }],
+        hotel: { name: '奎屯市区 · 天北新区云居酒店', price: '200-300元', tip: 'D1即出发抢3小时' },
+        notes: '到达后取车即出发，G30高速240km。天黑前到奎屯。',
+        roadType: '高速240km'
+      },
+      {
+        day: 'D2', date: '8/3(一)', title: '奎屯 → 赛湖 → 伊宁',
+        from: { keyword: '奎屯市', city: '伊犁哈萨克自治州' },
+        to: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        via: [{ keyword: '赛里木湖风景名胜区', city: '博尔塔拉蒙古自治州' }],
+        departure: '07:00', expectedArrival: '17:00',
+        stops: [
+          { time: '10:00', name: '赛里木湖', dur: '120min', purpose: '环湖游览' },
+          { time: '13:00', name: '果子沟大桥', dur: '15min', purpose: '拍照' }
+        ],
+        hotel: { name: '伊宁开发区连锁酒店', price: '250-400元', tip: '多住一晚休整' },
+        notes: '全程最长一天640km，建议两人轮换驾驶。',
+        roadType: '高速640km'
+      },
+      {
+        day: 'D4', date: '8/5(三)', title: '伊宁 → 那拉提',
+        from: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        to: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        via: [], departure: '08:00', expectedArrival: '11:30',
+        stops: [], hotel: { name: '同方案C', price: '150-600元', tip: '' },
+        notes: '同方案C D4', roadType: '国道270km'
+      },
+      {
+        day: 'D5', date: '8/6(四)', title: '那拉提 → 独库 → 乌鲁木齐',
+        from: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        to: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        via: [{ keyword: '乔尔玛', city: '伊犁哈萨克自治州' }, { keyword: '独山子区', city: '克拉玛依市' }],
+        departure: '12:00', expectedArrival: '19:30',
+        stops: [{ time: '13:00', name: '乔尔玛', dur: '30min', purpose: '致敬' }],
+        hotel: { name: '乌鲁木齐机场附近', price: '250-350元', tip: '' },
+        notes: '从那拉提沿G218西行20km到G217交汇处北上独库公路，同方案C D5', roadType: '山路+高速480km'
+      }
+    ]
+  },
+  d: {
+    name: '方案D 反向环线',
+    color: '#B8860B',
+    segments: [
+      {
+        day: 'D2', date: '8/3(一)', title: '乌鲁木齐 → 独库 → 那拉提',
+        from: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        to: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        via: [{ keyword: '独山子区', city: '克拉玛依市' }, { keyword: '乔尔玛', city: '伊犁哈萨克自治州' }],
+        departure: '07:00', expectedArrival: '15:00',
+        stops: [
+          { time: '08:30', name: '独山子(独库入口)', dur: '15min', purpose: '加油+确认路况' },
+          { time: '11:00', name: '哈希勒根达坂', dur: '20min', purpose: '拍照' },
+          { time: '12:30', name: '乔尔玛', dur: '30min', purpose: '致敬+午餐' }
+        ],
+        hotel: { name: '那拉提镇/新源县城', price: '150-600元', tip: '独库周一最空' },
+        notes: '逆时针走，先走独库。G30到独山子后南下G217独库北段，经哈希勒根达坂→乔尔玛→G217/G218交汇处，左转沿G218东行20km到那拉提。周一独库车最少。注意需提前预约独库通行。',
+        roadType: '高速+山路420km'
+      },
+      {
+        day: 'D4', date: '8/5(三)', title: '那拉提 → 伊宁',
+        from: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        to: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        via: [], departure: '10:00', expectedArrival: '13:30',
+        stops: [], hotel: { name: '伊宁开发区连锁酒店', price: '250-400元', tip: '' },
+        notes: 'G218西行到伊宁，同方案C反向。', roadType: '国道270km'
+      },
+      {
+        day: 'D5', date: '8/6(四)', title: '伊宁 → 赛湖 → 乌鲁木齐',
+        from: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        to: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        via: [{ keyword: '赛里木湖风景名胜区', city: '博尔塔拉蒙古自治州' }],
+        departure: '07:00', expectedArrival: '18:00',
+        stops: [
+          { time: '09:00', name: '赛里木湖', dur: '120min', purpose: '环湖游览' },
+          { time: '12:00', name: '博乐市', dur: '30min', purpose: '午餐+加油' }
+        ],
+        hotel: { name: '乌鲁木齐机场附近', price: '250-350元', tip: '周四赛湖人少' },
+        notes: '回程经赛湖，周四游客最少。全程640km较长。',
+        roadType: '高速640km'
+      }
+    ]
+  }
+};
+
+// Hotel markers data
+var HOTEL_MARKERS = [
+  { name: '乌鲁木齐机场', pos: [43.907, 87.474], price: '250-350元', hotels: '天缘景逸/玛贝儿', day: 'D1/D5' },
+  { name: '赛里木湖', pos: [44.603, 81.145], price: '600-2000元', hotels: '湖边营地', day: 'D2(C)' },
+  { name: '清水河镇', pos: [44.053, 80.762], price: '200-300元', hotels: '天上居大酒店', day: 'D2(A)' },
+  { name: '伊宁市区', pos: [43.913, 81.325], price: '250-400元', hotels: '希尔顿欢朋/亚朵', day: 'D3/D4' },
+  { name: '新源县城', pos: [43.435, 83.267], price: '150-250元', hotels: '那拉提国际酒店', day: 'D4' },
+  { name: '那拉提镇', pos: [43.330, 84.450], price: '400-600元', hotels: '文旅度假酒店', day: 'D4' },
+  { name: '独山子', pos: [44.327, 84.871], price: '200-400元', hotels: '冰峰温泉假日', day: 'D5备选' }
+];
+
+function saveApiKey() {
+  var input = document.getElementById('apiKeyInput');
+  var key = input.value.trim();
+  if (!key) {
+    document.getElementById('keyStatus').innerHTML = '<span class="err">请输入有效的 API Key</span>';
+    return;
+  }
+  localStorage.setItem('amap_key', key);
+  apiKey = key;
+  document.getElementById('keyStatus').innerHTML = '<span class="ok">✅ Key 已保存！正在加载地图...</span>';
+  document.getElementById('keyPanel').style.display = 'none';
+  initMap();
+}
+
+function checkSavedKey() {
+  if (apiKey) {
+    document.getElementById('apiKeyInput').value = apiKey;
+    document.getElementById('keyPanel').style.display = 'none';
+    initMap();
+  }
+}
+
+function loadAMapScript(key) {
+  var script = document.createElement('script');
+  script.src = 'https://webapi.amap.com/maps?v=2.0&key=' + key + '&plugin=AMap.Driving,AMap.PlaceSearch';
+  script.onload = function() {
+    initMapContent();
   };
-
-  // ===== Route definitions =====
-  // Each plan is an array of day segments, each segment is an array of waypoints
-  var ROUTES = {
-    c: {
-      color: '#2E7D6F',
-      weight: 4,
-      name: '方案C 深度草原',
-      days: [
-        { day: 'D2', label: '乌市→赛湖 550km', color: '#2E7D6F', pts: [LOC.urumqi, LOC.shihezi, LOC.kuitun, [44.50,83.50], [44.55,82.50], LOC.bole, LOC.sayram] },
-        { day: 'D3', label: '赛湖→伊宁 180km', color: '#66BB6A', pts: [LOC.sayram, LOC.guozigou, LOC.qingshuihe, [44.00,81.00], LOC.yining] },
-        { day: 'D4', label: '伊宁→那拉提 270km', color: '#81C784', pts: [LOC.yining, LOC.gongliu, LOC.xinyuan, LOC.nalati] },
-        { day: 'D5', label: '那拉提→独库→乌市 480km', color: '#A5D6A7', pts: [LOC.nalati, LOC.qiaoerma, LOC.hashilegen, LOC.dukuView, LOC.dushanzi, LOC.kuitun, LOC.shihezi, LOC.urumqi] }
-      ]
-    },
-    a: {
-      color: '#C65D3A',
-      weight: 3,
-      name: '方案A 经典',
-      days: [
-        { day: 'D2', label: '乌市→清水河 560km', color: '#C65D3A', pts: [LOC.urumqi, LOC.shihezi, LOC.kuitun, [44.50,83.50], [44.55,82.50], LOC.bole, LOC.sayram, LOC.qingshuihe] },
-        { day: 'D3', label: '清水河→赛湖→伊宁 270km', color: '#E8845F', pts: [LOC.qingshuihe, LOC.sayram, LOC.guozigou, LOC.qingshuihe, [44.00,81.00], LOC.yining] },
-        { day: 'D4', label: '伊宁→那拉提 270km', color: '#F0A080', pts: [LOC.yining, LOC.gongliu, LOC.xinyuan, LOC.nalati] },
-        { day: 'D5', label: '那拉提→独库→乌市 480km', color: '#F5BBA0', pts: [LOC.nalati, LOC.qiaoerma, LOC.hashilegen, LOC.dukuView, LOC.dushanzi, LOC.kuitun, LOC.shihezi, LOC.urumqi] }
-      ]
-    },
-    b: {
-      color: '#4A7A9B',
-      weight: 3,
-      name: '方案B 紧凑',
-      days: [
-        { day: 'D1', label: '乌市→奎屯 240km', color: '#4A7A9B', pts: [LOC.urumqi, LOC.shihezi, LOC.kuitun] },
-        { day: 'D2', label: '奎屯→赛湖→伊宁 640km', color: '#6B9AC4', pts: [LOC.kuitun, [44.50,83.50], [44.55,82.50], LOC.bole, LOC.sayram, LOC.guozigou, LOC.qingshuihe, [44.00,81.00], LOC.yining] },
-        { day: 'D4', label: '伊宁→那拉提 270km', color: '#8BB5D6', pts: [LOC.yining, LOC.gongliu, LOC.xinyuan, LOC.nalati] },
-        { day: 'D5', label: '那拉提→独库→乌市 480km', color: '#A8CDE6', pts: [LOC.nalati, LOC.qiaoerma, LOC.hashilegen, LOC.dukuView, LOC.dushanzi, LOC.kuitun, LOC.shihezi, LOC.urumqi] }
-      ]
-    },
-    d: {
-      color: '#B8860B',
-      weight: 3,
-      name: '方案D 反向',
-      days: [
-        { day: 'D2', label: '乌市→独库→那拉提 420km', color: '#B8860B', pts: [LOC.urumqi, LOC.shihezi, LOC.kuitun, LOC.dushanzi, LOC.dukuView, LOC.hashilegen, LOC.qiaoerma, LOC.nalati] },
-        { day: 'D4', label: '那拉提→伊宁 270km', color: '#D4A531', pts: [LOC.nalati, LOC.xinyuan, LOC.gongliu, LOC.yining] },
-        { day: 'D5', label: '伊宁→赛湖→乌市 640km', color: '#E8C063', pts: [LOC.yining, [44.00,81.00], LOC.qingshuihe, LOC.guozigou, LOC.sayram, [44.55,82.50], [44.50,83.50], LOC.bole, LOC.kuitun, LOC.shihezi, LOC.urumqi] }
-      ]
-    }
+  script.onerror = function() {
+    document.getElementById('keyStatus').innerHTML = '<span class="err">高德地图加载失败，请检查 Key 是否正确</span>';
+    document.getElementById('keyPanel').style.display = 'block';
   };
+  document.head.appendChild(script);
+}
 
-  // ===== Hotel locations =====
-  var HOTELS = [
-    { name: '乌鲁木齐 · 机场附近', pos: [43.90, 87.55], tier: '推荐', price: '250-350元', hotels: '天缘景逸 / 玛贝儿', day: 'D1/D5' },
-    { name: '赛里木湖 · 湖边营地', pos: [44.62, 81.18], tier: '贵', price: '600-2000元', hotels: '星空营地房/房车', day: 'D2(C)' },
-    { name: '清水河镇', pos: [44.053, 80.762], tier: '省钱', price: '200-300元', hotels: '天上居大酒店', day: 'D2(A)' },
-    { name: '博乐市区', pos: [44.850, 82.070], tier: '备选', price: '200-350元', hotels: '博乐市区酒店', day: 'D2(备选)' },
-    { name: '伊宁 · 开发区', pos: [43.93, 81.35], tier: '推荐', price: '250-400元', hotels: '希尔顿欢朋/亚朵', day: 'D3/D4' },
-    { name: '伊宁 · 老城区', pos: [43.895, 81.32], tier: '人文', price: '150-300元', hotels: '特色民宿', day: 'D3/D4' },
-    { name: '那拉提 · 景区门口', pos: [43.34, 84.47], tier: '贵', price: '400-600元', hotels: '文旅度假酒店', day: 'D4' },
-    { name: '那拉泉 · 中间位置', pos: [43.38, 83.85], tier: '推荐', price: '300-450元', hotels: '那拉泉生态园林', day: 'D4' },
-    { name: '新源县城', pos: [43.435, 83.267], tier: '省钱', price: '150-250元', hotels: '那拉提国际酒店', day: 'D4' },
-    { name: '独山子 · 温泉', pos: [44.33, 84.87], tier: '备选', price: '200-400元', hotels: '冰峰温泉假日', day: 'D5(备选)' }
-  ];
+function initMap() {
+  if (!apiKey) return;
+  if (typeof AMap !== 'undefined') {
+    initMapContent();
+  } else {
+    loadAMapScript(apiKey);
+  }
+}
 
-  // ===== Scenic spots =====
-  var SCENIC = [
-    { name: '大巴扎', pos: [43.795, 87.63], desc: '乌鲁木齐国际大巴扎' },
-    { name: '赛里木湖', pos: [44.60, 81.15], desc: '大西洋最后一滴眼泪' },
-    { name: '果子沟大桥', pos: [44.40, 81.35], desc: '新疆最美高速桥' },
-    { name: '喀赞其民俗村', pos: [43.895, 81.33], desc: '薄荷蓝巷子+马车' },
-    { name: '六星街', pos: [43.92, 81.35], desc: '手风琴馆+苹果香' },
-    { name: '伊犁河大桥', pos: [43.85, 81.30], desc: '最佳日落观赏点' },
-    { name: '那拉提空中草原', pos: [43.29, 84.42], desc: '48h门票二次入园' },
-    { name: '乔尔玛烈士陵园', pos: [43.72, 84.52], desc: '独库公路168位筑路英雄' },
-    { name: '哈希勒根达坂', pos: [43.95, 84.65], desc: '海拔3390m 防雪廊道' }
-  ];
-
-  // ===== Initialize map =====
-  var map = L.map('map', { scrollWheelZoom: true }).setView([43.9, 83.5], 7);
-
-  // Tile layers
-  var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
-    maxZoom: 18
-  }).addTo(map);
-
-  var satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Esri World Imagery',
-    maxZoom: 18
+function initMapContent() {
+  // Initialize map
+  map = new AMap.Map('map', {
+    zoom: 7,
+    center: [83.5, 43.9],
+    mapStyle: 'amap://styles/whitesmoke',
+    viewMode: '2D'
   });
 
-  var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    attribution: 'OpenTopoMap (CC-BY-SA)',
-    maxZoom: 17,
-    subdomains: 'abc'
+  // Add hotel markers
+  HOTEL_MARKERS.forEach(function(h) {
+    var marker = new AMap.Marker({
+      position: h.pos,
+      title: h.name,
+      content: '<div style="width:20px;height:20px;border-radius:50%;background:#6A4C93;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',
+      offset: new AMap.Pixel(-10, -10)
+    });
+    marker.setMap(map);
+    marker.setContent('<div style="background:white;border:2px solid #6A4C93;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.2);">🏨</div>');
+    marker.setLabel({
+      content: '<div style="background:rgba(255,255,255,0.9);padding:2px 6px;border-radius:4px;font-size:11px;color:#3D2B1F;border:1px solid #D4C4A8;white-space:nowrap;">' + h.name + '</div>',
+      offset: new AMap.Pixel(15, -5)
+    });
+    var infoWindow = new AMap.InfoWindow({
+      content: '<div style="padding:8px;min-width:180px;font-family:Lora,serif;">' +
+        '<strong style="font-size:14px;color:#6A4C93;">🏨 ' + h.name + '</strong><br>' +
+        '<span style="font-size:12px;color:#666;">' + h.day + '</span><br>' +
+        '<span style="font-size:13px;">' + h.hotels + '</span><br>' +
+        '<span style="font-size:14px;color:#C65D3A;font-weight:bold;">💰 ' + h.price + '/晚</span>' +
+        '</div>',
+      offset: new AMap.Pixel(0, -20)
+    });
+    marker.on('click', function() {
+      infoWindow.open(map, h.pos);
+    });
+    markers.push(marker);
   });
 
-  L.control.layers({
-    '标准地图': osmLayer,
-    '卫星影像': satLayer,
-    '地形图': terrainLayer
-  }, null, { position: 'topright' }).addTo(map);
+  // Initialize driving
+  driving = new AMap.Driving({
+    map: map,
+    policy: AMap.DrivingPolicy.LEAST_TIME,
+    hideMarkers: true,
+    showTraffic: false,
+    autoFitView: false
+  });
 
-  // ===== Route layers =====
-  var routeLayers = {};
-  var activePlans = { c: true, a: false, b: false, d: false };
+  // Load route for current plan
+  loadPlanRoute(currentPlan);
+}
 
-  function createRoute(planKey) {
-    var plan = ROUTES[planKey];
-    var layers = [];
+function selectPlan(planKey) {
+  // Update buttons
+  document.querySelectorAll('.plan-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  document.querySelector('.plan-btn.' + planKey).classList.add('active');
+  currentPlan = planKey;
 
-    plan.days.forEach(function(daySeg) {
-      // Route polyline
-      var polyline = L.polyline(daySeg.pts, {
-        color: daySeg.color,
-        weight: 4,
-        opacity: 0.8,
-        dashArray: planKey === 'c' ? null : '8,6',
+  if (map && driving) {
+    loadPlanRoute(planKey);
+  }
+}
+
+function clearRoute() {
+  if (driving) driving.clear();
+  routePolylines.forEach(function(p) { map.remove(p); });
+  routePolylines = [];
+}
+
+function loadPlanRoute(planKey) {
+  clearRoute();
+  var plan = PLANS[planKey];
+  var segmentsContainer = document.getElementById('segmentsContainer');
+  segmentsContainer.innerHTML = '';
+
+  var allPoints = [];
+
+  // Process each segment
+  plan.segments.forEach(function(seg, idx) {
+    // Create segment card
+    var card = document.createElement('div');
+    card.className = 'segment-card';
+    if (idx === 0) card.classList.add('open');
+
+    var headerColor = plan.color;
+    card.innerHTML = createSegmentCard(seg, headerColor, idx);
+    segmentsContainer.appendChild(card);
+
+    // Search route
+    searchRoute(seg, idx, plan.color, card);
+
+    // Collect points for fit view
+    allPoints.push(seg);
+  });
+
+  // Add click handler for expand/collapse
+  document.querySelectorAll('.segment-header').forEach(function(h, i) {
+    h.onclick = function() {
+      h.parentElement.classList.toggle('open');
+    };
+  });
+}
+
+function createSegmentCard(seg, color, idx) {
+  var stopsHtml = '';
+  if (seg.stops && seg.stops.length > 0) {
+    stopsHtml = seg.stops.map(function(s) {
+      return '<div class="tl-row">' +
+        '<div class="tl-time">' + s.time + '</div>' +
+        '<div class="tl-place"><strong>' + s.name + '</strong><br><span>' + s.purpose + ' · 停' + s.dur + '</span></div>' +
+        '</div>';
+    }).join('');
+  }
+
+  var hotelHtml = '';
+  if (seg.hotel) {
+    hotelHtml = '<div class="tl-row" style="background:rgba(106,76,147,0.05);">' +
+      '<div class="tl-time">🏨</div>' +
+      '<div class="tl-place"><strong style="color:#6A4C93;">住宿：' + seg.hotel.name + '</strong><br><span>' + seg.hotel.tip + '</span></div>' +
+      '<div class="tl-dist" style="color:#6A4C93;font-weight:bold;">' + seg.hotel.price + '</div>' +
+      '</div>';
+  }
+
+  return '<div class="segment-header" style="background:' + color + ';">' +
+    '<span class="seg-day">' + seg.day + ' ' + seg.date + '</span>' +
+    '<span class="seg-title">' + seg.title + '</span>' +
+    '<span class="seg-arrow">▶</span>' +
+    '</div>' +
+    '<div class="segment-body">' +
+    '<div class="seg-stats">' +
+    '<span class="seg-stat green"><strong>出发</strong> ' + seg.departure + '</span>' +
+    '<span class="seg-stat orange"><strong>预计到达</strong> ' + seg.expectedArrival + '</span>' +
+    '<span class="seg-stat blue"><strong>路况</strong> ' + seg.roadType + '</span>' +
+    '<span class="seg-stat" id="seg-dist-' + idx + '"><strong>距离</strong> 计算中...</span>' +
+    '<span class="seg-stat" id="seg-time-' + idx + '"><strong>预计用时</strong> 计算中...</span>' +
+    '</div>' +
+    '<div class="seg-timeline">' +
+    '<div class="tl-row"><div class="tl-time">' + seg.departure + '</div><div class="tl-place"><strong>出发</strong><br><span>' + seg.from.keyword + '</span></div></div>' +
+    stopsHtml +
+    '<div class="tl-row"><div class="tl-time">' + seg.expectedArrival + '</div><div class="tl-place"><strong>到达</strong><br><span>' + seg.to.keyword + '</span></div></div>' +
+    hotelHtml +
+    '</div>' +
+    '<div class="turn-section">' +
+    '<div class="turn-title">📝 ' + seg.notes + '</div>' +
+    '<div id="turn-list-' + idx + '"></div>' +
+    '</div>' +
+    '</div>';
+}
+
+function searchRoute(seg, idx, color, card) {
+  if (!driving) return;
+
+  var points = [seg.from];
+  if (seg.via) {
+    seg.via.forEach(function(v) { points.push(v); });
+  }
+  points.push(seg.to);
+
+  driving.search(points, function(status, result) {
+    if (status === 'complete') {
+      var route = result.routes[0];
+      var distance = (route.distance / 1000).toFixed(1);
+      var duration = Math.round(route.time / 60);
+      var hours = Math.floor(duration / 60);
+      var mins = duration % 60;
+
+      // Update distance/time
+      var distEl = document.getElementById('seg-dist-' + idx);
+      var timeEl = document.getElementById('seg-time-' + idx);
+      if (distEl) distEl.innerHTML = '<strong>距离</strong> ' + distance + 'km';
+      if (timeEl) timeEl.innerHTML = '<strong>预计用时</strong> ' + hours + 'h' + (mins > 0 ? mins + 'min' : '');
+
+      // Show turn-by-turn
+      var turnEl = document.getElementById('turn-list-' + idx);
+      if (turnEl && route.steps) {
+        var turnHtml = '<div class="turn-title">🧭 逐步导航 (' + route.steps.length + '步)</div><ul class="turn-list">';
+        route.steps.forEach(function(step, si) {
+          var stepDist = step.distance > 1000 ? (step.distance / 1000).toFixed(1) + 'km' : step.distance + 'm';
+          var instruction = step.instruction || '';
+          // Clean up instruction - remove HTML tags
+          instruction = instruction.replace(/<[^>]+>/g, '');
+          if (instruction.length > 80) instruction = instruction.substring(0, 80) + '...';
+          turnHtml += '<li class="turn-item">' +
+            '<span class="turn-num">' + (si + 1) + '</span>' +
+            '<span class="turn-text">' + instruction + '</span>' +
+            '<span class="turn-dist">' + stepDist + '</span>' +
+            '</li>';
+        });
+        turnHtml += '</ul>';
+        turnEl.innerHTML = turnHtml;
+      }
+
+      // Draw custom polyline
+      var path = [];
+      route.steps.forEach(function(step) {
+        step.path.forEach(function(p) { path.push(p); });
+      });
+
+      var polyline = new AMap.Polyline({
+        path: path,
+        strokeColor: color,
+        strokeWeight: 5,
+        strokeOpacity: 0.85,
+        lineJoin: 'round',
         lineCap: 'round',
-        lineJoin: 'round'
+        showDir: true
       });
+      polyline.setMap(map);
+      routePolylines.push(polyline);
 
-      // Day label at midpoint
-      var midIdx = Math.floor(daySeg.pts.length / 2);
-      var midPt = daySeg.pts[midIdx];
-      var label = L.marker(midPt, {
-        icon: L.divIcon({
-          className: 'route-label',
-          html: '<div style="background:' + daySeg.color + '; color:white; font-family:NationalPark,sans-serif; font-size:0.7rem; padding:0.15rem 0.5rem; border-radius:8px; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,0.2);">' + daySeg.day + ' ' + daySeg.label + '</div>',
-          iconSize: [120, 20],
-          iconAnchor: [60, 10]
-        })
+      // Add start/end markers for this segment
+      var startMarker = new AMap.Marker({
+        position: path[0],
+        content: '<div style="background:' + color + ';color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' + seg.day + '</div>',
+        offset: new AMap.Pixel(-14, -14)
       });
+      startMarker.setMap(map);
+      routePolylines.push(startMarker);
 
-      layers.push({ polyline: polyline, label: label, day: daySeg });
-    });
-
-    return layers;
-  }
-
-  function showPlan(planKey) {
-    if (routeLayers[planKey]) return;
-    var layers = createRoute(planKey);
-    layers.forEach(function(l) {
-      l.polyline.addTo(map);
-      l.label.addTo(map);
-    });
-    routeLayers[planKey] = layers;
-  }
-
-  function hidePlan(planKey) {
-    if (!routeLayers[planKey]) return;
-    routeLayers[planKey].forEach(function(l) {
-      map.removeLayer(l.polyline);
-      map.removeLayer(l.label);
-    });
-    delete routeLayers[planKey];
-  }
-
-  // ===== Hotel markers =====
-  var hotelGroup = L.layerGroup();
-  var hotelColors = {
-    '推荐': '#6A4C93',
-    '贵': '#C62828',
-    '省钱': '#2E7D6F',
-    '备选': '#4A7A9B',
-    '人文': '#B8860B'
-  };
-
-  HOTELS.forEach(function(h) {
-    var color = hotelColors[h.tier] || '#6A4C93';
-    var icon = L.divIcon({
-      className: 'hotel-marker',
-      html: '<div style="width:18px; height:18px; border-radius:50%; background:' + color + '; border:3px solid white; box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',
-      iconSize: [18, 18],
-      iconAnchor: [9, 9]
-    });
-
-    L.marker(h.pos, { icon: icon }).addTo(hotelGroup).bindPopup(
-      '<div style="font-family:Lora,serif; min-width:180px;">' +
-      '<strong style="font-size:0.95rem; color:' + color + ';">' + h.name + '</strong><br>' +
-      '<span style="font-size:0.78rem; color:#666;">' + h.day + ' · ' + h.tier + '</span><br>' +
-      '<span style="font-size:0.82rem;">🏨 ' + h.hotels + '</span><br>' +
-      '<span style="font-size:0.85rem; color:#C65D3A; font-weight:bold;">💰 ' + h.price + '/晚</span>' +
-      '</div>'
-    );
-  });
-  hotelGroup.addTo(map);
-
-  // ===== Scenic spot markers =====
-  var scenicGroup = L.layerGroup();
-  SCENIC.forEach(function(s) {
-    var icon = L.divIcon({
-      className: 'scenic-marker',
-      html: '<div style="width:14px; height:14px; border-radius:50%; background:#E91E63; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>',
-      iconSize: [14, 14],
-      iconAnchor: [7, 7]
-    });
-
-    L.marker(s.pos, { icon: icon }).addTo(scenicGroup).bindPopup(
-      '<div style="font-family:Lora,serif;">' +
-      '<strong style="color:#E91E63;">📸 ' + s.name + '</strong><br>' +
-      '<span style="font-size:0.82rem; color:#666;">' + s.desc + '</span>' +
-      '</div>'
-    );
-  });
-  scenicGroup.addTo(map);
-
-  // ===== Layer toggles =====
-  var layerVisibility = { hotels: true, scenic: true };
-
-  window.toggleLayer = function(type) {
-    if (type === 'hotels') {
-      if (layerVisibility.hotels) {
-        map.removeLayer(hotelGroup);
-        layerVisibility.hotels = false;
-      } else {
-        hotelGroup.addTo(map);
-        layerVisibility.hotels = true;
+      // Fit view after first segment
+      if (idx === 0) {
+        map.setFitView(routePolylines, false, [60, 60, 60, 60]);
       }
-    } else if (type === 'scenic') {
-      if (layerVisibility.scenic) {
-        map.removeLayer(scenicGroup);
-        layerVisibility.scenic = false;
-      } else {
-        scenicGroup.addTo(map);
-        layerVisibility.scenic = true;
-      }
-    }
-    // Update button state
-    var btns = document.querySelectorAll('.toggle-btn');
-    btns.forEach(function(b) {
-      if (b.classList.contains(type)) {
-        b.classList.toggle('active');
-      }
-    });
-  };
-
-  // ===== Plan toggle =====
-  window.togglePlan = function(planKey) {
-    activePlans[planKey] = !activePlans[planKey];
-    if (activePlans[planKey]) {
-      showPlan(planKey);
     } else {
-      hidePlan(planKey);
+      var distEl = document.getElementById('seg-dist-' + idx);
+      if (distEl) distEl.innerHTML = '<strong>距离</strong> 路线查询失败';
+      var timeEl = document.getElementById('seg-time-' + idx);
+      if (timeEl) timeEl.innerHTML = '<strong>用时</strong> -';
     }
-    // Update button state
-    var btn = document.querySelector('.plan-btn.' + planKey);
-    if (btn) {
-      btn.classList.toggle('active');
-    }
-  };
+  });
+}
 
-  // ===== Initialize: show Plan C =====
-  showPlan('c');
-
-  // Fit bounds to show entire route
-  var allPts = [
-    LOC.urumqi, LOC.sayram, LOC.yining, LOC.nalati, LOC.dushanzi
-  ];
-  map.fitBounds(allPts, { padding: [40, 40] });
-
-})();
+// Check for saved key on page load
+window.addEventListener('load', function() {
+  checkSavedKey();
+});
 </script>
 </body>
 </html>
