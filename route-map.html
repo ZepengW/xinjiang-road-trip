@@ -171,6 +171,11 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
   <div class="key-status" id="keyStatus"></div>
 </div>
 
+<!-- Edit Key Button (shown when key+scode are saved) -->
+<div id="editKeyBtn" style="display:none; text-align:right; margin:0.5rem 0;">
+  <button onclick="showKeyPanel()" style="font-family:'NationalPark',sans-serif;font-size:0.82rem;padding:0.4rem 1rem;border:2px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--accent3);cursor:pointer;transition:all 0.2s;">修改 Key / 安全密钥</button>
+</div>
+
 <!-- Plan Selector (shared by both modes) -->
 <div class="plan-selector">
   <button class="plan-btn active c" onclick="selectPlan('c')">方案C 深度草原</button>
@@ -581,12 +586,19 @@ function switchMode(mode) {
   document.getElementById('mapLeaflet').classList.toggle('map-hidden', mode !== 'leaflet');
   document.getElementById('mapAmap').classList.toggle('map-hidden', mode !== 'amap');
 
-  // Toggle API Key panel
+  // Toggle API Key panel - only hide if BOTH key and security code are saved
   var keyPanel = document.getElementById('keyPanel');
   if (mode === 'amap') {
-    keyPanel.style.display = apiKey ? 'none' : 'block';
+    if (apiKey && securityCode) {
+      keyPanel.style.display = 'none';
+      document.getElementById('editKeyBtn').style.display = 'inline-block';
+    } else {
+      keyPanel.style.display = 'block';
+      document.getElementById('editKeyBtn').style.display = 'none';
+    }
   } else {
     keyPanel.style.display = 'none';
+    document.getElementById('editKeyBtn').style.display = 'none';
   }
 
   // Update hint text
@@ -853,7 +865,16 @@ function saveApiKey() {
   securityCode = scode;
   document.getElementById('keyStatus').innerHTML = '<span class="ok">Key 和安全密钥已保存！正在加载地图...</span>';
   document.getElementById('keyPanel').style.display = 'none';
+  document.getElementById('editKeyBtn').style.display = 'inline-block';
+  // Reload AMap script with new security code
+  amapScriptLoaded = false;
   initAmapMap();
+}
+
+function showKeyPanel() {
+  document.getElementById('keyPanel').style.display = 'block';
+  document.getElementById('editKeyBtn').style.display = 'none';
+  document.getElementById('keyStatus').innerHTML = '';
 }
 
 function loadAMapScript(key, securityCode, callback) {
