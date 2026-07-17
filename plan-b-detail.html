@@ -711,6 +711,72 @@ sup a {
   background: var(--accent);
   color: var(--paper);
 }
+/* ===== Side Nav ===== */
+.side-nav {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 999;
+  background: rgba(255,252,245,0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--rule);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  padding: 0.6rem 0.5rem;
+  box-shadow: -2px 2px 12px rgba(61,43,31,0.1);
+  font-family: 'NationalPark', sans-serif;
+  font-size: 0.72rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.side-nav-title {
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.2rem 0.5rem;
+  border-bottom: 1px dashed var(--rule);
+  margin-bottom: 0.3rem;
+}
+.side-nav a {
+  display: block;
+  padding: 0.3rem 0.6rem;
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  line-height: 1.5;
+  margin-bottom: 1px;
+}
+.side-nav a:hover {
+  background: var(--bg2);
+  color: var(--accent);
+}
+.side-nav a.active {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+.side-nav a .nav-day {
+  font-family: 'Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--muted);
+  margin-right: 0.3rem;
+}
+.side-nav a.active .nav-day { color: rgba(255,255,255,0.7); }
+.side-nav-divider {
+  border-top: 1px dashed var(--rule);
+  margin: 0.2rem 0;
+}
+/* Mobile: hide side nav */
+@media (max-width: 768px) {
+  .side-nav { display: none; }
+}
+/* Prevent content from being hidden behind nav */
+article.page { padding-right: 130px; }
+@media (max-width: 768px) { article.page { padding-right: 1rem; } }
 </style>
 </head>
 <body>
@@ -720,7 +786,7 @@ sup a {
 </nav>
 
 <!-- ========== COVER ========== -->
-<section class="cover">
+<section class="cover" id="cover">
   <span class="plan-badge">方案 B · 紧凑直达版</span>
   <img class="cover-img" src="assets/cover_1024x576.jpg" alt="新疆伊犁风光水彩画">
   <h1 class="cover-title">新疆伊犁环线<br>自驾手帐</h1>
@@ -1903,5 +1969,43 @@ sup a {
 
 </article>
 <script src="./_shared/weather-widget.js"></script>
+<nav class="side-nav" id="sideNav">
+  <div class="side-nav-title">快速跳转</div>
+  <a href="#cover"><span class="nav-day">TOP</span>概览</a>
+  <a href="#day1"><span class="nav-day">D1</span>8/2 奎屯</a>
+  <a href="#day2"><span class="nav-day">D2</span>8/3 赛湖→伊宁</a>
+  <a href="#day3"><span class="nav-day">D3</span>8/4 伊宁休整</a>
+  <a href="#day4"><span class="nav-day">D4</span>8/5 那拉提</a>
+  <a href="#day5"><span class="nav-day">D5</span>8/6 独库公路</a>
+  <a href="#day6"><span class="nav-day">D6</span>8/7 返程</a>
+  <div class="side-nav-divider"></div>
+  <a href="route-map.html"><span class="nav-day">→</span>导航地图</a>
+  <a href="accommodation-guide.html"><span class="nav-day">→</span>住宿</a>
+  <a href="booking-guide.html"><span class="nav-day">→</span>预约</a>
+</nav>
+<script>
+// Side nav active link on scroll
+(function() {
+  var nav = document.getElementById('sideNav');
+  if (!nav) return;
+  var links = nav.querySelectorAll('a[href^="#"]');
+  var sections = [];
+  links.forEach(function(link) {
+    var target = document.querySelector(link.getAttribute('href'));
+    if (target) sections.push({ el: target, link: link });
+  });
+  function updateActive() {
+    var scrollY = window.scrollY + 120;
+    var active = null;
+    sections.forEach(function(s) {
+      if (s.el.offsetTop <= scrollY) active = s;
+    });
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (active) active.link.classList.add('active');
+  }
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
 </body>
 </html>

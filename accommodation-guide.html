@@ -160,6 +160,72 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 .quick-answer { background: linear-gradient(135deg, #F0EDF7 0%, #E8E0F0 100%); border: 2px solid var(--accent); border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
 .quick-answer h3 { font-family: 'NationalPark', sans-serif; font-size: 1.1rem; color: var(--accent); margin-bottom: 0.5rem; }
 .quick-answer p { font-size: 0.88rem; line-height: 1.7; }
+/* ===== Side Nav ===== */
+.side-nav {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 999;
+  background: rgba(255,252,245,0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--rule);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  padding: 0.6rem 0.5rem;
+  box-shadow: -2px 2px 12px rgba(61,43,31,0.1);
+  font-family: 'NationalPark', sans-serif;
+  font-size: 0.72rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.side-nav-title {
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.2rem 0.5rem;
+  border-bottom: 1px dashed var(--rule);
+  margin-bottom: 0.3rem;
+}
+.side-nav a {
+  display: block;
+  padding: 0.3rem 0.6rem;
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  line-height: 1.5;
+  margin-bottom: 1px;
+}
+.side-nav a:hover {
+  background: var(--bg2);
+  color: var(--accent);
+}
+.side-nav a.active {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+.side-nav a .nav-day {
+  font-family: 'Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--muted);
+  margin-right: 0.3rem;
+}
+.side-nav a.active .nav-day { color: rgba(255,255,255,0.7); }
+.side-nav-divider {
+  border-top: 1px dashed var(--rule);
+  margin: 0.2rem 0;
+}
+/* Mobile: hide side nav */
+@media (max-width: 768px) {
+  .side-nav { display: none; }
+}
+/* Prevent content from being hidden behind nav */
+article.page { padding-right: 130px; }
+@media (max-width: 768px) { article.page { padding-right: 1rem; } }
 </style>
 </head>
 <body>
@@ -168,7 +234,7 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 <a href="index.html" class="nav-back">&larr; 返回首页</a>
 
 <!-- ========== COVER ========== -->
-<section class="cover">
+<section class="cover" id="cover">
   <span class="cover-badge">ACCOMMODATION GUIDE</span>
   <h1 class="cover-title">住宿指南</h1>
   <p class="cover-subtitle">有车就是自由 · 住远一点省一半 · 每站三级选择</p>
@@ -235,7 +301,7 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 </div>
 
 <!-- ========== CORE STRATEGY ========== -->
-<div class="section-header">
+<div class="section-header" id="strategy">
   <h2>省钱核心策略</h2>
   <p class="hand-note">Stay Smart, Save More</p>
 </div>
@@ -247,7 +313,7 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 </div>
 
 <!-- ========== ALL-NIGHT MATRIX ========== -->
-<div class="section-header">
+<div class="section-header" id="matrix">
   <h2>四方案住宿矩阵</h2>
   <p class="hand-note">Plan × Night Matrix</p>
 </div>
@@ -308,7 +374,7 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 </div>
 
 <!-- ========== DETAILED LOCATIONS ========== -->
-<div class="section-header">
+<div class="section-header" id="locations">
   <h2>逐站详细建议</h2>
   <p class="hand-note">Location by Location</p>
 </div>
@@ -600,7 +666,7 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 </div>
 
 <!-- ========== PRICE COMPARISON ========== -->
-<div class="section-header">
+<div class="section-header" id="price">
   <h2>价格总览</h2>
   <p class="hand-note">Price at a Glance</p>
 </div>
@@ -657,7 +723,7 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 </div>
 
 <!-- ========== BOOKING TIPS ========== -->
-<div class="section-header">
+<div class="section-header" id="tips">
   <h2>预订技巧</h2>
   <p class="hand-note">Booking Tips</p>
 </div>
@@ -691,7 +757,7 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 </div>
 
 <!-- ========== PLAN C SPECIFIC ========== -->
-<div class="section-header">
+<div class="section-header" id="plan-c-daily">
   <h2>方案C 逐日住宿方案</h2>
   <p class="hand-note">Plan C Night by Night</p>
 </div>
@@ -776,5 +842,42 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 
 </article>
 <script src="./_shared/weather-widget.js"></script>
+<nav class="side-nav" id="sideNav">
+  <div class="side-nav-title">快速跳转</div>
+  <a href="#cover"><span class="nav-day">TOP</span>概览</a>
+  <a href="#strategy"><span class="nav-day">01</span>省钱策略</a>
+  <a href="#matrix"><span class="nav-day">02</span>住宿矩阵</a>
+  <a href="#locations"><span class="nav-day">03</span>逐站建议</a>
+  <a href="#price"><span class="nav-day">04</span>价格总览</a>
+  <a href="#tips"><span class="nav-day">05</span>预订技巧</a>
+  <a href="#plan-c-daily"><span class="nav-day">06</span>方案C住宿</a>
+  <div class="side-nav-divider"></div>
+  <a href="route-map.html"><span class="nav-day">→</span>导航地图</a>
+  <a href="booking-guide.html"><span class="nav-day">→</span>预约方案</a>
+</nav>
+<script>
+// Side nav active link on scroll
+(function() {
+  var nav = document.getElementById('sideNav');
+  if (!nav) return;
+  var links = nav.querySelectorAll('a[href^="#"]');
+  var sections = [];
+  links.forEach(function(link) {
+    var target = document.querySelector(link.getAttribute('href'));
+    if (target) sections.push({ el: target, link: link });
+  });
+  function updateActive() {
+    var scrollY = window.scrollY + 120;
+    var active = null;
+    sections.forEach(function(s) {
+      if (s.el.offsetTop <= scrollY) active = s;
+    });
+    links.forEach(function(l) { l.classList.remove('active'); });
+    if (active) active.link.classList.add('active');
+  }
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
 </body>
 </html>
