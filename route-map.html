@@ -61,6 +61,7 @@ article.page{max-width:1000px;margin:0 auto;padding:0 1rem 4rem;}
 .plan-btn.active.a{background:#C65D3A;}
 .plan-btn.active.b{background:#4A7A9B;}
 .plan-btn.active.d{background:#B8860B;}
+.plan-btn.active.cr{background:#6A4C93;}
 
 /* Segment Tabs */
 .segment-tabs{display:flex;gap:0.5rem;flex-wrap:wrap;margin:0.5rem 0;}
@@ -245,6 +246,7 @@ article.page { padding-right: 130px; }
 <!-- Plan Selector (shared by both modes) -->
 <div class="plan-selector">
   <button class="plan-btn active c" onclick="selectPlan('c')">方案C 深度草原</button>
+  <button class="plan-btn cr" onclick="selectPlan('c-revert')">方案C-R 反向深度</button>
   <button class="plan-btn a" onclick="selectPlan('a')">方案A 经典</button>
   <button class="plan-btn b" onclick="selectPlan('b')">方案B 紧凑</button>
   <button class="plan-btn d" onclick="selectPlan('d')">方案D 反向</button>
@@ -542,6 +544,71 @@ var PLANS = {
         hotel: { name: '乌鲁木齐机场附近', price: '250-350元', tip: '周四赛湖人少' },
         notes: '回程经赛湖，周四游客最少。全程640km较长。',
         roadType: '高速640km'
+      }
+    ]
+  },
+  'c-revert': {
+    name: '方案C-R 反向深度',
+    color: '#6A4C93',
+    segments: [
+      {
+        day: 'D2', date: '8/3(一)', title: '乌鲁木齐 → 独库公路 → 那拉提',
+        from: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        to: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        via: [{ keyword: '独山子区', city: '克拉玛依市' }, { keyword: '乔尔玛', city: '伊犁哈萨克自治州' }],
+        departure: '07:00', expectedArrival: '15:00',
+        stops: [
+          { time: '08:30', name: '独山子(独库入口)', dur: '15min', purpose: '加油+确认路况+独库预约核销' },
+          { time: '11:00', name: '哈希勒根达坂(3390m)', dur: '20min', purpose: '拍照+防风外套' },
+          { time: '12:30', name: '乔尔玛', dur: '45min', purpose: '烈士陵园致敬+午餐+加油' }
+        ],
+        hotel: { name: '那拉提空中草原漫心酒店 ✅', price: '已预订(需改日期8/3)', tip: '那拉提街220号G218旁，毗邻景区' },
+        notes: '先走独库=保险策略！G30到独山子约250km→南下G217独库北段约230km山路→乔尔玛→哈希勒根达坂(3390m)→G217/G218交汇处右转G218西行20km到那拉提。独库预约入口选「独山子」南行，时段选8:00-10:00。周一独库车最少。出发前务必查「新疆交警」微博确认通行。两司机轮换，山路限速40-60。',
+        scenicRoute: '独库公路北段自驾路线(南行)：乌鲁木齐→G30高速→独山子(独库入口，加油+核销预约)→G217南行→哈希勒根达坂(3390m，停车拍照防雪廊道，注意可能有冰雹)→乔尔玛(烈士陵园致敬+午餐+可加油)→继续G217南行→G217/G218交汇处→右转G218西行20km→那拉提镇。全程山路约280km，限速40-60，弯道密集需集中精力。与Plan C反方向，风景一样壮美。',
+        roadType: '高速+山路480km'
+      },
+      {
+        day: 'D3', date: '8/4(二)', title: '那拉提 → 伊宁',
+        from: { keyword: '那拉提草原景区', city: '伊犁哈萨克自治州' },
+        to: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        via: [{ keyword: '新源县', city: '伊犁哈萨克自治州' }],
+        departure: '08:00', expectedArrival: '11:30',
+        stops: [
+          { time: '09:30', name: '新源县', dur: '10min', purpose: '休息+补给' }
+        ],
+        hotel: { name: '伊宁老城美仑酒店 ✅', price: '已预订', tip: '斯大林街23号老城区，免费接送机，逛喀赞其/六星街方便' },
+        notes: 'G218沿巩乃斯河西行，风景好但部分路段限速80。上午逛那拉提景区后出发，下午到伊宁逛喀赞其。',
+        scenicRoute: '那拉提景区+伊宁市区：早上酒店旁那拉提景区(空中草原区间车+河谷草原)→中午出发G218西行→新源县午餐→下午到伊宁入住→逛喀赞其民俗旅游区(蓝色小镇)→六星街(俄式建筑)→傍晚伊犁河大桥看日落→汉人街吃烤肉/抓饭。那拉提门票95+区间车40元/人。',
+        roadType: '国道270km'
+      },
+      {
+        day: 'D4', date: '8/5(三)', title: '伊宁 → 果子沟 → 赛里木湖',
+        from: { keyword: '伊宁市政府', city: '伊犁哈萨克自治州' },
+        to: { keyword: '赛里木湖风景名胜区', city: '博尔塔拉蒙古自治州' },
+        via: [{ keyword: '果子沟大桥', city: '伊犁哈萨克自治州' }],
+        departure: '09:00', expectedArrival: '12:00',
+        stops: [
+          { time: '10:00', name: '果子沟大桥观景台', dur: '20min', purpose: '拍照' }
+        ],
+        hotel: { name: '赛里木湖牧野星空营地 ✅', price: '已预订(需改日期8/5)', tip: '天鹅乐水景点南250m，湖西侧景区内，看日落星空最佳' },
+        notes: 'G218→果子沟隧道→G30→赛里木湖东门进。上午伊宁出发，中午到赛湖。下午深度环湖南岸+西岸到营地，看日落星空。',
+        scenicRoute: '赛里木湖景区内(东门进东门出)：D4中午东门进→顺时针走南岸(松树头观全景→月亮湾拍蓝湖)→西岸(克勒涌珠→天鹅乐水看天鹅)→抵达星空营地入住看日落。D5早上营地出发→继续顺时针走北岸(点将台→西海草原)→东门出。门票145元/人，住景区内续期到次日12点只需买一次。提前在「赛里木湖旅游」公众号预约，填车牌号。',
+        roadType: '高速+国道180km'
+      },
+      {
+        day: 'D5', date: '8/6(四)', title: '赛里木湖 → 乌鲁木齐',
+        from: { keyword: '赛里木湖风景名胜区', city: '博尔塔拉蒙古自治州' },
+        to: { keyword: '乌鲁木齐地窝堡国际机场', city: '乌鲁木齐' },
+        via: [],
+        departure: '10:00', expectedArrival: '16:30',
+        stops: [
+          { time: '12:00', name: '精河服务区', dur: '15min', purpose: '加油+午餐' },
+          { time: '13:30', name: '奎屯服务区', dur: '10min', purpose: '休息' }
+        ],
+        hotel: { name: '乌鲁木齐机场美居酒店 ✅', price: '已预订', tip: '头屯河区中亚北路138号，免费接送机，D6退房去机场~6km' },
+        notes: 'D5早上赛湖北岸环湖(12点前出园免再买票)→G30连霍高速回乌鲁木齐。全程566km高速，路况好。注意精河到赛湖段从景区路回到G312再上G30。',
+        scenicRoute: '赛里木湖北岸(出园前)：早上营地出发→继续顺时针走北岸(点将台敖包→西海草原看晨光)→东门出(12点前免再买票)→G312→G30连霍高速→精河服务区(午餐+加油)→奎屯服务区(休息)→乌鲁木齐。高速限速120km/h，全程路况好。',
+        roadType: '高速566km'
       }
     ]
   }
