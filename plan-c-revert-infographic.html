@@ -53,7 +53,7 @@
   --accent-light: #8E6FC5;
   --accent-dark: #4A3470;
   --accent2: #6B8E4E;         /* 绿色 - 优势 */
-  --accent3: #C65D3A;         /* 橙色 - 缺点 */
+  --accent3: #C65D3A;         /* 橙色 - 缺点/餐饮 */
   --paper: #FFFCF5;
   --shadow: rgba(61,43,31,0.1);
   --shadow-strong: rgba(61,43,31,0.18);
@@ -134,10 +134,22 @@ body {
   padding: 0.2rem 0.7rem;
   border-radius: 12px;
 }
+.cover-vehicle {
+  display: inline-block;
+  font-family: 'Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--accent-dark);
+  background: rgba(106,76,147,0.12);
+  padding: 0.15rem 0.6rem;
+  border-radius: 10px;
+  margin-top: 0.5rem;
+  border: 1px dashed var(--accent);
+  letter-spacing: 0.04em;
+}
 .cover-overview {
   font-size: 0.82rem;
   color: var(--muted);
-  margin-top: 0.8rem;
+  margin-top: 0.7rem;
   line-height: 1.7;
   padding: 0 0.4rem;
 }
@@ -148,9 +160,7 @@ body {
   padding-top: 0.8rem;
   border-top: 1px dashed var(--rule);
 }
-.cover-stat {
-  text-align: center;
-}
+.cover-stat { text-align: center; }
 .cover-stat-num {
   font-family: 'NationalPark', sans-serif;
   font-size: 1.2rem;
@@ -167,9 +177,7 @@ body {
 }
 
 /* ===== Section Header ===== */
-.section {
-  padding: 1.4rem 1.25rem 0.5rem;
-}
+.section { padding: 1.4rem 1.25rem 0.5rem; }
 .section-header {
   display: flex;
   align-items: center;
@@ -217,11 +225,7 @@ body {
   border-radius: 6px;
   padding: 0.4rem;
 }
-.map-svg-wrap svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
+.map-svg-wrap svg { display: block; width: 100%; height: auto; }
 .map-legend {
   display: flex;
   flex-wrap: wrap;
@@ -236,11 +240,7 @@ body {
 .map-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 
 /* ===== Daily Timeline ===== */
-.timeline {
-  margin: 0 1.25rem;
-  position: relative;
-  padding-left: 0.5rem;
-}
+.timeline { margin: 0 1.25rem; position: relative; padding-left: 0.5rem; }
 .day-card {
   background: var(--paper);
   border: 1.5px solid var(--rule);
@@ -255,16 +255,9 @@ body {
   border-color: var(--accent);
   box-shadow: 0 2px 10px var(--shadow);
 }
-.day-card.warn {
-  border-left-color: var(--accent3);
-  background: #FDF6F2;
-}
 .day-header {
-  display: flex;
-  align-items: baseline;
-  gap: 0.4rem;
-  margin-bottom: 0.4rem;
-  flex-wrap: wrap;
+  display: flex; align-items: baseline; gap: 0.4rem;
+  margin-bottom: 0.4rem; flex-wrap: wrap;
 }
 .day-num {
   font-family: 'NationalPark', sans-serif;
@@ -276,7 +269,6 @@ body {
   font-weight: 700;
   letter-spacing: 0.05em;
 }
-.day-card.warn .day-num { background: var(--accent3); }
 .day-date {
   font-family: 'Mono', monospace;
   font-size: 0.72rem;
@@ -291,12 +283,8 @@ body {
   font-weight: 700;
 }
 .day-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  font-size: 0.74rem;
-  margin: 0.2rem 0;
-  align-items: baseline;
+  display: flex; justify-content: space-between; gap: 0.5rem;
+  font-size: 0.74rem; margin: 0.2rem 0; align-items: baseline;
 }
 .day-row-label {
   font-family: 'Mono', monospace;
@@ -307,20 +295,14 @@ body {
   letter-spacing: 0.04em;
 }
 .day-row-val {
-  color: var(--ink);
-  flex: 1;
-  text-align: right;
-  line-height: 1.5;
+  color: var(--ink); flex: 1; text-align: right; line-height: 1.5;
 }
 .day-row-val .km {
   font-family: 'Mono', monospace;
   color: var(--accent);
   font-weight: 700;
 }
-.day-row-val .hotel {
-  color: var(--accent2);
-  font-weight: 700;
-}
+.day-row-val .hotel { color: var(--accent2); font-weight: 700; }
 .day-row-val .price {
   font-family: 'Mono', monospace;
   color: var(--accent);
@@ -336,10 +318,52 @@ body {
   border-radius: 8px;
   margin-top: 0.25rem;
 }
-.day-card.warn .day-tag {
-  background: rgba(198,93,58,0.12);
-  color: var(--accent3);
+
+/* ===== Meals Section ===== */
+.day-meals {
+  margin-top: 0.5rem;
+  padding-top: 0.45rem;
+  border-top: 1px dashed var(--rule);
 }
+.day-meals-head {
+  display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.3rem;
+}
+.day-meals-badge {
+  font-family: 'NationalPark', sans-serif;
+  font-size: 0.6rem;
+  color: var(--paper);
+  background: var(--accent3);
+  padding: 0.05rem 0.4rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+.day-meals-title {
+  font-family: 'NationalPark', sans-serif;
+  font-size: 0.68rem;
+  color: var(--accent3);
+  font-weight: 700;
+}
+.day-meal-item {
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0.12rem 0;
+  display: flex; align-items: baseline; gap: 0.3rem;
+}
+.day-meal-tag {
+  font-family: 'Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--accent3);
+  font-weight: 700;
+  background: rgba(198,93,58,0.12);
+  padding: 0.02rem 0.28rem;
+  border-radius: 3px;
+  min-width: 1.1rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+.day-meal-text { flex: 1; line-height: 1.45; }
 
 /* ===== Pros / Cons ===== */
 .pros-cons {
@@ -348,27 +372,15 @@ body {
   grid-template-columns: 1fr;
   gap: 0.7rem;
 }
-.pc-card {
-  border-radius: 8px;
-  padding: 0.8rem 0.9rem;
-  border: 1.5px dashed;
-}
-.pc-card.pros {
-  background: #F1F8EB;
-  border-color: var(--accent2);
-}
-.pc-card.cons {
-  background: #FDF1EB;
-  border-color: var(--accent3);
-}
+.pc-card { border-radius: 8px; padding: 0.8rem 0.9rem; border: 1.5px dashed; }
+.pc-card.pros { background: #F1F8EB; border-color: var(--accent2); }
+.pc-card.cons { background: #FDF1EB; border-color: var(--accent3); }
 .pc-title {
   font-family: 'NationalPark', sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
+  display: flex; align-items: center; gap: 0.3rem;
 }
 .pc-card.pros .pc-title { color: var(--accent2); }
 .pc-card.cons .pc-title { color: var(--accent3); }
@@ -458,10 +470,7 @@ body {
   min-width: 2.2rem;
 }
 .hotel-row.head .hotel-day { color: var(--paper); }
-.hotel-name {
-  flex: 1;
-  line-height: 1.4;
-}
+.hotel-name { flex: 1; line-height: 1.4; }
 .hotel-price {
   font-family: 'Mono', monospace;
   font-size: 0.72rem;
@@ -472,8 +481,7 @@ body {
 }
 .hotel-row.head .hotel-price { color: var(--paper); }
 .hotel-total {
-  display: flex;
-  justify-content: space-between;
+  display: flex; justify-content: space-between;
   background: var(--accent-dark);
   color: var(--paper);
   padding: 0.55rem 0.75rem;
@@ -482,8 +490,7 @@ body {
   font-weight: 700;
 }
 .hotel-saved {
-  display: flex;
-  justify-content: space-between;
+  display: flex; justify-content: space-between;
   background: var(--accent2);
   color: var(--paper);
   padding: 0.4rem 0.75rem;
@@ -503,8 +510,7 @@ body {
 .cost-card::before {
   content: '5人合计';
   position: absolute;
-  top: -0.6rem;
-  right: 0.8rem;
+  top: -0.6rem; right: 0.8rem;
   background: var(--accent);
   color: var(--paper);
   font-family: 'Mono', monospace;
@@ -514,24 +520,14 @@ body {
   letter-spacing: 0.05em;
 }
 .cost-row {
-  display: flex;
-  justify-content: space-between;
+  display: flex; justify-content: space-between;
   padding: 0.3rem 0;
   font-size: 0.78rem;
   border-bottom: 1px dotted var(--rule);
 }
 .cost-row:last-of-type { border-bottom: none; }
-.cost-label {
-  color: var(--ink);
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-.cost-label .dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
+.cost-label { color: var(--ink); display: flex; align-items: center; gap: 0.3rem; }
+.cost-label .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .cost-value {
   font-family: 'Mono', monospace;
   font-weight: 700;
@@ -548,9 +544,7 @@ body {
   margin-top: 0.6rem;
   padding-top: 0.6rem;
   border-top: 2px dashed var(--accent);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+  display: flex; justify-content: space-between; align-items: baseline;
 }
 .cost-total-label {
   font-family: 'NationalPark', sans-serif;
@@ -564,10 +558,7 @@ body {
   color: var(--accent);
   font-weight: 700;
 }
-.cost-total-value .yuan {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
+.cost-total-value .yuan { font-size: 0.85rem; color: var(--muted); }
 .cost-saved {
   margin-top: 0.6rem;
   padding: 0.4rem 0.6rem;
@@ -580,9 +571,7 @@ body {
   text-align: center;
   font-weight: 700;
 }
-.cost-saved .big {
-  font-size: 1rem;
-}
+.cost-saved .big { font-size: 1rem; }
 
 /* ===== Bottom Tips ===== */
 .tips-card {
@@ -598,14 +587,9 @@ body {
   color: var(--accent3);
   font-weight: 700;
   margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
+  display: flex; align-items: center; gap: 0.3rem;
 }
-.tips-list {
-  list-style: none;
-  counter-reset: tips;
-}
+.tips-list { list-style: none; counter-reset: tips; }
 .tips-list li {
   font-size: 0.74rem;
   line-height: 1.55;
@@ -617,8 +601,7 @@ body {
 .tips-list li::before {
   content: counter(tips);
   position: absolute;
-  left: 0;
-  top: 0.05rem;
+  left: 0; top: 0.05rem;
   width: 16px; height: 16px;
   background: var(--accent3);
   color: var(--paper);
@@ -628,10 +611,7 @@ body {
   font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
-.tips-list li strong {
-  color: var(--accent3);
-  font-family: 'NationalPark', sans-serif;
-}
+.tips-list li strong { color: var(--accent3); font-family: 'NationalPark', sans-serif; }
 
 /* ===== Footer ===== */
 .footer {
@@ -641,11 +621,7 @@ body {
   margin-top: 0.5rem;
   background: linear-gradient(180deg, var(--paper) 0%, #F5EFF9 100%);
 }
-.footer-note {
-  font-family: 'Hand', cursive;
-  font-size: 1.1rem;
-  color: var(--accent);
-}
+.footer-note { font-family: 'Hand', cursive; font-size: 1.1rem; color: var(--accent); }
 .footer-meta {
   font-family: 'Mono', monospace;
   font-size: 0.62rem;
@@ -664,6 +640,7 @@ body {
     <h1 class="cover-title">先独库后赛湖</h1>
     <p class="cover-subtitle">Duku Highway First, Then Sayram</p>
     <p class="cover-dates">2026.08.02(日) — 08.07(五) ｜ 6天5晚</p>
+    <div class="cover-vehicle">深蓝G318 · 5人自驾</div>
     <p class="cover-overview">
       D2精力最充沛时直接上独库公路(若封路可立刻切Plan C零风险)，D3-D4逐渐轻松过渡到伊宁+赛湖深度游，D5返程最轻松5.5h自然醒。独库风险前置，体力递减分配。
     </p>
@@ -673,7 +650,7 @@ body {
         <div class="cover-stat-label">总里程</div>
       </div>
       <div class="cover-stat">
-        <div class="cover-stat-num">6天</div>
+        <div class="cover-stat-num">6天5晚</div>
         <div class="cover-stat-label">行程</div>
       </div>
       <div class="cover-stat">
@@ -687,12 +664,12 @@ body {
   <section class="section">
     <div class="section-header">
       <div class="section-icon">M</div>
-      <div class="section-title">路线示意图</div>
-      <span class="section-hand">Route Map</span>
+      <div class="section-title">路线示意图 · 北朝上</div>
+      <span class="section-hand">North-Up Map</span>
     </div>
     <div class="map-box">
       <div class="map-svg-wrap">
-        <svg viewBox="0 0 320 290" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="gridCR" width="20" height="20" patternUnits="userSpaceOnUse">
               <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(106,76,147,0.08)" stroke-width="0.5"/>
@@ -700,92 +677,93 @@ body {
             <marker id="arrowCR" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
               <path d="M0,0 L8,4 L0,8 z" fill="#6A4C93"/>
             </marker>
-            <marker id="arrowCR-orange" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <marker id="arrowCRo" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
               <path d="M0,0 L8,4 L0,8 z" fill="#C65D3A"/>
             </marker>
           </defs>
-          <rect width="320" height="290" fill="url(#gridCR)"/>
-
-          <!-- D1 乌鲁木齐 (start) -->
-          <circle cx="245" cy="240" r="7" fill="#6A4C93" stroke="#FFFCF5" stroke-width="2"/>
-          <text x="245" y="262" text-anchor="middle" font-family="NationalPark" font-size="10" fill="#3D2B1F" font-weight="700">乌鲁木齐</text>
-          <text x="245" y="273" text-anchor="middle" font-family="Mono" font-size="7" fill="#8B7355">D1·休整</text>
-
-          <!-- D2 乌市→独山子→独库→那拉提 (mountain road first!) -->
-          <path d="M 245 234 Q 285 210 270 165 Q 255 140 230 130" fill="none" stroke="#C65D3A" stroke-width="3" stroke-dasharray="4 3" marker-end="url(#arrowCR-orange)"/>
-          <text x="282" y="200" font-family="Mono" font-size="7" fill="#C65D3A" font-weight="700">D2·480km</text>
-          <text x="282" y="210" font-family="Mono" font-size="6" fill="#8B7355">独库G217</text>
-
-          <!-- 独山子 entry point -->
-          <rect x="276" y="218" width="5" height="5" fill="#C65D3A" transform="rotate(45 278.5 220.5)"/>
-          <text x="285" y="227" font-family="Mono" font-size="6" fill="#8B7355">独山子</text>
-          <text x="285" y="234" font-family="Mono" font-size="5.5" fill="#C65D3A">预约入口</text>
-
-          <!-- 独库 high pass icon (mountain) -->
-          <g transform="translate(258, 158)">
-            <path d="M0,12 L6,0 L12,12 Z" fill="#C65D3A"/>
-            <text x="6" y="-3" text-anchor="middle" font-family="Mono" font-size="6" fill="#C65D3A" font-weight="700">3390m</text>
-            <text x="6" y="22" text-anchor="middle" font-family="Mono" font-size="5.5" fill="#8B7355">达坂</text>
-          </g>
-
-          <!-- 那拉提 -->
-          <circle cx="225" cy="127" r="7" fill="#6A4C93" stroke="#FFFCF5" stroke-width="2"/>
-          <text x="225" y="116" text-anchor="middle" font-family="NationalPark" font-size="10" fill="#3D2B1F" font-weight="700">那拉提</text>
-          <text x="225" y="148" text-anchor="middle" font-family="Mono" font-size="6.5" fill="#6B8E4E">海拔1800m</text>
-          <text x="225" y="158" text-anchor="middle" font-family="Mono" font-size="7" fill="#8B7355">D2·住漫心</text>
-
-          <!-- D3 那拉提→伊宁 (short hop) -->
-          <path d="M 220 134 Q 195 145 170 160" fill="none" stroke="#6A4C93" stroke-width="2.5" stroke-dasharray="4 3" marker-end="url(#arrowCR)"/>
-          <text x="158" y="138" font-family="Mono" font-size="7" fill="#6A4C93" font-weight="700">D3·270km</text>
-
-          <!-- 伊宁 -->
-          <circle cx="165" cy="165" r="6" fill="#6A4C93" stroke="#FFFCF5" stroke-width="2"/>
-          <text x="165" y="184" text-anchor="middle" font-family="NationalPark" font-size="9" fill="#3D2B1F" font-weight="700">伊宁</text>
-          <text x="165" y="194" text-anchor="middle" font-family="Mono" font-size="7" fill="#8B7355">D3·喀赞其</text>
-
-          <!-- D4 伊宁→果子沟→赛湖 (uphill!) -->
-          <path d="M 159 159 Q 130 130 100 100" fill="none" stroke="#6A4C93" stroke-width="2.5" stroke-dasharray="4 3" marker-end="url(#arrowCR)"/>
-          <text x="105" y="135" font-family="Mono" font-size="7" fill="#6A4C93" font-weight="700" transform="rotate(30 105 135)">D4·180km</text>
-          <!-- 果子沟 -->
-          <rect x="125" y="128" width="5" height="5" fill="#C65D3A" transform="rotate(45 127.5 130.5)"/>
-          <text x="118" y="120" font-family="Mono" font-size="6" fill="#8B7355">果子沟↑</text>
-
-          <!-- 赛里木湖 -->
-          <circle cx="95" cy="95" r="9" fill="#8E6FC5" stroke="#6A4C93" stroke-width="2"/>
-          <circle cx="95" cy="95" r="3" fill="#FFFCF5"/>
-          <text x="95" y="78" text-anchor="middle" font-family="NationalPark" font-size="10" fill="#3D2B1F" font-weight="700">赛里木湖</text>
-          <text x="95" y="68" text-anchor="middle" font-family="Mono" font-size="7" fill="#8B7355">D4·环湖+日落</text>
-          <text x="95" y="115" text-anchor="middle" font-family="Mono" font-size="6.5" fill="#6B8E4E">海拔2071m</text>
-
-          <!-- D4 赛湖→精河 (东行80km after sunset) -->
-          <path d="M 100 102 Q 135 110 170 105" fill="none" stroke="#6A4C93" stroke-width="2" stroke-dasharray="2 2" marker-end="url(#arrowCR)"/>
-          <text x="125" y="98" font-family="Mono" font-size="6" fill="#6A4C93">80km→精河</text>
-          <!-- 精河 -->
-          <rect x="170" y="100" width="6" height="6" fill="#6A4C93" rx="1"/>
-          <text x="176" y="93" font-family="Mono" font-size="6" fill="#6A4C93" font-weight="700">精河</text>
-          <text x="176" y="115" font-family="Mono" font-size="5.5" fill="#8B7355">22:30到</text>
-
-          <!-- D5 精河→乌鲁木齐 (return) -->
-          <path d="M 178 108 Q 220 160 240 230" fill="none" stroke="#6B8E4E" stroke-width="2.5" stroke-dasharray="4 3" marker-end="url(#arrowCR)"/>
-          <text x="220" y="180" font-family="Mono" font-size="7" fill="#6B8E4E" font-weight="700">D5·486km</text>
-          <text x="220" y="190" font-family="Mono" font-size="6" fill="#8B7355">G30高速5.5h</text>
-
-          <!-- Compass -->
-          <g transform="translate(290, 30)">
-            <circle cx="0" cy="0" r="12" fill="none" stroke="#8B7355" stroke-width="1"/>
-            <text x="0" y="-3" text-anchor="middle" font-family="Mono" font-size="7" fill="#8B7355" font-weight="700">N</text>
-            <path d="M0,-8 L3,3 L0,1 L-3,3 Z" fill="#6A4C93"/>
-          </g>
+          <rect width="320" height="320" fill="url(#gridCR)"/>
 
           <!-- Title -->
-          <text x="16" y="22" font-family="NationalPark" font-size="10" fill="#6A4C93" font-weight="700">伊犁环线 · 反向</text>
-          <text x="16" y="33" font-family="Hand" font-size="9" fill="#4A3470">Counterclockwise Loop</text>
+          <text x="16" y="22" font-family="NationalPark" font-size="11" fill="#6A4C93" font-weight="700">伊犁环线 · 逆时针</text>
+          <text x="16" y="34" font-family="Hand" font-size="9" fill="#4A3470">North-Up · Counter-Clockwise</text>
 
-          <!-- Risk indicator -->
-          <g transform="translate(16, 50)">
-            <rect x="0" y="0" width="120" height="14" rx="7" fill="rgba(107,142,78,0.2)" stroke="#6B8E4E" stroke-width="0.5"/>
-            <text x="60" y="10" text-anchor="middle" font-family="Mono" font-size="6.5" fill="#6B8E4E" font-weight="700">独库封路可切Plan C</text>
+          <!-- Compass N pointing up -->
+          <g transform="translate(290, 32)">
+            <circle cx="0" cy="0" r="14" fill="#FFFCF5" stroke="#8B7355" stroke-width="1"/>
+            <text x="0" y="-4" text-anchor="middle" font-family="Mono" font-size="7" fill="#8B7355" font-weight="700">N</text>
+            <path d="M0,-10 L3,3 L0,1 L-3,3 Z" fill="#6A4C93"/>
+            <line x1="-11" y1="0" x2="11" y2="0" stroke="rgba(139,115,85,0.25)" stroke-width="0.5" stroke-dasharray="2 2"/>
           </g>
+
+          <!-- Risk indicator badge -->
+          <g transform="translate(16, 46)">
+            <rect x="0" y="0" width="118" height="13" rx="6.5" fill="rgba(107,142,78,0.2)" stroke="#6B8E4E" stroke-width="0.5"/>
+            <text x="59" y="9" text-anchor="middle" font-family="Mono" font-size="6.5" fill="#6B8E4E" font-weight="700">独库封路可切Plan C</text>
+          </g>
+
+          <!-- D2 seg1: 乌鲁木齐→独山子 (G30 west-northwest, short, PURPLE) -->
+          <path d="M 268 92 Q 240 76 210 70" fill="none" stroke="#6A4C93" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#arrowCR)"/>
+          <text x="250" y="72" text-anchor="middle" font-family="Mono" font-size="6" fill="#6A4C93">G30</text>
+
+          <!-- D2 seg2: 独山子→那拉提 (Duku south, ORANGE) -->
+          <path d="M 202 70 Q 210 130 210 200 Q 205 240 188 256" fill="none" stroke="#C65D3A" stroke-width="3" stroke-dasharray="5 3" marker-end="url(#arrowCRo)"/>
+          <text x="235" y="165" font-family="Mono" font-size="7" fill="#C65D3A" font-weight="700">D2·独库</text>
+          <text x="235" y="175" font-family="Mono" font-size="6" fill="#8B7355">G217北向南</text>
+
+          <!-- 独库 high pass icon (mountain 3390m) -->
+          <g transform="translate(207, 150)">
+            <path d="M0,11 L5,0 L10,11 Z" fill="#C65D3A"/>
+            <text x="5" y="-3" text-anchor="middle" font-family="Mono" font-size="6" fill="#C65D3A" font-weight="700">3390m</text>
+          </g>
+
+          <!-- 独山子 entry point (top-middle) -->
+          <rect x="199" y="62" width="6" height="6" fill="#C65D3A" transform="rotate(45 202 65)"/>
+          <text x="228" y="58" font-family="Mono" font-size="6" fill="#8B7355">独山子</text>
+
+          <!-- D2 那拉提 (bottom-middle, 1800m) -->
+          <circle cx="185" cy="260" r="6" fill="#6A4C93" stroke="#FFFCF5" stroke-width="2"/>
+          <text x="185" y="280" text-anchor="middle" font-family="NationalPark" font-size="9" fill="#3D2B1F" font-weight="700">那拉提</text>
+          <text x="185" y="291" text-anchor="middle" font-family="Mono" font-size="6.5" fill="#6B8E4E">1800m·D2住</text>
+
+          <!-- D3: 那拉提→伊宁 (west-northwest) -->
+          <path d="M 180 256 Q 120 235 56 198" fill="none" stroke="#6A4C93" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#arrowCR)"/>
+          <text x="118" y="250" text-anchor="middle" font-family="Mono" font-size="7" fill="#6A4C93" font-weight="700">D3 · 270km</text>
+
+          <!-- 伊宁 (left-middle, 660m) -->
+          <circle cx="50" cy="195" r="6" fill="#6A4C93" stroke="#FFFCF5" stroke-width="2"/>
+          <text x="50" y="215" text-anchor="middle" font-family="NationalPark" font-size="9" fill="#3D2B1F" font-weight="700">伊宁</text>
+          <text x="50" y="225" text-anchor="middle" font-family="Mono" font-size="6.5" fill="#8B7355">660m·D3住</text>
+
+          <!-- D4 seg1: 伊宁→果子沟→赛湖 (north through Guozigou) -->
+          <path d="M 50 188 Q 44 115 55 64" fill="none" stroke="#6A4C93" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#arrowCR)"/>
+          <text x="20" y="130" text-anchor="middle" font-family="Mono" font-size="7" fill="#6A4C93" font-weight="700" transform="rotate(-90 20 130)">D4·180km</text>
+          <!-- 果子沟 tunnel -->
+          <rect x="41" y="118" width="6" height="6" fill="#C65D3A" transform="rotate(45 44 121)"/>
+          <text x="30" y="112" text-anchor="middle" font-family="Mono" font-size="6" fill="#8B7355">果子沟</text>
+
+          <!-- 赛里木湖 (top-left, 2071m) -->
+          <circle cx="55" cy="55" r="9" fill="#8E6FC5" stroke="#6A4C93" stroke-width="2"/>
+          <circle cx="55" cy="55" r="3" fill="#FFFCF5"/>
+          <text x="55" y="33" text-anchor="middle" font-family="NationalPark" font-size="10" fill="#3D2B1F" font-weight="700">赛里木湖</text>
+          <text x="55" y="82" text-anchor="middle" font-family="Mono" font-size="6.5" fill="#6B8E4E">2071m·D4环湖</text>
+
+          <!-- D4 seg2: 赛湖→精河 (east, short) -->
+          <path d="M 65 55 Q 88 48 108 50" fill="none" stroke="#6A4C93" stroke-width="2" stroke-dasharray="3 2" marker-end="url(#arrowCR)"/>
+          <text x="86" y="44" text-anchor="middle" font-family="Mono" font-size="5.5" fill="#6A4C93">80km</text>
+
+          <!-- 精河 (top-middle-left) -->
+          <rect x="110" y="46" width="8" height="8" fill="#6A4C93" rx="1"/>
+          <text x="114" y="40" text-anchor="middle" font-family="Mono" font-size="6.5" fill="#6A4C93" font-weight="700">精河·D4住</text>
+          <text x="114" y="62" text-anchor="middle" font-family="Mono" font-size="5.5" fill="#8B7355">22:30到</text>
+
+          <!-- D5: 精河→乌鲁木齐 (east-southeast, long) -->
+          <path d="M 118 53 Q 195 72 268 90" fill="none" stroke="#6B8E4E" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#arrowCR)"/>
+          <text x="195" y="65" text-anchor="middle" font-family="Mono" font-size="7" fill="#6B8E4E" font-weight="700">D5 · 486km G30</text>
+
+          <!-- 乌鲁木齐 (top-right, 800m) - drawn last to be on top -->
+          <circle cx="275" cy="95" r="7" fill="#6A4C93" stroke="#FFFCF5" stroke-width="2"/>
+          <text x="275" y="115" text-anchor="middle" font-family="NationalPark" font-size="10" fill="#3D2B1F" font-weight="700">乌鲁木齐</text>
+          <text x="275" y="126" text-anchor="middle" font-family="Mono" font-size="6.5" fill="#8B7355">800m·D1/D5住</text>
         </svg>
       </div>
       <div class="map-legend">
@@ -802,7 +780,7 @@ body {
   <section class="section">
     <div class="section-header">
       <div class="section-icon">T</div>
-      <div class="section-title">每日时间轴</div>
+      <div class="section-title">每日时间轴 · 含餐饮</div>
       <span class="section-hand">D1 - D6</span>
     </div>
     <div class="timeline">
@@ -820,17 +798,27 @@ body {
         </div>
         <div class="day-row">
           <span class="day-row-label">里程</span>
-          <span class="day-row-val"><span class="km">市内 ~30km</span></span>
+          <span class="day-row-val"><span class="km">0km · 市内</span></span>
         </div>
         <div class="day-row">
           <span class="day-row-label">住宿</span>
-          <span class="day-row-val"><span class="hotel">乌鲁木齐机场美居酒店</span> · <span class="price">¥420×3=1,260</span></span>
+          <span class="day-row-val"><span class="hotel">美居酒店</span> · <span class="price">¥1,260</span></span>
         </div>
-        <span class="day-tag">海拔 680m · 适应期</span>
+        <div class="day-meals">
+          <div class="day-meals-head">
+            <span class="day-meals-badge">餐</span>
+            <span class="day-meals-title">餐饮安排</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">晚</span>
+            <span class="day-meal-text">大巴扎 · 恺撒烤包子 + 努日依曼抓饭（人均50元）</span>
+          </div>
+        </div>
+        <span class="day-tag">海拔 800m · 适应期</span>
       </div>
 
-      <!-- D2 独库 - 风险日 -->
-      <div class="day-card highlight warn">
+      <!-- D2 独库 - 风险前置日 -->
+      <div class="day-card highlight">
         <div class="day-header">
           <span class="day-num">D2</span>
           <span class="day-date">8/3(一)</span>
@@ -838,19 +826,41 @@ body {
         </div>
         <div class="day-row">
           <span class="day-row-label">独库</span>
-          <span class="day-row-val">预约 独山子入口 8-10 点</span>
+          <span class="day-row-val">独山子入口预约 · G217北向南</span>
         </div>
         <div class="day-row">
           <span class="day-row-label">里程</span>
-          <span class="day-row-val"><span class="km">480km · 高速+山路</span></span>
+          <span class="day-row-val"><span class="km">480km · 07:00-15:00</span></span>
         </div>
         <div class="day-row">
           <span class="day-row-label">海拔</span>
-          <span class="day-row-val">680 → 3390m达坂 → 1800m</span>
+          <span class="day-row-val">800 → 3390m达坂 → 1800m</span>
         </div>
         <div class="day-row">
           <span class="day-row-label">住宿</span>
-          <span class="day-row-val"><span class="hotel">那拉提空中草原漫心酒店</span> · <span class="price">¥2,420(3间)</span></span>
+          <span class="day-row-val"><span class="hotel">漫心酒店</span> · <span class="price">¥2,420</span></span>
+        </div>
+        <div class="day-meals">
+          <div class="day-meals-head">
+            <span class="day-meals-badge">餐</span>
+            <span class="day-meals-title">餐饮安排</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">早</span>
+            <span class="day-meal-text">酒店早餐</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">午</span>
+            <span class="day-meal-text">独山子 · 徐记沙湾大盘鸡（98元/份 3人吃到撑）</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">茶</span>
+            <span class="day-meal-text">乔尔玛 · 馕坑烤肉红柳肉15元/串 + 拌面28元</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">晚</span>
+            <span class="day-meal-text">那拉提 · 歹歹抓饭王或美食街（人均40-50元）</span>
+          </div>
         </div>
         <span class="day-tag">封了立刻切Plan C · 风险前置</span>
       </div>
@@ -864,7 +874,7 @@ body {
         </div>
         <div class="day-row">
           <span class="day-row-label">上午</span>
-          <span class="day-row-val">那拉提空中草原 · 傍晚人少</span>
+          <span class="day-row-val">那拉提空中草原 · 09:00出发</span>
         </div>
         <div class="day-row">
           <span class="day-row-label">里程</span>
@@ -872,43 +882,83 @@ body {
         </div>
         <div class="day-row">
           <span class="day-row-label">下午</span>
-          <span class="day-row-val">到伊宁 · 喀赞其民俗村</span>
+          <span class="day-row-val">伊宁喀赞其民俗村 · 老城</span>
         </div>
         <div class="day-row">
           <span class="day-row-label">住宿</span>
-          <span class="day-row-val"><span class="hotel">伊宁老城文化旅游区美居</span> · <span class="price">¥560×3=1,680</span></span>
+          <span class="day-row-val"><span class="hotel">美居酒店</span> · <span class="price">¥1,680</span></span>
         </div>
-        <span class="day-tag">海拔 660m · 中等强度</span>
+        <div class="day-meals">
+          <div class="day-meals-head">
+            <span class="day-meals-badge">餐</span>
+            <span class="day-meals-title">餐饮安排</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">早</span>
+            <span class="day-meal-text">酒店早餐</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">午</span>
+            <span class="day-meal-text">那拉提 · 塔合曼拌面馆过油肉拌面（26元）</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">茶</span>
+            <span class="day-meal-text">伊宁喀赞其冰淇淋（5-15元）</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">晚</span>
+            <span class="day-meal-text">海尔巴格餐厅 · 维吾尔风味（人均60元）</span>
+          </div>
+        </div>
+        <span class="day-tag">海拔 1800→660m · 体力递减</span>
       </div>
 
-      <!-- D4 赛湖 -->
+      <!-- D4 赛湖深度 -->
       <div class="day-card highlight">
         <div class="day-header">
           <span class="day-num">D4</span>
           <span class="day-date">8/5(三)</span>
-          <span class="day-route">伊宁 → 果子沟 → 赛湖 → 精河</span>
+          <span class="day-route">伊宁 → 赛里木湖 → 精河</span>
         </div>
         <div class="day-row">
           <span class="day-row-label">上午</span>
-          <span class="day-row-val">09:00出发 · 果子沟上坡</span>
-        </div>
-        <div class="day-row">
-          <span class="day-row-label">里程</span>
-          <span class="day-row-val"><span class="km">180km 环湖 + 80km 东行</span></span>
+          <span class="day-row-val">09:00出发 · 果子沟隧道 · 抵达赛湖</span>
         </div>
         <div class="day-row">
           <span class="day-row-label">下午</span>
-          <span class="day-row-val">赛湖环湖 · 看日落(21:30)</span>
+          <span class="day-row-val">赛湖完整环湖90km · 看日落(21:30)</span>
+        </div>
+        <div class="day-row">
+          <span class="day-row-label">里程</span>
+          <span class="day-row-val"><span class="km">180km + 80km = 260km</span></span>
         </div>
         <div class="day-row">
           <span class="day-row-label">住宿</span>
-          <span class="day-row-val"><span class="hotel">全季精河和平路东酒店</span> · <span class="price">¥1,231(3间)</span></span>
+          <span class="day-row-val"><span class="hotel">全季精河</span> · <span class="price">¥1,231</span> · 22:30到</span>
         </div>
-        <span class="day-tag">海拔 2071m · 22:30到精河</span>
+        <div class="day-meals">
+          <div class="day-meals-head">
+            <span class="day-meals-badge">餐</span>
+            <span class="day-meals-title">餐饮安排</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">早</span>
+            <span class="day-meal-text">酒店早餐</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">午</span>
+            <span class="day-meal-text">赛湖景区 · 自带干粮野餐或高白鲑鱼（人均80元）</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">晚</span>
+            <span class="day-meal-text">精河县城 · 大盘鸡/烤肉（人均40-50元）</span>
+          </div>
+        </div>
+        <span class="day-tag">海拔 660→2071m · 完整环湖+日落</span>
       </div>
 
-      <!-- D5 返程 - 最轻松 -->
-      <div class="day-card highlight">
+      <!-- D5 返程最轻松 -->
+      <div class="day-card">
         <div class="day-header">
           <span class="day-num">D5</span>
           <span class="day-date">8/6(四)</span>
@@ -916,21 +966,39 @@ body {
         </div>
         <div class="day-row">
           <span class="day-row-label">出发</span>
-          <span class="day-row-val">自然醒 08:30 出发 · 14:00 到</span>
+          <span class="day-row-val">08:30出发 · 自然醒 · G30东行</span>
         </div>
         <div class="day-row">
           <span class="day-row-label">里程</span>
-          <span class="day-row-val"><span class="km">486km · 纯高速5.5h</span></span>
+          <span class="day-row-val"><span class="km">486km · 08:30-14:00</span></span>
         </div>
         <div class="day-row">
-          <span class="day-row-label">特点</span>
-          <span class="day-row-val">不用爬山纯巡航 · 全程最轻松</span>
+          <span class="day-row-label">下午</span>
+          <span class="day-row-val">14:00到乌鲁木齐 · 大巴扎</span>
         </div>
         <div class="day-row">
           <span class="day-row-label">住宿</span>
-          <span class="day-row-val"><span class="hotel">乌鲁木齐机场美居酒店</span> · <span class="price">¥420×3=1,260</span></span>
+          <span class="day-row-val"><span class="hotel">美居酒店</span> · <span class="price">¥1,260</span></span>
         </div>
-        <span class="day-tag">海拔 800m · 返程最轻松</span>
+        <div class="day-meals">
+          <div class="day-meals-head">
+            <span class="day-meals-badge">餐</span>
+            <span class="day-meals-title">餐饮安排</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">早</span>
+            <span class="day-meal-text">全季早餐</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">午</span>
+            <span class="day-meal-text">奎屯服务区 · 简餐（25-35元）</span>
+          </div>
+          <div class="day-meal-item">
+            <span class="day-meal-tag">晚</span>
+            <span class="day-meal-text">乌鲁木齐大巴扎（人均50元）</span>
+          </div>
+        </div>
+        <span class="day-tag">返程最轻松 · 5.5h高速</span>
       </div>
 
       <!-- D6 -->
@@ -946,7 +1014,7 @@ body {
         </div>
         <div class="day-row">
           <span class="day-row-label">上午</span>
-          <span class="day-row-val">机场美居退房 · 即可达机场</span>
+          <span class="day-row-val">美居退房 · 即可达机场</span>
         </div>
         <span class="day-tag">返程 · 海拔 800m</span>
       </div>
@@ -968,15 +1036,15 @@ body {
           方案优势 · 6个亮点
         </div>
         <ul class="pc-list">
-          <li><strong>独库风险前置</strong>：D2走独库，若封路立刻切Plan C原计划(改2处酒店即可)，零风险</li>
-          <li><strong>D5返程最轻松</strong>：486km纯高速5.5h，自然醒08:30出发不用爬山</li>
-          <li><strong>体力递减分配</strong>：最累D2(山路480km) → 最轻松D5(高速486km)，符合疲劳曲线</li>
-          <li><strong>住宿省¥1,449</strong>：C-R住宿¥7,851 vs Plan C¥9,300(赛湖不住景区改住精河)</li>
-          <li><strong>独库精力最充沛</strong>：D2第一天开独库山路，身体状态最好集中度最高</li>
-          <li><strong>赛湖完整环湖+看日落</strong>：D4到赛湖时体力充沛，21:30日落完整体验</li>
+          <li><strong>独库风险前置</strong>：D2封了立刻切Plan C，零风险</li>
+          <li><strong>D5返程最轻松</strong>：486km高速5.5h，自然醒08:30出发</li>
+          <li><strong>体力递减</strong>：最累D2独库→最轻松D5返程，越走越轻松</li>
+          <li><strong>住宿省1449元</strong>：7851 vs 9300元</li>
+          <li><strong>独库精力最充沛</strong>：D2第一天精力最好走山路</li>
+          <li><strong>赛湖完整环湖+日落</strong>：单日90km一圈+看日落</li>
         </ul>
         <div class="pc-savings">
-          较Plan C省 <span class="big">¥1,549</span> 总费用
+          较 Plan C 省 <span class="big">¥1,549</span>
         </div>
       </div>
       <div class="pc-card cons">
@@ -985,9 +1053,9 @@ body {
           方案缺点 · 3个注意点
         </div>
         <ul class="pc-list">
-          <li><strong>D2第一天就开独库山路</strong>：海拔从680m直接冲到3390m达坂，可能高反(无渐进适应)</li>
-          <li><strong>赛湖不住景区内</strong>：D4看完日落后22:30才到精河，看不到次日日出晨雾</li>
-          <li><strong>D4晚上22:30才到精河</strong>：日落后开车80km东行到精河，到达时间晚需提前订好酒店</li>
+          <li><strong>D2第一天就开独库山路</strong>：海拔从800直接到3390m，无缓冲</li>
+          <li><strong>赛湖不住景区内</strong>：看不到日出，要22:30才到精河</li>
+          <li><strong>D2需提前改酒店日期</strong>：那拉提酒店从D4改到D2</li>
         </ul>
       </div>
     </div>
@@ -1013,7 +1081,7 @@ body {
       </div>
       <div class="hotel-row">
         <span class="hotel-day">D2</span>
-        <span class="hotel-name">那拉提空中草原漫心酒店<br><span style="font-size:0.66rem;color:var(--muted)">3间房</span></span>
+        <span class="hotel-name">那拉提空中草原漫心酒店<br><span style="font-size:0.66rem;color:var(--muted)">需提前从D4改到D2</span></span>
         <span class="hotel-price">¥2,420</span>
       </div>
       <div class="hotel-row">
@@ -1023,7 +1091,7 @@ body {
       </div>
       <div class="hotel-row">
         <span class="hotel-day">D4</span>
-        <span class="hotel-name">全季精河和平路东酒店<br><span style="font-size:0.66rem;color:var(--muted)">3间房·22:30到</span></span>
+        <span class="hotel-name">全季精河和平路东<br><span style="font-size:0.66rem;color:var(--muted)">22:30到</span></span>
         <span class="hotel-price">¥1,231</span>
       </div>
       <div class="hotel-row">
@@ -1036,8 +1104,8 @@ body {
         <span>¥7,851</span>
       </div>
       <div class="hotel-saved">
-        <span>较Plan C省</span>
-        <span>-¥1,449</span>
+        <span>较 Plan C 住宿省</span>
+        <span>¥1,449</span>
       </div>
     </div>
   </section>
@@ -1059,13 +1127,7 @@ body {
         <span class="cost-value">¥1,500</span>
       </div>
       <div class="cost-row">
-        <span class="cost-label" style="display:block;">
-          <span class="dot" style="background:#6B8E4E"></span>门票明细
-        </span>
-        <span class="cost-value"></span>
-      </div>
-      <div class="cost-row">
-        <span class="cost-detail">赛湖 ¥725 + 那拉提 ¥775 + 独库 ¥0</span>
+        <span class="cost-detail">赛湖¥725 + 那拉提¥775 + 独库¥0</span>
         <span class="cost-value" style="opacity:0"></span>
       </div>
       <div class="cost-row">
@@ -1085,7 +1147,7 @@ body {
         <span class="cost-total-value">¥13,451<span class="yuan"> 元</span></span>
       </div>
       <div class="cost-saved">
-        较 Plan C 节省 <span class="big">¥1,549</span> 元
+        较 Plan C 省 <span class="big">¥1,549</span> 元
       </div>
     </div>
   </section>
@@ -1103,12 +1165,10 @@ body {
         预约 & 出发清单
       </div>
       <ol class="tips-list">
-        <li><strong>独库公路预约</strong>：提前7天在「新疆交警」公众号预约，D2独山子入口8-10点时段</li>
-        <li><strong>赛里木湖预约</strong>：提前3天在「赛里木湖旅游」公众号预约入园名额</li>
-        <li><strong>无车牌号怎么办</strong>：可16:00后免预约进独库 / 用临牌预约后拨打12123修改车牌</li>
-        <li><strong>切换Plan C预案</strong>：D2早上查独库路况，封路则立刻改走G30→赛湖原Plan C路线</li>
-        <li><strong>D4精河酒店</strong>：务必提前预订全季精河酒店(22:30晚到)，避免临时找房</li>
-        <li><strong>行李清单</strong>：冲锋衣+抓绒衣必备，独库达坂8月可遇降雪；不要带金属杆雨伞</li>
+        <li><strong>独库公路</strong>：提前7天在「新疆交警」公众号预约（免费）</li>
+        <li><strong>赛里木湖</strong>：提前3天在「赛里木湖旅游」公众号预约（145元/人）</li>
+        <li><strong>没有车牌号？</strong>可16:00后免预约进独库 / 用临牌预约后拨12123修改</li>
+        <li><strong>8月日落约21:30</strong>，赛湖看完日落再走完全来得及</li>
       </ol>
     </div>
   </section>
@@ -1116,7 +1176,7 @@ body {
   <!-- ========== FOOTER ========== -->
   <footer class="footer">
     <p class="footer-note">Plan C-R · 先独库后赛湖</p>
-    <p class="footer-meta">2026.08.02-08.07 · 1,416km · ¥13,451(5人) · 风险前置</p>
+    <p class="footer-meta">2026.08.02-08.07 · 1,416km · ¥13,451(5人) · 深蓝G318 · 省¥1,549</p>
   </footer>
 
 </div>
