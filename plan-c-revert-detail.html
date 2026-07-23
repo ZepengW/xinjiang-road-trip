@@ -995,6 +995,465 @@ article.page { padding-right: 130px; }
   方案C-R反向路线：D1在乌鲁木齐休整，D2先走独库公路北段至那拉提（风险前置，封了立刻切Plan C），D3那拉提→伊宁速览喀赞其，D4经果子沟至赛里木湖（24小时票单日完整环湖，18:00回到西岸等日落→21:30看完日落出园→G30东行80km→22:30到精河入住全季精河和平路东酒店），D5自然醒08:30从精河出发G30返乌鲁木齐，D6返程。
 </p>
 
+<!-- ===== GANTT TIMELINE CSS ===== -->
+<style>
+.gantt-overview {
+  margin: 2rem 0;
+  background: var(--paper);
+  border: 1.5px dashed var(--rule);
+  border-radius: 10px;
+  padding: 1.5rem 1.2rem 1.2rem;
+  box-shadow: 0 3px 14px var(--shadow);
+  position: relative;
+}
+.gantt-overview::before {
+  content: '';
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%) rotate(-1.5deg);
+  width: 130px; height: 24px;
+  background: rgba(106,76,147,0.2);
+  border-radius: 2px;
+}
+.gantt-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.gantt-head h3 {
+  font-family: 'NationalPark', sans-serif;
+  font-size: 1.35rem;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+.gantt-head .sub {
+  font-family: 'Hand', cursive;
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+.gantt-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--rule);
+  flex-wrap: wrap;
+}
+.gantt-stat { text-align: center; }
+.gantt-stat .num {
+  font-family: 'NationalPark', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: block;
+}
+.gantt-stat .lbl {
+  font-family: 'Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.gantt-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.3rem;
+}
+.gantt-inner {
+  min-width: 760px;
+}
+/* Hour header */
+.gantt-hour-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+.gantt-corner {
+  width: 72px;
+  flex-shrink: 0;
+  text-align: center;
+  font-family: 'Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.gantt-hours {
+  flex: 1;
+  position: relative;
+  height: 20px;
+}
+.gantt-hours span {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: 'Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  top: 0;
+}
+/* Day rows */
+.gantt-day {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 3px;
+  min-height: 46px;
+}
+.gantt-day-label {
+  width: 72px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 2px solid var(--rule);
+  padding: 0.2rem;
+}
+.gantt-day-num {
+  font-family: 'NationalPark', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+.gantt-day-date {
+  font-family: 'Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.gantt-day-route {
+  font-family: 'Lora', serif;
+  font-size: 0.52rem;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 1px;
+  line-height: 1.1;
+  max-width: 68px;
+}
+/* Track (blocks container) */
+.gantt-track {
+  flex: 1;
+  position: relative;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(212,196,168,0.07) 0,
+    rgba(212,196,168,0.07) calc(100%/17 - 1px),
+    rgba(212,196,168,0.18) calc(100%/17 - 1px),
+    rgba(212,196,168,0.18) calc(100%/17)
+  );
+  border-radius: 4px;
+  margin-left: 2px;
+}
+/* Blocks */
+.gantt-block {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 4px;
+  padding: 0.15rem 0.35rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: default;
+  transition: transform 0.15s, box-shadow 0.15s;
+  min-width: 0;
+}
+.gantt-block:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 5;
+}
+.gantt-block .act {
+  font-family: 'NationalPark', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gantt-block .info {
+  font-family: 'Lora', serif;
+  font-size: 0.52rem;
+  line-height: 1.15;
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gantt-block .time {
+  font-family: 'Mono', monospace;
+  font-size: 0.5rem;
+  opacity: 0.7;
+  line-height: 1;
+}
+/* Block type colors */
+.gantt-block.drive { background: #7BA4C7; color: #1B3A52; border: 1px solid #5A8AAD; }
+.gantt-block.play  { background: #A8C8A0; color: #264A1E; border: 1px solid #8AAA80; }
+.gantt-block.meal  { background: #F0C674; color: #5A3E0A; border: 1px solid #D4A848; }
+.gantt-block.rest  { background: #DDB9A2; color: #5A3020; border: 1px solid #C49A82; }
+.gantt-block.risk  { background: #E8A0A0; color: #6A1E1E; border: 1px solid #CC8080; }
+
+/* Legend */
+.gantt-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem 1.2rem;
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--rule);
+}
+.gantt-leg {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-family: 'Lora', serif;
+}
+.gantt-leg-dot {
+  width: 16px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.gantt-leg-dot.drive { background: #7BA4C7; border: 1px solid #5A8AAD; }
+.gantt-leg-dot.play  { background: #A8C8A0; border: 1px solid #8AAA80; }
+.gantt-leg-dot.meal  { background: #F0C674; border: 1px solid #D4A848; }
+.gantt-leg-dot.rest  { background: #DDB9A2; border: 1px solid #C49A82; }
+.gantt-leg-dot.risk  { background: #E8A0A0; border: 1px solid #CC8080; }
+
+@media (max-width: 600px) {
+  .gantt-overview { padding: 1.2rem 0.6rem 1rem; }
+  .gantt-head h3 { font-size: 1.15rem; }
+  .gantt-stats { gap: 1.2rem; }
+}
+</style>
+<!-- ===== END GANTT CSS ===== -->
+<!-- ===== GANTT TIMELINE OVERVIEW ===== -->
+<div class="gantt-overview">
+  <div class="gantt-head">
+    <h3>行程时间轴</h3>
+    <span class="sub">Timeline at a Glance</span>
+  </div>
+
+  <div class="gantt-stats">
+    <div class="gantt-stat"><span class="num">~1,560</span><span class="lbl">总里程 km</span></div>
+    <div class="gantt-stat"><span class="num">6天5晚</span><span class="lbl">行程天数</span></div>
+    <div class="gantt-stat"><span class="num">⚠</span><span class="lbl">风险前置</span></div>
+  </div>
+
+  <div class="gantt-scroll">
+    <div class="gantt-inner">
+      <!-- Hour header -->
+      <div class="gantt-hour-row">
+        <div class="gantt-corner">时<br>DAY</div>
+        <div class="gantt-hours">
+          <span style="left: 0.00%;">6</span>
+          <span style="left: 11.76%;">8</span>
+          <span style="left: 23.53%;">10</span>
+          <span style="left: 35.29%;">12</span>
+          <span style="left: 47.06%;">14</span>
+          <span style="left: 58.82%;">16</span>
+          <span style="left: 70.59%;">18</span>
+          <span style="left: 82.35%;">20</span>
+          <span style="left: 94.12%;">22</span>
+        </div>
+      </div>
+
+      <!-- D1 -->
+      <div class="gantt-day">
+        <div class="gantt-day-label">
+          <span class="gantt-day-num">D1</span>
+          <span class="gantt-day-date">8.2</span>
+          <span class="gantt-day-route">乌鲁木齐休整</span>
+        </div>
+        <div class="gantt-track">
+          <div class="gantt-block meal" style="left: 35.29%; width: 11.76%;" title="12:00-14:00 午餐 大巴扎附近">
+            <span class="act">午餐</span>
+          </div>
+          <div class="gantt-block play" style="left: 47.06%; width: 23.53%;" title="14:00-18:00 博物馆+大巴扎 市区游览">
+            <span class="act">博物馆+大巴扎</span>
+            <span class="info">市区游览</span>
+          </div>
+          <div class="gantt-block meal" style="left: 70.59%; width: 11.76%;" title="18:00-20:00 晚餐 红山公园">
+            <span class="act">晚餐</span>
+          </div>
+          <div class="gantt-block rest" style="left: 82.35%; width: 17.65%;" title="20:00-23:00 休整倒时差 美居 ¥420×3">
+            <span class="act">休整倒时差</span>
+            <span class="info">美居 ¥420×3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- D2 -->
+      <div class="gantt-day">
+        <div class="gantt-day-label">
+          <span class="gantt-day-num">D2</span>
+          <span class="gantt-day-date">8.3</span>
+          <span class="gantt-day-route">乌市→独库→那拉提</span>
+        </div>
+        <div class="gantt-track">
+          <div class="gantt-block drive" style="left: 5.88%; width: 11.76%;" title="7:00-9:00 乌市→独山子 137km">
+            <span class="act">乌市→独山子</span>
+          </div>
+          <div class="gantt-block meal" style="left: 17.65%; width: 5.88%;" title="9:00-10:00 独山子午餐 ">
+            <span class="act">独山子</span>
+          </div>
+          <div class="gantt-block risk" style="left: 23.53%; width: 29.41%;" title="10:00-15:00 独库公路 280km 风险前置">
+            <span class="act">独库公路</span>
+            <span class="info">280km 风险前置</span>
+          </div>
+          <div class="gantt-block drive" style="left: 52.94%; width: 17.65%;" title="15:00-18:00 独库南段 →那拉提">
+            <span class="act">独库南段</span>
+            <span class="info">→那拉提</span>
+          </div>
+          <div class="gantt-block meal" style="left: 70.59%; width: 5.88%;" title="18:00-19:00 镇上晚餐 ">
+            <span class="act">镇上晚</span>
+          </div>
+          <div class="gantt-block rest" style="left: 76.47%; width: 23.53%;" title="19:00-23:00 漫心住宿 ¥2420/3间">
+            <span class="act">漫心住宿</span>
+            <span class="info">¥2420/3间</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- D3 -->
+      <div class="gantt-day">
+        <div class="gantt-day-label">
+          <span class="gantt-day-num">D3</span>
+          <span class="gantt-day-date">8.4</span>
+          <span class="gantt-day-route">那拉提→伊宁</span>
+        </div>
+        <div class="gantt-track">
+          <div class="gantt-block meal" style="left: 11.76%; width: 5.88%;" title="8:00-9:00 酒店早餐 ">
+            <span class="act">酒店早</span>
+          </div>
+          <div class="gantt-block play" style="left: 17.65%; width: 17.65%;" title="9:00-12:00 那拉提晨游 空中草原">
+            <span class="act">那拉提晨游</span>
+            <span class="info">空中草原</span>
+          </div>
+          <div class="gantt-block meal" style="left: 35.29%; width: 5.88%;" title="12:00-13:00 镇上午餐 ">
+            <span class="act">镇上午</span>
+          </div>
+          <div class="gantt-block drive" style="left: 41.18%; width: 17.65%;" title="13:00-16:00 那拉提→伊宁 270km">
+            <span class="act">那拉提→伊宁</span>
+            <span class="info">270km</span>
+          </div>
+          <div class="gantt-block play" style="left: 58.82%; width: 11.76%;" title="16:00-18:00 喀赞其速览 ">
+            <span class="act">喀赞其速览</span>
+          </div>
+          <div class="gantt-block meal" style="left: 70.59%; width: 11.76%;" title="18:00-20:00 伊宁晚餐 ">
+            <span class="act">伊宁晚餐</span>
+          </div>
+          <div class="gantt-block rest" style="left: 82.35%; width: 17.65%;" title="20:00-23:00 美居住宿 ¥560×3">
+            <span class="act">美居住宿</span>
+            <span class="info">¥560×3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- D4 -->
+      <div class="gantt-day">
+        <div class="gantt-day-label">
+          <span class="gantt-day-num">D4</span>
+          <span class="gantt-day-date">8.5</span>
+          <span class="gantt-day-route">伊宁→赛湖→精河</span>
+        </div>
+        <div class="gantt-track">
+          <div class="gantt-block meal" style="left: 11.76%; width: 5.88%;" title="8:00-9:00 酒店早餐 ">
+            <span class="act">酒店早</span>
+          </div>
+          <div class="gantt-block drive" style="left: 17.65%; width: 17.65%;" title="9:00-12:00 伊宁→赛湖 180km">
+            <span class="act">伊宁→赛湖</span>
+            <span class="info">180km</span>
+          </div>
+          <div class="gantt-block meal" style="left: 35.29%; width: 5.88%;" title="12:00-13:00 东门午餐 鱼宴">
+            <span class="act">东门午</span>
+          </div>
+          <div class="gantt-block play" style="left: 41.18%; width: 29.41%;" title="13:00-18:00 环湖90km 24h票 145元">
+            <span class="act">环湖90km</span>
+            <span class="info">24h票 145元</span>
+          </div>
+          <div class="gantt-block play" style="left: 70.59%; width: 20.59%;" title="18:00-21:30 西岸等日落 21:30日落">
+            <span class="act">西岸等日落</span>
+            <span class="info">21:30日落</span>
+          </div>
+          <div class="gantt-block meal" style="left: 91.18%; width: 5.88%;" title="21:30-22:30 出园简餐 ">
+            <span class="act">出园简</span>
+          </div>
+          <div class="gantt-block drive" style="left: 97.06%; width: 2.94%;" title="22:30-23:00 →精河 80km">
+          </div>
+        </div>
+      </div>
+
+      <!-- D5 -->
+      <div class="gantt-day">
+        <div class="gantt-day-label">
+          <span class="gantt-day-num">D5</span>
+          <span class="gantt-day-date">8.6</span>
+          <span class="gantt-day-route">精河→乌市</span>
+        </div>
+        <div class="gantt-track">
+          <div class="gantt-block meal" style="left: 11.76%; width: 5.88%;" title="8:00-9:00 全季早餐 ">
+            <span class="act">全季早</span>
+          </div>
+          <div class="gantt-block drive" style="left: 17.65%; width: 29.41%;" title="9:00-14:00 精河→乌市 486km G30">
+            <span class="act">精河→乌市</span>
+            <span class="info">486km G30</span>
+          </div>
+          <div class="gantt-block meal" style="left: 47.06%; width: 11.76%;" title="14:00-16:00 乌市午餐 ">
+            <span class="act">乌市午餐</span>
+          </div>
+          <div class="gantt-block play" style="left: 58.82%; width: 23.53%;" title="16:00-20:00 大巴扎采购 伴手礼">
+            <span class="act">大巴扎采购</span>
+            <span class="info">伴手礼</span>
+          </div>
+          <div class="gantt-block rest" style="left: 82.35%; width: 17.65%;" title="20:00-23:00 美居住宿 ¥420×3">
+            <span class="act">美居住宿</span>
+            <span class="info">¥420×3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- D6 -->
+      <div class="gantt-day">
+        <div class="gantt-day-label">
+          <span class="gantt-day-num">D6</span>
+          <span class="gantt-day-date">8.7</span>
+          <span class="gantt-day-route">返程</span>
+        </div>
+        <div class="gantt-track">
+          <div class="gantt-block meal" style="left: 5.88%; width: 11.76%;" title="7:00-9:00 早餐+整理 ">
+            <span class="act">早餐+整理</span>
+          </div>
+          <div class="gantt-block rest" style="left: 17.65%; width: 17.65%;" title="9:00-12:00 前往机场 返程">
+            <span class="act">前往机场</span>
+            <span class="info">返程</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="gantt-legend">
+    <div class="gantt-leg"><span class="gantt-leg-dot drive"></span>驾驶</div>
+    <div class="gantt-leg"><span class="gantt-leg-dot play"></span>游玩</div>
+    <div class="gantt-leg"><span class="gantt-leg-dot meal"></span>餐饮</div>
+    <div class="gantt-leg"><span class="gantt-leg-dot rest"></span>休整</div>
+    <div class="gantt-leg"><span class="gantt-leg-dot risk"></span>高风险</div>
+  </div>
+</div>
+<!-- ===== END GANTT TIMELINE ===== -->
+
 <!-- ========== DAY 1 ========== -->
 <div class="section-header">
   <h2>逐日行程</h2>
