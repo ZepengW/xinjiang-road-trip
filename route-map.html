@@ -455,19 +455,24 @@ var AREA_POIS = {
       { name: '机场美居酒店', lat: 43.907, lng: 87.474, desc: '头屯河区中亚北路138号，免费接送机', icon: 'hotel' }
     ]
   },
-  // Sayram Lake
+  // Sayram Lake - coordinates verified from OSM & government docs
   'sayram-lake': {
-    center: [44.620, 81.080], zoom: 11,
-    title: '赛里木湖 · 环湖自驾',
+    center: [44.608, 81.181], zoom: 11,
+    title: '赛里木湖 · 逆时针环湖自驾',
+    lakeShape: {
+      centerLat: 44.608, centerLng: 81.181,
+      rxDeg: 0.19, ryDeg: 0.115,
+      label: '赛里木湖'
+    },
     pois: [
-      { name: '东门', lat: 44.603, lng: 81.145, desc: '景区入口，购票入园', icon: 'gate' },
-      { name: '松树头', lat: 44.590, lng: 81.050, desc: '爬山顶观全景', icon: 'mountain' },
-      { name: '月亮湾', lat: 44.610, lng: 81.080, desc: '拍蓝湖最佳机位', icon: 'camera' },
-      { name: '克勒涌珠', lat: 44.620, lng: 81.030, desc: '西岸景点', icon: 'water' },
-      { name: '天鹅乐水', lat: 44.655, lng: 81.005, desc: '看天鹅，星空营地附近', icon: 'swan' },
-      { name: '星空营地', lat: 44.660, lng: 81.020, desc: '住宿点，看日落星空', icon: 'hotel' },
-      { name: '点将台', lat: 44.670, lng: 81.090, desc: '北岸·敖包', icon: 'mountain' },
-      { name: '西海草原', lat: 44.680, lng: 81.060, desc: '北岸·草原', icon: 'grass' }
+      { name: '东门', lat: 44.6011, lng: 81.3907, desc: '景区主入口·购票入园', icon: 'gate' },
+      { name: '月亮湾', lat: 44.5986, lng: 81.3722, desc: '东岸·拍蓝湖最佳机位', icon: 'camera' },
+      { name: '点将台', lat: 44.6884, lng: 81.0662, desc: '西北岸·敖包观景', icon: 'mountain' },
+      { name: '星空营地', lat: 44.6945, lng: 81.0662, desc: '住宿·点将台北侧·看日落星空', icon: 'hotel' },
+      { name: '天鹅乐水', lat: 44.6158, lng: 80.9911, desc: '西岸·看天鹅栖息', icon: 'swan' },
+      { name: '西海草原', lat: 44.5776, lng: 80.9894, desc: '西南岸·草原花海', icon: 'grass' },
+      { name: '克勒涌珠', lat: 44.5604, lng: 81.0194, desc: '西南岸·涌泉溪流', icon: 'water' },
+      { name: '松树头', lat: 44.5026, lng: 81.1409, desc: '南岸·爬山顶观全景·近南门出', icon: 'tree' }
     ]
   },
   // Yining city
@@ -482,19 +487,23 @@ var AREA_POIS = {
       { name: '汉人街', lat: 43.930, lng: 81.320, desc: '晚餐烤肉/抓饭', icon: 'food' }
     ]
   },
-  // Nalati park
+  // Nalati park - coordinates from research, route focuses on 空中草原线
   'nalati-park': {
-    center: [43.330, 84.460], zoom: 13,
-    title: '那拉提 · 景区导览',
+    center: [43.295, 84.390], zoom: 13,
+    title: '那拉提 · 空中草原自驾',
+    routeSegments: [
+      { indices: [0, 1, 2, 3, 4], label: '空中草原线', color: '#4A7A9B', note: '自驾主线·精华' },
+      { indices: [0, 5, 6], label: '河谷草原线', color: '#6B8E4E', note: '时间充裕可加' }
+    ],
     pois: [
-      { name: '游客中心', lat: 43.350, lng: 84.440, desc: '购票入园起点', icon: 'gate' },
-      { name: '天界台', lat: 43.340, lng: 84.460, desc: '空中草原制高点，360°全景', icon: 'mountain' },
-      { name: '天牧台', lat: 43.335, lng: 84.475, desc: '养蜂女雕像·骑马', icon: 'horse' },
-      { name: '游牧人家', lat: 43.325, lng: 84.490, desc: '网红桥·溪流·毡房午餐', icon: 'camera' },
-      { name: '雪莲谷', lat: 43.300, lng: 84.520, desc: '海拔3000m+·近看雪山冰川', icon: 'mountain' },
-      { name: '漫心酒店', lat: 43.330, lng: 84.450, desc: '那拉提街220号G218旁', icon: 'hotel' },
-      { name: '塔吾萨尼', lat: 43.340, lng: 84.430, desc: '河谷草原·一山四景', icon: 'camera' },
-      { name: '森林公园', lat: 43.350, lng: 84.410, desc: '河谷草原·云杉溪流', icon: 'tree' }
+      { name: '游客中心', lat: 43.299, lng: 84.434, desc: '西门·购票入园起点', icon: 'gate' },
+      { name: '天界台', lat: 43.275, lng: 84.385, desc: '爬栈道10min登顶·360°全景·有缆车滑草', icon: 'mountain' },
+      { name: '天牧台', lat: 43.265, lng: 84.360, desc: '谷底牧场·可骑马·牧民毡房', icon: 'horse' },
+      { name: '游牧人家', lat: 43.258, lng: 84.345, desc: '空中草原精华·网红桥·溪流·毡房午餐', icon: 'camera' },
+      { name: '雪莲谷', lat: 43.240, lng: 84.330, desc: '换乘区间车60元·近看雪山冰川', icon: 'mountain' },
+      { name: '塔吾萨尼', lat: 43.285, lng: 84.400, desc: '河谷草原线·一山四景', icon: 'camera' },
+      { name: '森林公园', lat: 43.295, lng: 84.415, desc: '河谷草原线·云杉溪流', icon: 'tree' },
+      { name: '漫心酒店', lat: 43.330, lng: 84.450, desc: 'G218旁·那拉提街220号', icon: 'hotel' }
     ]
   },
   // Duku Highway
@@ -533,18 +542,28 @@ function createMiniMap(containerId, areaKey) {
   // If already rendered, skip
   if (miniMaps[containerId]) return;
 
-  // Normalize POI coordinates to SVG viewBox
   var pois = area.pois;
+
+  // Calculate bounds from POIs
   var minLat = Math.min.apply(null, pois.map(function(p) { return p.lat; }));
   var maxLat = Math.max.apply(null, pois.map(function(p) { return p.lat; }));
   var minLng = Math.min.apply(null, pois.map(function(p) { return p.lng; }));
   var maxLng = Math.max.apply(null, pois.map(function(p) { return p.lng; }));
 
+  // Include lake shape in bounds if exists
+  if (area.lakeShape) {
+    var ls = area.lakeShape;
+    minLat = Math.min(minLat, ls.centerLat - ls.ryDeg);
+    maxLat = Math.max(maxLat, ls.centerLat + ls.ryDeg);
+    minLng = Math.min(minLng, ls.centerLng - ls.rxDeg);
+    maxLng = Math.max(maxLng, ls.centerLng + ls.rxDeg);
+  }
+
   // Add padding to bounds
   var latRange = (maxLat - minLat) || 0.1;
   var lngRange = (maxLng - minLng) || 0.1;
-  var latPad = latRange * 0.15;
-  var lngPad = lngRange * 0.15;
+  var latPad = latRange * 0.12;
+  var lngPad = lngRange * 0.12;
   minLat -= latPad; maxLat += latPad;
   minLng -= lngPad; maxLng += lngPad;
   var latSpan = maxLat - minLat;
@@ -553,10 +572,12 @@ function createMiniMap(containerId, areaKey) {
   // SVG dimensions
   var svgW = 380, svgH = 250;
   var padX = 45, padY = 50;
+  var drawW = svgW - padX * 2;
+  var drawH = svgH - padY - 30;
 
   // Convert lat/lng to SVG x/y
-  function toX(lng) { return padX + (lng - minLng) / lngSpan * (svgW - padX * 2); }
-  function toY(lat) { return padY + (maxLat - lat) / latSpan * (svgH - padY - 30); }
+  function toX(lng) { return padX + (lng - minLng) / lngSpan * drawW; }
+  function toY(lat) { return padY + (maxLat - lat) / latSpan * drawH; }
 
   // Build route path points
   var pathPoints = pois.map(function(p) { return [toX(p.lng), toY(p.lat)]; });
@@ -564,25 +585,21 @@ function createMiniMap(containerId, areaKey) {
   // Create smooth wobbly path (hand-drawn style)
   function smoothPath(pts) {
     if (pts.length < 2) return '';
-    var d = 'M ' + pts[0][0] + ' ' + pts[0][1];
+    var d = 'M ' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
     for (var i = 1; i < pts.length; i++) {
       var prev = pts[i - 1];
       var curr = pts[i];
       var midX = (prev[0] + curr[0]) / 2;
       var midY = (prev[1] + curr[1]) / 2;
-      // Add slight wobble for hand-drawn feel
       var wobble = 3;
       var offsetX = (Math.sin(i * 2.7) * wobble);
       var offsetY = (Math.cos(i * 1.9) * wobble);
-      d += ' Q ' + (midX + offsetX) + ' ' + (midY + offsetY) + ' ' + curr[0] + ' ' + curr[1];
+      d += ' Q ' + (midX + offsetX).toFixed(1) + ' ' + (midY + offsetY).toFixed(1) + ' ' + curr[0].toFixed(1) + ' ' + curr[1].toFixed(1);
     }
     return d;
   }
 
-  var routePath = smoothPath(pathPoints);
-
   // Color palette
-  var routeColor = '#4A7A9B';
   var poiColors = {
     'gate': '#4A7A9B', 'mountain': '#6B8E4E', 'camera': '#C65D3A',
     'water': '#4A7A9B', 'swan': '#4A7A9B', 'hotel': '#6A4C93',
@@ -591,19 +608,27 @@ function createMiniMap(containerId, areaKey) {
     'plane': '#4A7A9B', 'grass': '#6B8E4E'
   };
 
+  // Scale bar calculation: 40px = how many km?
+  var midLat = (minLat + maxLat) / 2;
+  var kmPerDegLng = 111 * Math.cos(midLat * Math.PI / 180);
+  var scaleBarKm = Math.round((40 / drawW) * lngSpan * kmPerDegLng);
+
   // Build SVG
   var svg = '<svg viewBox="0 0 ' + svgW + ' ' + svgH + '" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">';
-  
-  // Defs: filters and patterns
+
+  // Defs: filters, patterns, gradients
   svg += '<defs>';
   svg += '<filter id="rough-' + areaKey + '"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise"/>';
   svg += '<feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5"/></filter>';
-  svg += '<filter id="paper-' + areaKey + '"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise"/>';
-  svg += '<feColorMatrix in="noise" type="saturate" values="0" result="gray"/>';
-  svg += '<feComponentTransfer in="gray"><feFuncA type="linear" slope="0.08"/></feComponentTransfer>';
-  svg += '<feComposite operator="over" in2="SourceGraphic"/></filter>';
   svg += '<pattern id="dots-' + areaKey + '" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">';
   svg += '<circle cx="10" cy="10" r="0.8" fill="#D4C4A8" opacity="0.3"/></pattern>';
+  if (area.lakeShape) {
+    svg += '<radialGradient id="water-' + areaKey + '" cx="45%" cy="40%" r="65%">';
+    svg += '<stop offset="0%" stop-color="#8BB8D4" stop-opacity="0.4"/>';
+    svg += '<stop offset="60%" stop-color="#5B8AAB" stop-opacity="0.35"/>';
+    svg += '<stop offset="100%" stop-color="#4A7A9B" stop-opacity="0.3"/>';
+    svg += '</radialGradient>';
+  }
   svg += '</defs>';
 
   // Background
@@ -618,12 +643,56 @@ function createMiniMap(containerId, areaKey) {
   svg += '<text x="' + (svgW / 2) + '" y="24" text-anchor="middle" font-family="NationalPark, sans-serif" font-size="13" font-weight="700" fill="#4A7A9B">' + area.title + '</text>';
   svg += '<line x1="' + (svgW / 2 - 50) + '" y1="32" x2="' + (svgW / 2 + 50) + '" y2="32" stroke="#4A7A9B" stroke-width="1.5" stroke-linecap="round"/>';
 
-  // Route path (hand-drawn dashed style)
-  if (routePath) {
-    // Shadow/glow
-    svg += '<path d="' + routePath + '" fill="none" stroke="#4A7A9B" stroke-width="6" opacity="0.1" stroke-linecap="round" stroke-linejoin="round"/>';
-    // Main route
-    svg += '<path d="' + routePath + '" fill="none" stroke="#4A7A9B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 4" opacity="0.7"/>';
+  // Lake shape (if exists) - draw before route
+  if (area.lakeShape) {
+    var ls2 = area.lakeShape;
+    var lakeCx = toX(ls2.centerLng);
+    var lakeCy = toY(ls2.centerLat);
+    var lakeRx = (ls2.rxDeg / lngSpan) * drawW;
+    var lakeRy = (ls2.ryDeg / latSpan) * drawH;
+
+    // Lake fill with gradient
+    svg += '<ellipse cx="' + lakeCx.toFixed(1) + '" cy="' + lakeCy.toFixed(1) + '" rx="' + lakeRx.toFixed(1) + '" ry="' + lakeRy.toFixed(1) + '" fill="url(#water-' + areaKey + ')" stroke="#4A7A9B" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.8"/>';
+
+    // Wave decoration lines on lake
+    var wave1Y = lakeCy - lakeRy * 0.25;
+    svg += '<path d="M ' + (lakeCx - lakeRx * 0.6).toFixed(1) + ' ' + wave1Y.toFixed(1) + ' Q ' + (lakeCx - lakeRx * 0.3).toFixed(1) + ' ' + (wave1Y - 5).toFixed(1) + ' ' + lakeCx.toFixed(1) + ' ' + wave1Y.toFixed(1) + ' T ' + (lakeCx + lakeRx * 0.6).toFixed(1) + ' ' + wave1Y.toFixed(1) + '" fill="none" stroke="#4A7A9B" stroke-width="0.8" opacity="0.25"/>';
+    var wave2Y = lakeCy + lakeRy * 0.15;
+    svg += '<path d="M ' + (lakeCx - lakeRx * 0.5).toFixed(1) + ' ' + wave2Y.toFixed(1) + ' Q ' + (lakeCx - lakeRx * 0.2).toFixed(1) + ' ' + (wave2Y - 4).toFixed(1) + ' ' + (lakeCx + lakeRx * 0.1).toFixed(1) + ' ' + wave2Y.toFixed(1) + ' T ' + (lakeCx + lakeRx * 0.5).toFixed(1) + ' ' + wave2Y.toFixed(1) + '" fill="none" stroke="#4A7A9B" stroke-width="0.6" opacity="0.2"/>';
+
+    // Lake label
+    svg += '<text x="' + lakeCx.toFixed(1) + '" y="' + (lakeCy + 3).toFixed(1) + '" text-anchor="middle" font-family="Lora, serif" font-size="10" fill="#4A7A9B" opacity="0.35" font-style="italic">' + ls2.label + '</text>';
+  }
+
+  // Route path(s)
+  if (area.routeSegments) {
+    // Draw multiple route segments with different colors
+    area.routeSegments.forEach(function(seg) {
+      var segPts = seg.indices.map(function(i) { return pathPoints[i]; });
+      var segPath = smoothPath(segPts);
+      if (segPath) {
+        // Shadow/glow
+        svg += '<path d="' + segPath + '" fill="none" stroke="' + seg.color + '" stroke-width="6" opacity="0.1" stroke-linecap="round" stroke-linejoin="round"/>';
+        // Main route
+        svg += '<path d="' + segPath + '" fill="none" stroke="' + seg.color + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 4" opacity="0.7"/>';
+      }
+    });
+
+    // Route legend (bottom-right area)
+    var legX = svgW - 105;
+    var legStartY = svgH - 40;
+    area.routeSegments.forEach(function(seg, i) {
+      var ly = legStartY + i * 12;
+      svg += '<line x1="' + legX + '" y1="' + ly + '" x2="' + (legX + 12) + '" y2="' + ly + '" stroke="' + seg.color + '" stroke-width="2" stroke-dasharray="4 2"/>';
+      svg += '<text x="' + (legX + 16) + '" y="' + (ly + 2.5) + '" font-family="Lora, serif" font-size="7" fill="' + seg.color + '">' + seg.label + '</text>';
+    });
+  } else {
+    // Single route path (default)
+    var routePath = smoothPath(pathPoints);
+    if (routePath) {
+      svg += '<path d="' + routePath + '" fill="none" stroke="#4A7A9B" stroke-width="6" opacity="0.1" stroke-linecap="round" stroke-linejoin="round"/>';
+      svg += '<path d="' + routePath + '" fill="none" stroke="#4A7A9B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 4" opacity="0.7"/>';
+    }
   }
 
   // POI markers
@@ -631,26 +700,25 @@ function createMiniMap(containerId, areaKey) {
     var px = toX(poi.lng);
     var py = toY(poi.lat);
     var color = poiColors[poi.icon] || '#4A7A9B';
-    var emoji = POI_EMOJI[poi.icon] || '📍';
     var isHotel = poi.icon === 'hotel';
     var markerR = isHotel ? 11 : 8;
 
     // Marker shadow
-    svg += '<circle cx="' + px + '" cy="' + py + '" r="' + (markerR + 2) + '" fill="' + color + '" opacity="0.15"/>';
+    svg += '<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="' + (markerR + 2) + '" fill="' + color + '" opacity="0.15"/>';
     // Marker pin (teardrop style)
-    svg += '<path d="M ' + px + ' ' + (py - markerR - 4) + ' L ' + (px - markerR) + ' ' + py + ' A ' + markerR + ' ' + markerR + ' 0 1 1 ' + (px + markerR) + ' ' + py + ' Z" fill="' + color + '" stroke="white" stroke-width="1.5"/>';
+    svg += '<path d="M ' + px.toFixed(1) + ' ' + (py - markerR - 4).toFixed(1) + ' L ' + (px - markerR).toFixed(1) + ' ' + py.toFixed(1) + ' A ' + markerR + ' ' + markerR + ' 0 1 1 ' + (px + markerR).toFixed(1) + ' ' + py.toFixed(1) + ' Z" fill="' + color + '" stroke="white" stroke-width="1.5"/>';
     // Inner dot
-    svg += '<circle cx="' + px + '" cy="' + py + '" r="3" fill="white"/>';
+    svg += '<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="3" fill="white"/>';
 
     // Label
     var labelY = py + markerR + 12;
     var labelBgW = poi.name.length * 6.5 + 10;
-    svg += '<rect x="' + (px - labelBgW / 2) + '" y="' + (labelY - 9) + '" width="' + labelBgW + '" height="14" rx="3" fill="#FFFCF5" stroke="' + color + '" stroke-width="0.8" opacity="0.95"/>';
-    svg += '<text x="' + px + '" y="' + (labelY + 1) + '" text-anchor="middle" font-family="Lora, serif" font-size="8" fill="' + color + '" font-weight="600">' + poi.name + '</text>';
+    svg += '<rect x="' + (px - labelBgW / 2).toFixed(1) + '" y="' + (labelY - 9).toFixed(1) + '" width="' + labelBgW + '" height="14" rx="3" fill="#FFFCF5" stroke="' + color + '" stroke-width="0.8" opacity="0.95"/>';
+    svg += '<text x="' + px.toFixed(1) + '" y="' + (labelY + 1).toFixed(1) + '" text-anchor="middle" font-family="Lora, serif" font-size="8" fill="' + color + '" font-weight="600">' + poi.name + '</text>';
 
     // Number badge
-    svg += '<circle cx="' + (px + markerR - 2) + '" cy="' + (py - markerR - 2) + '" r="6" fill="' + color + '" stroke="white" stroke-width="1"/>';
-    svg += '<text x="' + (px + markerR - 2) + '" y="' + (py - markerR + 0.5) + '" text-anchor="middle" font-family="Mono, monospace" font-size="7" fill="white" font-weight="700">' + (idx + 1) + '</text>';
+    svg += '<circle cx="' + (px + markerR - 2).toFixed(1) + '" cy="' + (py - markerR - 2).toFixed(1) + '" r="6" fill="' + color + '" stroke="white" stroke-width="1"/>';
+    svg += '<text x="' + (px + markerR - 2).toFixed(1) + '" y="' + (py - markerR + 0.5).toFixed(1) + '" text-anchor="middle" font-family="Mono, monospace" font-size="7" fill="white" font-weight="700">' + (idx + 1) + '</text>';
   });
 
   // Compass rose (top-right)
@@ -664,7 +732,7 @@ function createMiniMap(containerId, areaKey) {
   svg += '<line x1="20" y1="' + (svgH - 15) + '" x2="60" y2="' + (svgH - 15) + '" stroke="#8B7355" stroke-width="1"/>';
   svg += '<line x1="20" y1="' + (svgH - 18) + '" x2="20" y2="' + (svgH - 12) + '" stroke="#8B7355" stroke-width="1"/>';
   svg += '<line x1="60" y1="' + (svgH - 18) + '" x2="60" y2="' + (svgH - 12) + '" stroke="#8B7355" stroke-width="1"/>';
-  svg += '<text x="40" y="' + (svgH - 6) + '" text-anchor="middle" font-family="Mono, monospace" font-size="6" fill="#8B7355">~' + (Math.round(lngSpan * 85)) + 'km</text>';
+  svg += '<text x="40" y="' + (svgH - 6) + '" text-anchor="middle" font-family="Mono, monospace" font-size="6" fill="#8B7355">~' + scaleBarKm + 'km</text>';
 
   // Watermark
   svg += '<text x="' + (svgW - 12) + '" y="' + (svgH - 8) + '" text-anchor="end" font-family="Hand, cursive" font-size="8" fill="#D4C4A8" opacity="0.6">示意图 · 非比例</text>';
