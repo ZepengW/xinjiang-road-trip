@@ -221,6 +221,61 @@ footer .footer-links a.current{border-color:var(--accent);color:var(--accent);ba
 /* Prevent content from being hidden behind nav */
 article.page { padding-right: 130px; }
 @media (max-width: 768px) { article.page { padding-right: 1rem; } }
+
+/* ===== Mini Map (per-day area exploration) ===== */
+.mini-map-section {
+  margin: 0.8rem 1.2rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+}
+.mini-map-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  background: rgba(74,122,155,0.08);
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.mini-map-header:hover { background: rgba(74,122,155,0.14); }
+.mini-map-header .mm-icon { font-size: 0.9rem; }
+.mini-map-header .mm-title {
+  font-family: 'NationalPark', sans-serif;
+  font-size: 0.82rem;
+  color: var(--accent3);
+  flex: 1;
+}
+.mini-map-header .mm-toggle {
+  font-family: 'Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+.mini-map-section.open .mm-toggle { transform: rotate(90deg); }
+.mini-map-container {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+.mini-map-section.open .mini-map-container { height: 300px; }
+.mini-map-section .leaflet-container {
+  width: 100%;
+  height: 100%;
+  font-family: 'Lora', serif;
+}
+.mm-poi-popup {
+  font-family: 'Lora', serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.mm-poi-popup strong {
+  font-family: 'NationalPark', sans-serif;
+  color: var(--accent3);
+  font-size: 0.85rem;
+}
 </style>
 </head>
 <body>
@@ -353,7 +408,168 @@ var COORDS = {
   '博乐市': [44.833, 82.033]
 };
 
-// ===== Route definitions for each plan =====
+// ===== Area POI data for mini maps (per-day exploration) =====
+// Each day's key POIs with coordinates and descriptions
+var AREA_POIS = {
+  // Urumqi arrival area
+  'd1-arrival': {
+    center: [43.825, 87.600], zoom: 12,
+    title: '乌鲁木齐 · 抵达日',
+    pois: [
+      { name: '地窝堡机场', lat: 43.907, lng: 87.474, desc: '抵达后取车', icon: 'plane' },
+      { name: '大巴扎', lat: 43.795, lng: 87.618, desc: '采购干果/特产，晚餐抓饭烤包子', icon: 'shop' },
+      { name: '机场美居酒店', lat: 43.907, lng: 87.474, desc: '头屯河区中亚北路138号，免费接送机', icon: 'hotel' }
+    ]
+  },
+  // Sayram Lake
+  'sayram-lake': {
+    center: [44.620, 81.080], zoom: 11,
+    title: '赛里木湖 · 环湖自驾',
+    pois: [
+      { name: '东门', lat: 44.603, lng: 81.145, desc: '景区入口，购票入园', icon: 'gate' },
+      { name: '松树头', lat: 44.590, lng: 81.050, desc: '爬山顶观全景', icon: 'mountain' },
+      { name: '月亮湾', lat: 44.610, lng: 81.080, desc: '拍蓝湖最佳机位', icon: 'camera' },
+      { name: '克勒涌珠', lat: 44.620, lng: 81.030, desc: '西岸景点', icon: 'water' },
+      { name: '天鹅乐水', lat: 44.655, lng: 81.005, desc: '看天鹅，星空营地附近', icon: 'swan' },
+      { name: '星空营地', lat: 44.660, lng: 81.020, desc: '住宿点，看日落星空', icon: 'hotel' },
+      { name: '点将台', lat: 44.670, lng: 81.090, desc: '北岸·敖包', icon: 'mountain' },
+      { name: '西海草原', lat: 44.680, lng: 81.060, desc: '北岸·草原', icon: 'grass' }
+    ]
+  },
+  // Yining city
+  'yining-city': {
+    center: [43.910, 81.310], zoom: 13,
+    title: '伊宁 · 市区游览',
+    pois: [
+      { name: '美仑酒店', lat: 43.913, lng: 81.325, desc: '斯大林街23号老城区', icon: 'hotel' },
+      { name: '喀赞其民俗区', lat: 43.948, lng: 81.335, desc: '蓝色小镇风情，拍彩色门和院落', icon: 'camera' },
+      { name: '六星街', lat: 43.908, lng: 81.298, desc: '俄式建筑+手风琴博物馆', icon: 'camera' },
+      { name: '伊犁河大桥', lat: 43.880, lng: 81.250, desc: '傍晚看日落', icon: 'sunset' },
+      { name: '汉人街', lat: 43.930, lng: 81.320, desc: '晚餐烤肉/抓饭', icon: 'food' }
+    ]
+  },
+  // Nalati park
+  'nalati-park': {
+    center: [43.330, 84.460], zoom: 13,
+    title: '那拉提 · 景区导览',
+    pois: [
+      { name: '游客中心', lat: 43.350, lng: 84.440, desc: '购票入园起点', icon: 'gate' },
+      { name: '天界台', lat: 43.340, lng: 84.460, desc: '空中草原制高点，360°全景', icon: 'mountain' },
+      { name: '天牧台', lat: 43.335, lng: 84.475, desc: '养蜂女雕像·骑马', icon: 'horse' },
+      { name: '游牧人家', lat: 43.325, lng: 84.490, desc: '网红桥·溪流·毡房午餐', icon: 'camera' },
+      { name: '雪莲谷', lat: 43.300, lng: 84.520, desc: '海拔3000m+·近看雪山冰川', icon: 'mountain' },
+      { name: '漫心酒店', lat: 43.330, lng: 84.450, desc: '那拉提街220号G218旁', icon: 'hotel' },
+      { name: '塔吾萨尼', lat: 43.340, lng: 84.430, desc: '河谷草原·一山四景', icon: 'camera' },
+      { name: '森林公园', lat: 43.350, lng: 84.410, desc: '河谷草原·云杉溪流', icon: 'tree' }
+    ]
+  },
+  // Duku Highway
+  'duku-highway': {
+    center: [43.900, 84.700], zoom: 8,
+    title: '独库公路北段 · 风景线',
+    pois: [
+      { name: '那拉提上独库', lat: 43.350, lng: 84.600, desc: 'G218东行20km→G217交汇处左转', icon: 'gate' },
+      { name: '乔尔玛', lat: 43.833, lng: 84.583, desc: '烈士陵园致敬+午餐+可加油', icon: 'food' },
+      { name: '哈希勒根达坂', lat: 43.920, lng: 84.720, desc: '海拔3390m·拍照·防雪廊道', icon: 'mountain' },
+      { name: '独山子区', lat: 44.327, lng: 84.871, desc: '出独库·加油休息', icon: 'gas' },
+      { name: '乌鲁木齐酒店', lat: 43.907, lng: 87.474, desc: 'G30高速回到乌鲁木齐', icon: 'hotel' }
+    ]
+  }
+};
+
+// ===== Mini map creation =====
+var miniMaps = {}; // track initialized mini maps
+
+function createMiniMap(containerId, areaKey) {
+  var area = AREA_POIS[areaKey];
+  if (!area) return;
+
+  var container = document.getElementById(containerId);
+  if (!container) return;
+
+  // If already initialized, just invalidate size
+  if (miniMaps[containerId]) {
+    setTimeout(function() { miniMaps[containerId].invalidateSize(); }, 100);
+    return;
+  }
+
+  var m = L.map(containerId, {
+    scrollWheelZoom: false,
+    zoomControl: true,
+    attributionControl: false
+  }).setView(area.center, area.zoom);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    subdomains: ['a','b','c']
+  }).addTo(m);
+
+  // Icon colors by type
+  var iconColors = {
+    'gate': '#4A7A9B', 'mountain': '#6B8E4E', 'camera': '#C65D3A',
+    'water': '#4A7A9B', 'swan': '#4A7A9B', 'hotel': '#6A4C93',
+    'shop': '#B8860B', 'food': '#C65D3A', 'sunset': '#B8860B',
+    'horse': '#8B7355', 'tree': '#6B8E4E', 'gas': '#C65D3A',
+    'plane': '#4A7A9B', 'grass': '#6B8E4E'
+  };
+
+  area.pois.forEach(function(poi) {
+    var color = iconColors[poi.icon] || '#4A7A9B';
+    var icon = L.divIcon({
+      className: 'day-marker',
+      html: '<div style="width:24px;height:24px;border-radius:50% 50% 50% 0;background:' + color +
+            ';border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);transform:rotate(-45deg);margin-left:-12px;margin-top:-24px;">' +
+            '<div style="width:8px;height:8px;border-radius:50%;background:white;margin:auto;margin-top:7px;"></div></div>',
+      iconSize: [0, 0]
+    });
+
+    L.marker([poi.lat, poi.lng], { icon: icon })
+      .addTo(m)
+      .bindPopup('<div class="mm-poi-popup"><strong>' + poi.name + '</strong><br>' + poi.desc + '</div>');
+  });
+
+  // Fit bounds to show all POIs
+  if (area.pois.length > 1) {
+    var bounds = L.latLngBounds(area.pois.map(function(p) { return [p.lat, p.lng]; }));
+    m.fitBounds(bounds, { padding: [30, 30] });
+  }
+
+  miniMaps[containerId] = m;
+
+  // Fix: invalidate size after a short delay to ensure proper rendering
+  // This handles cases where the container dimensions change after CSS transition
+  setTimeout(function() {
+    if (miniMaps[containerId]) {
+      miniMaps[containerId].invalidateSize();
+    }
+  }, 200);
+}
+
+// Toggle mini map expand/collapse and lazy-init
+function toggleMiniMap(idx, areaKey) {
+  var section = document.getElementById('mm-sec-' + idx);
+  if (!section) return;
+
+  // Safety: ensure parent segment card is expanded first
+  var segCard = section.closest('.segment-card');
+  if (segCard && !segCard.classList.contains('open')) {
+    segCard.classList.add('open');
+  }
+  
+  var isOpen = section.classList.contains('open');
+  if (!isOpen) {
+    // Opening: init map after CSS transition starts
+    section.classList.add('open');
+    var mapId = 'mm-map-' + idx;
+    setTimeout(function() {
+      createMiniMap(mapId, areaKey);
+    }, 350);
+  } else {
+    // Closing
+    section.classList.remove('open');
+  }
+}
+
 // Each segment: from, to, via (waypoints), departure, arrival, stops, notes
 var PLANS = {
   c: {
@@ -1361,9 +1577,42 @@ function selectPlan(planKey) {
 }
 
 // ===== Shared: Segment Card Rendering =====
+
+// Map segment to area POI key based on from/to keywords
+function getAreaKey(seg) {
+  var fromKw = (seg.from && seg.from.keyword) || '';
+  var toKw = (seg.to && seg.to.keyword) || '';
+  var title = seg.title || '';
+  
+  // Special case: Duku highway scenic drive day (driving back to Urumqi via Duku)
+  if (title.indexOf('独库') >= 0 && toKw.indexOf('乌鲁木齐') >= 0) {
+    return 'duku-highway';
+  }
+  if (fromKw.indexOf('那拉提') >= 0 && toKw.indexOf('乌鲁木齐') >= 0) {
+    return 'duku-highway';
+  }
+  
+  // Check DESTINATION first (where you arrive = what you explore that day)
+  if (toKw.indexOf('那拉提') >= 0) return 'nalati-park';
+  if (toKw.indexOf('赛里木湖') >= 0) return 'sayram-lake';
+  if (toKw.indexOf('伊宁') >= 0) return 'yining-city';
+  if (toKw.indexOf('奎屯') >= 0) return 'd1-arrival';
+  
+  // Fallback: check title for destination hints (赛湖 is short for 赛里木湖)
+  if (title.indexOf('那拉提') >= 0) return 'nalati-park';
+  if (title.indexOf('赛里木湖') >= 0 || title.indexOf('赛湖') >= 0) return 'sayram-lake';
+  if (title.indexOf('伊宁') >= 0) return 'yining-city';
+  
+  // Default: no mini map
+  return null;
+}
+
 function renderSegments(planKey) {
   var plan = PLANS[planKey];
   var container = document.getElementById('segmentsContainer');
+
+  // Reset mini maps (old instances are stale after re-render)
+  miniMaps = {};
 
   // AMap mode without key: show prompt
   if (currentMode === 'amap' && !apiKey) {
@@ -1445,6 +1694,21 @@ function createSegmentCard(seg, color, idx, mode) {
     '<span class="seg-arrow">&#9654;</span>' +
     '</div>';
 
+  // Mini map section (shared) - per-day area exploration map
+  var areaKey = getAreaKey(seg);
+  var miniMapHtml = '';
+  if (areaKey && AREA_POIS[areaKey]) {
+    var areaInfo = AREA_POIS[areaKey];
+    miniMapHtml = '<div class="mini-map-section" id="mm-sec-' + idx + '">' +
+      '<div class="mini-map-header" onclick="toggleMiniMap(' + idx + ', \'' + areaKey + '\')">' +
+      '<span class="mm-icon">&#128506;</span>' +
+      '<span class="mm-title">' + areaInfo.title + ' · 区域导览地图</span>' +
+      '<span class="mm-toggle">&#9654;</span>' +
+      '</div>' +
+      '<div class="mini-map-container" id="mm-map-' + idx + '"></div>' +
+      '</div>';
+  }
+
   if (mode === 'leaflet') {
     // Leaflet mode: distance/time filled by OSRM, show notes + turn-by-turn from OSRM
     var statsHtml = '<div class="seg-stats">' +
@@ -1465,7 +1729,7 @@ function createSegmentCard(seg, color, idx, mode) {
       '<div style="font-size:0.78rem;line-height:1.7;color:var(--ink);margin-top:0.3rem;">' + seg.scenicRoute + '</div>' +
       '</div>' : '';
 
-    return headerHtml + '<div class="segment-body">' + statsHtml + timelineHtml + turnHtml + scenicHtml + '</div>';
+    return headerHtml + '<div class="segment-body">' + statsHtml + timelineHtml + turnHtml + scenicHtml + miniMapHtml + '</div>';
   } else {
     // AMap mode: placeholders filled by searchAmapRoute, turn-by-turn navigation
     var statsHtml = '<div class="seg-stats">' +
@@ -1486,7 +1750,7 @@ function createSegmentCard(seg, color, idx, mode) {
       '<div style="font-size:0.78rem;line-height:1.7;color:var(--ink);margin-top:0.3rem;">' + seg.scenicRoute + '</div>' +
       '</div>' : '';
 
-    return headerHtml + '<div class="segment-body">' + statsHtml + timelineHtml + turnHtml + scenicHtml + '</div>';
+    return headerHtml + '<div class="segment-body">' + statsHtml + timelineHtml + turnHtml + scenicHtml + miniMapHtml + '</div>';
   }
 }
 
