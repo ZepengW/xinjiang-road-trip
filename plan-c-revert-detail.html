@@ -2052,42 +2052,35 @@ article.page { padding-right: 130px; }
   </p>
 </div>
 
+<!-- ========== WEATHER WIDGET ========== -->
+<div style="margin: 2rem 0;">
+  <h2 style="font-family:'NationalPark',sans-serif;font-size:1.5rem;color:var(--ink);text-align:center;margin-bottom:0.5rem;">实时天气预报 · 方案C-R天气利弊分析</h2>
+  <p style="text-align:center;font-family:'Hand',cursive;font-size:1.1rem;color:var(--accent);margin-bottom:1rem;">Live Weather & Plan Analysis</p>
+  <div data-weather-widget data-plan="cr" style="background: rgba(255,255,255,0.9); border: 2px solid #2E7D32; border-radius: 10px; padding: 1.2rem; margin: 0.8rem 0;"></div>
+</div>
+
 <footer>
   <p class="footer-note">祝你旅途愉快！一路平安</p>
   <p class="footer-text">方案C-R（反向深度版）路线及信息综合整理自新疆旅游攻略、交通资讯、小红书/马蜂窝网友经验及景区官方信息。<br>实际出行请以最新官方公告为准，注意天气变化和道路状况。先走独库=保险策略，封了立刻切Plan C，零风险。</p>
-  <div style="margin-top: 1.5rem; padding-top: 1.2rem; border-top: 1px dashed var(--rule);">
-    <div style="font-family:'NationalPark',sans-serif; font-size:0.85rem; color:var(--accent); margin-bottom:0.6rem; letter-spacing:0.05em;">相关页面导航</div>
-    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center;">
-      <a href="index.html" style="font-family:'NationalPark',sans-serif; font-size:0.78rem; color:var(--accent); text-decoration:none; padding:0.3rem 0.9rem; border:1.5px solid var(--accent); border-radius:16px; transition:all 0.2s;">首页 · 方案对比</a>
-      <a href="route-map.html" style="font-family:'NationalPark',sans-serif; font-size:0.78rem; color:var(--accent2); text-decoration:none; padding:0.3rem 0.9rem; border:1.5px solid var(--accent2); border-radius:16px; transition:all 0.2s;">路线地图</a>
-      <a href="booking-guide.html" style="font-family:'NationalPark',sans-serif; font-size:0.78rem; color:var(--accent2); text-decoration:none; padding:0.3rem 0.9rem; border:1.5px solid var(--accent2); border-radius:16px; transition:all 0.2s;">预订指南</a>
-      <a href="accommodation-guide.html" style="font-family:'NationalPark',sans-serif; font-size:0.78rem; color:var(--accent2); text-decoration:none; padding:0.3rem 0.9rem; border:1.5px solid var(--accent2); border-radius:16px; transition:all 0.2s;">住宿指南</a>
-      <a href="flexible-playbook.html" style="font-family:'NationalPark',sans-serif; font-size:0.78rem; color:var(--accent3); text-decoration:none; padding:0.3rem 0.9rem; border:1.5px solid var(--accent3); border-radius:16px; transition:all 0.2s;">灵活玩法</a>
-      <a href="multi-plans.html" style="font-family:'NationalPark',sans-serif; font-size:0.78rem; color:var(--accent3); text-decoration:none; padding:0.3rem 0.9rem; border:1.5px solid var(--accent3); border-radius:16px; transition:all 0.2s;">多方案对比</a>
-      <a href="plan-c-detail.html" style="font-family:'NationalPark',sans-serif; font-size:0.78rem; color:#B8860B; text-decoration:none; padding:0.3rem 0.9rem; border:1.5px solid #B8860B; border-radius:16px; transition:all 0.2s;">方案C · 深度草原版</a>
-      <a href="plan-b-detail.html" style="font-family:'NationalPark',sans-serif; font-size:0.78rem; color:var(--accent3); text-decoration:none; padding:0.3rem 0.9rem; border:1.5px solid var(--accent3); border-radius:16px; transition:all 0.2s;">方案B详情</a>
-      <a href="plan-d-detail.html" style="font-family:'NationalPark',sans-serif; font-size:0.78rem; color:var(--accent3); text-decoration:none; padding:0.3rem 0.9rem; border:1.5px solid var(--accent3); border-radius:16px; transition:all 0.2s;">方案D详情</a>
-    </div>
+  <div class="footer-links" style="display:flex;flex-wrap:wrap;gap:0.8rem;justify-content:center;margin-top:1rem;">
+    <a href="index.html">首页 · 方案对比</a>
+    <a href="xinjiang-road-trip.html">方案A · 经典</a>
+    <a href="plan-b-detail.html">方案B · 紧凑</a>
+    <a href="plan-c-detail.html">方案C · 深度</a>
+    <a href="plan-c-revert-detail.html" style="color:var(--accent);font-weight:700;">方案C-R · 反向</a>
+    <a href="plan-d-detail.html">方案D · 反向</a>
+    <a href="multi-plans.html">多方案对比</a>
+    <a href="flexible-playbook.html">灵活手册</a>
+    <a href="accommodation-guide.html">住宿指南</a>
+    <a href="route-map.html">路线地图</a>
+    <a href="booking-guide.html">预约指南</a>
   </div>
 </footer>
 
 </article>
+<script src="./_shared/weather-widget.js"></script>
 
 <!-- ===== Side Nav (右侧浮动导航) ===== -->
-
-<div class="footer-links">
-  <a href="index.html">首页 · 方案对比</a>
-  <a href="xinjiang-road-trip.html">方案A · 经典</a>
-  <a href="plan-b-detail.html">方案B · 紧凑</a>
-  <a href="plan-c-detail.html">方案C · 深度</a>
-  <a href="plan-c-revert-detail.html" class="current">方案C-R · 反向</a>
-  <a href="plan-d-detail.html">方案D · 反向</a>
-  <a href="multi-plans.html">多方案对比</a>
-  <a href="flexible-playbook.html">灵活手册</a>
-  <a href="accommodation-guide.html">住宿指南</a>
-  <a href="route-map.html">路线地图</a>
-  <a href="booking-guide.html">预约指南</a>
-</div>
 
 <nav class="side-nav" id="sideNav">
   <div class="side-nav-title">快速跳转</div>
@@ -2099,8 +2092,9 @@ article.page { padding-right: 130px; }
   <a href="#day5"><span class="nav-day">D5</span>8/6 返程</a>
   <a href="#day6"><span class="nav-day">D6</span>8/7 返程</a>
   <div class="side-nav-divider"></div>
-  <a href="index.html"><span class="nav-day">←</span>方案对比</a>
-  <a href="multi-plans.html"><span class="nav-day">≡</span>多方案对比</a>
+  <a href="index.html"><span class="nav-day">←</span>首页 · 方案对比</a>
+  <a href="plan-c-detail.html"><span class="nav-day">→</span>方案C详情</a>
+  <a href="multi-plans.html"><span class="nav-day">→</span>多方案对比</a>
   <a href="route-map.html"><span class="nav-day">→</span>路线地图</a>
   <a href="accommodation-guide.html"><span class="nav-day">→</span>住宿指南</a>
   <a href="booking-guide.html"><span class="nav-day">→</span>预约指南</a>

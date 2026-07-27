@@ -614,6 +614,37 @@ footer nav a.current {
 /* Prevent content from being hidden behind nav */
 article.page { padding-right: 130px; }
 @media (max-width: 768px) { article.page { padding-right: 1rem; } }
+
+/* ===== C / C-R Plan Switcher ===== */
+.plan-switcher {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg); padding: 0.8rem 0;
+  border-bottom: 2px solid var(--rule); margin-bottom: 1rem;
+}
+.ps-btns { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+.ps-btn {
+  font-family: 'NationalPark', sans-serif; font-size: 0.92rem;
+  padding: 0.5rem 1.2rem; border: 2px solid var(--rule); border-radius: 10px;
+  background: var(--paper); cursor: pointer; transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative;
+}
+.ps-btn .ps-sub { font-family: 'Mono', monospace; font-size: 0.66rem; color: var(--muted); font-weight: 400; }
+.ps-btn.active { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+.ps-btn.active .ps-sub { color: rgba(255,255,255,0.85); }
+.ps-btn[data-plan="cr"] { border-color: #6A4C93; }
+.ps-btn[data-plan="cr"] .ps-label { color: #6A4C93; }
+.ps-btn[data-plan="cr"].active { background: #6A4C93; border-color: #6A4C93; color: #fff; }
+.ps-btn[data-plan="cr"].active .ps-label { color: #fff; }
+.ps-btn[data-plan="cr"].active .ps-sub { color: rgba(255,255,255,0.85); }
+.ps-urgent {
+  position: absolute; top: -6px; right: -6px;
+  background: var(--warn); color: #fff; font-size: 0.58rem;
+  padding: 0.1rem 0.4rem; border-radius: 8px; font-family: 'Mono', monospace;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.plan-content { display: none; }
+.plan-content.active { display: block; }
 </style>
 </head>
 <body>
@@ -633,6 +664,24 @@ article.page { padding-right: 130px; }
     附可打印的行动清单与费用汇总，出发前照着勾即可。
   </p>
 </section>
+
+<!-- ========== C / C-R PLAN SWITCHER ========== -->
+<div class="plan-switcher">
+  <div class="ps-btns">
+    <button class="ps-btn active" data-plan="c" onclick="switchPlan('c')">
+      <span class="ps-label">方案 C</span>
+      <span class="ps-sub">先赛湖后独库 · 那拉提 D4 8/5</span>
+    </button>
+    <button class="ps-btn" data-plan="cr" onclick="switchPlan('cr')">
+      <span class="ps-urgent">今日抢票</span>
+      <span class="ps-label">方案 C-R</span>
+      <span class="ps-sub">先独库后赛湖 · 那拉提 D2 8/3</span>
+    </button>
+  </div>
+</div>
+
+<!-- ========== PLAN C CONTENT ========== -->
+<div class="plan-content active" id="content-c">
 
 <!-- ========== BOOKING TIMELINE ========== -->
 <div class="section-header" id="timeline">
@@ -1114,6 +1163,172 @@ article.page { padding-right: 130px; }
   <strong>说明：</strong>以上为景区门票及自驾票费用，不含住宿、租车、油费、餐饮。如入住赛里木湖景区内并办理门票续期，145元自驾套票可覆盖两日二次入园，无需重复购票。那拉提200元自驾套票48小时有效，含门票95元+自驾票105元；若未抢到自驾票，可退而购买门票+区间车联票（95+60=155元/人）乘区间车游览。65岁以上老人免95元门票，自驾票部分仍需付；1.3米以下儿童全免。
 </div>
 
+</div><!-- end content-c -->
+
+<!-- ========== PLAN C-R CONTENT ========== -->
+<div class="plan-content" id="content-cr">
+
+<!-- C-R 紧急抢票警示 -->
+<div class="tip-box warn" style="border-left-color:var(--warn);background:#FFF0ED;margin-bottom:1rem;">
+  <strong style="color:var(--warn);">⚠ 紧急：C-R 那拉提抢票今天 12:10！</strong><br>
+  C-R 于 D2(8/3 周一) 到达那拉提，自驾票提前 7 天放号 = <strong style="color:var(--warn);">7/27 今天中午 12:10</strong>。
+  请立即在「智游那拉提」小程序完成抢票（提前上传驾驶证+行驶证+身份证，须人脸认证，15 分钟内付款）。
+</div>
+
+<!-- ========== C-R BOOKING TIMELINE ========== -->
+<div class="section-header">
+  <h2>C-R 预约时间线</h2>
+  <p class="hand-note">C-R Booking Timeline</p>
+</div>
+
+<div class="tip-box strategy">
+  <strong>核心原则：</strong>C-R 方案先走独库（D2 8/3），那拉提和独库预约日相同（7/27），是第一优先级。赛湖延后到 D4(8/5)，预约日 8/2。
+</div>
+
+<div class="timeline-wrap">
+  <table class="timeline">
+    <thead>
+      <tr>
+        <th style="width:12%">日期</th>
+        <th style="width:15%">景区</th>
+        <th style="width:13%">提前预约</th>
+        <th style="width:20%">预约平台</th>
+        <th style="width:13%">价格</th>
+        <th style="width:27%">注意事项</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="tl-date">D2 8/3(一)</span><br>到达</td>
+        <td><span class="tl-scenic">那拉提草原</span></td>
+        <td><span class="tl-advance">提前7天</span><br><span style="font-size:0.72rem;color:var(--warn)">7/27 12:10！</span></td>
+        <td><span class="tl-platform">「智游那拉提」<br>微信小程序</span></td>
+        <td><span class="tl-price">200元/人</span><br><span style="font-size:0.7rem;color:var(--muted)">自驾票</span></td>
+        <td class="tl-note"><strong style="color:var(--warn)">旺季最难抢！</strong>自驾票提前7天每天12:10放号。须人脸认证，15分钟内付款。详见下方那拉提详情。</td>
+      </tr>
+      <tr>
+        <td><span class="tl-date">D2 8/3(一)</span><br>通行</td>
+        <td><span class="tl-scenic">独库公路</span></td>
+        <td><span class="tl-advance">提前7天</span><br><span style="font-size:0.72rem;color:var(--warn)">7/27</span></td>
+        <td><span class="tl-platform">「平安独山子」<br>微信公众号</span></td>
+        <td><span class="tl-price free">免费</span></td>
+        <td class="tl-note">C-R 方案南行（独山子→那拉提），入口选「独山子」，时段选 8:00-10:00。2026新规不预约罚200元记1分。</td>
+      </tr>
+      <tr>
+        <td><span class="tl-date">D4 8/5(三)</span><br>到达</td>
+        <td><span class="tl-scenic">赛里木湖</span></td>
+        <td><span class="tl-advance">提前3-7天</span><br><span style="font-size:0.72rem;color:var(--accent)">最晚 8/2</span></td>
+        <td><span class="tl-platform">「赛里木湖旅游」<br>微信公众号</span></td>
+        <td><span class="tl-price">145元/人</span><br><span style="font-size:0.7rem;color:var(--muted)">自驾套票</span></td>
+        <td class="tl-note">C-R 方案赛湖延后到 D4，24h票单日环湖。住精河全季，G30东行80km。</td>
+      </tr>
+      <tr>
+        <td><span class="tl-date">D3 8/4(二)</span><br>到达</td>
+        <td><span class="tl-scenic">喀赞其 + 六星街</span></td>
+        <td><span class="tl-advance">无需预约</span></td>
+        <td><span style="color:var(--muted);font-size:0.78rem">—</span></td>
+        <td><span class="tl-price free">免费</span></td>
+        <td class="tl-note">C-R 方案伊宁在 D3 到达，同方案C。六星街旺季10:00-次日2:00禁入五环。</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== C-R 预约清单 ========== -->
+<div class="section-header">
+  <h2>C-R 预约行动清单</h2>
+  <p class="hand-note">C-R Action Checklist</p>
+</div>
+
+<div class="checklist-card">
+  <div class="checklist-title">出发前必须完成的预约</div>
+  <div class="checklist-sub">C-R 方案 · 按时间倒推 · 勾选确认</div>
+
+  <div class="check-item">
+    <span class="check-box">☐</span>
+    <span class="check-date">7/27</span>
+    <span class="check-text">
+      <strong style="color:var(--warn)">抢那拉提自驾票！</strong>（<span class="platform-name">「智游那拉提」</span>小程序，选 <span class="price-mono">8/3</span>，提前上传驾驶证+行驶证+身份证，<strong>须人脸认证</strong>，15分钟内付款，<span class="price-mono">200元/人 × 2 = 400元</span>）<br>
+      <span style="font-size:0.78rem;color:var(--muted)">没抢到 → 8/2补约门票+区间车联票（95+60=155元/人），乘区间车游览空中草原</span>
+    </span>
+  </div>
+
+  <div class="check-item">
+    <span class="check-box">☐</span>
+    <span class="check-date">7/27</span>
+    <span class="check-text">
+      <strong>预约独库公路通行</strong>（<span class="platform-name">「平安独山子」</span>公众号，选 <span class="price-mono">8/3</span>，入口选「独山子」南行，时段选 <span class="price-mono">8:00-10:00</span>，<span class="price-mono">免费</span>）<br>
+      <span style="font-size:0.78rem;color:var(--muted)">2026新规：不预约罚200元记1分。周一独库车最少。</span>
+    </span>
+  </div>
+
+  <div class="check-item">
+    <span class="check-box">☐</span>
+    <span class="check-date d2">8/2</span>
+    <span class="check-text">
+      <strong>预约赛里木湖自驾票</strong>（<span class="platform-name">「赛里木湖旅游」</span>公众号，选 <span class="price-mono">8/5</span>，填车牌号，<span class="price-mono">145元/人 × 2 = 290元</span>）<br>
+      <span style="font-size:0.78rem;color:var(--muted)">每日限量3000辆，旺季秒光。C-R选24h票单日环湖，住精河全季。</span>
+    </span>
+  </div>
+
+  <div class="check-item">
+    <span class="check-box">☐</span>
+    <span class="check-date d3">8/2</span>
+    <span class="check-text">
+      <strong>出发前查独库 8/3 通行状态</strong>（「平安独山子」公众号/抖音，确认无临时管制）<br>
+      <span style="font-size:0.78rem;color:var(--muted)">夏季独库因天气临时管制很常见，备选方案见灵活手册。</span>
+    </span>
+  </div>
+</div>
+
+<!-- ========== C-R 费用汇总 ========== -->
+<div class="section-header">
+  <h2>C-R 预约费用汇总</h2>
+  <p class="hand-note">C-R Cost Summary</p>
+</div>
+
+<div class="cost-card">
+  <table class="cost-table">
+    <thead>
+      <tr>
+        <th>景区</th>
+        <th>计算</th>
+        <th class="num">金额</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="scenic">那拉提草原</td>
+        <td class="calc">自驾票 200元/人 × 2人</td>
+        <td class="num">400元</td>
+      </tr>
+      <tr>
+        <td class="scenic">赛里木湖</td>
+        <td class="calc">自驾套票 145元/人 × 2人</td>
+        <td class="num">290元</td>
+      </tr>
+      <tr>
+        <td class="scenic">独库公路</td>
+        <td class="calc">2026新规需预约</td>
+        <td class="num free">免费</td>
+      </tr>
+      <tr>
+        <td class="scenic">喀赞其+六星街</td>
+        <td class="calc">步行游览</td>
+        <td class="num free">免费</td>
+      </tr>
+      <tr class="total">
+        <td class="scenic">合计</td>
+        <td class="calc">2人全程</td>
+        <td class="num">690元</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="cost-badge">与方案C费用一致</span>
+</div>
+
+</div><!-- end content-cr -->
+
 <!-- ========== FOOTER ========== -->
 <footer>
   <p class="footer-note">Book early, travel easy</p>
@@ -1144,8 +1359,54 @@ article.page { padding-right: 130px; }
   <a href="#plate-no-guide"><span class="nav-day">?</span>没车牌号</a>
   <a href="#checklist"><span class="nav-day">★</span>预约清单</a>
   <a href="#cost"><span class="nav-day">¥</span>费用汇总</a>
+  <a href="#weather"><span class="nav-day">☀</span>天气对比</a>
+  <div class="side-nav-divider"></div>
+  <a href="index.html"><span class="nav-day">←</span>首页 · 方案对比</a>
+  <a href="plan-c-detail.html"><span class="nav-day">→</span>方案C详情</a>
+  <a href="plan-c-revert-detail.html"><span class="nav-day">→</span>方案C-R详情</a>
+  <a href="route-map.html"><span class="nav-day">→</span>路线地图</a>
+  <a href="accommodation-guide.html"><span class="nav-day">→</span>住宿指南</a>
+  <a href="flexible-playbook.html"><span class="nav-day">→</span>灵活手册</a>
 </nav>
+<!-- ========== WEATHER WIDGET (shared across plans) ========== -->
+<div class="section-header" id="weather">
+  <h2>实时天气预报 · 方案天气对比</h2>
+  <p class="hand-note">Live Weather & Plan Analysis</p>
+</div>
+<div data-weather-widget data-plan="compare" style="background: rgba(255,255,255,0.9); border: 2px solid #2E7D32; border-radius: 10px; padding: 1.2rem; margin: 0.8rem 0 2rem;"></div>
+<script src="./_shared/weather-widget.js"></script>
+
 <script>
+// ===== C / C-R Plan Switcher =====
+function switchPlan(plan) {
+  // Toggle buttons
+  document.querySelectorAll('.ps-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-plan') === plan);
+  });
+  // Toggle content sections
+  document.querySelectorAll('.plan-content').forEach(function(content) {
+    content.classList.toggle('active', content.id === 'content-' + plan);
+  });
+  // Persist preference
+  try { localStorage.setItem('booking-plan', plan); } catch(e) {}
+  // Update weather widget plan mode if present
+  var weatherWidget = document.querySelector('[data-weather-widget]');
+  if (weatherWidget) {
+    weatherWidget.setAttribute('data-plan', plan === 'c' ? 'c' : (plan === 'cr' ? 'cr' : 'compare'));
+  }
+  // Scroll to top of content
+  window.scrollTo({ top: document.querySelector('.plan-switcher').offsetTop - 20, behavior: 'smooth' });
+}
+
+// Restore saved plan on load
+(function() {
+  var saved;
+  try { saved = localStorage.getItem('booking-plan'); } catch(e) {}
+  if (saved === 'cr') {
+    switchPlan('cr');
+  }
+})();
+
 // Side nav active link on scroll
 (function() {
   var nav = document.getElementById('sideNav');

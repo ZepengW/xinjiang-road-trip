@@ -91,7 +91,7 @@
       '&longitude=' + location.lon +
       '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max' +
       '&timezone=Asia/Shanghai' +
-      '&forecast_days=7';
+      '&forecast_days=16';
     return fetch(url).then(function(resp) {
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       return resp.json();
@@ -184,15 +184,150 @@
 
     if (tripFound) {
       html += '<div style="margin-top:0.6rem; padding:0.5rem 0.8rem; background:#E8F5E9; border-radius:6px; font-size:0.78rem; color:#2E7D32;">';
-      html += '✅ <strong>行程日期已进入7天预报窗口！</strong>上方高亮列为8/2-8/7的实时天气预报，请重点关注。';
+      html += '✅ <strong>16天预报已覆盖行程日期！</strong>上方高亮列为8/2-8/7的实时天气预报，请重点关注。';
       html += '</div>';
     } else {
       var daysUntilTrip = Math.ceil((new Date(TRIP_DATES[0]) - new Date()) / (1000 * 60 * 60 * 24));
       html += '<div style="margin-top:0.6rem; padding:0.5rem 0.8rem; background:#FFF9E8; border-radius:6px; font-size:0.78rem; color:#D4A017;">';
-      html += '📅 距行程第一天（8/2）还有约 <strong>' + daysUntilTrip + ' 天</strong>。7天预报窗口将在约7/26起覆盖行程日期，届时此处将显示实时预报。';
+      html += '📅 距行程第一天（8/2）还有约 <strong>' + daysUntilTrip + ' 天</strong>。16天预报窗口将在约7/17起覆盖行程日期，届时此处将显示实时预报。';
       html += '</div>';
     }
 
+    return html;
+  }
+
+  // 行程方案天气对比分析
+  // 方案C: 独库=8/6(独山子), 赛湖=8/3(博乐), 那拉提=8/5(伊宁)
+  // 方案C-R: 独库=8/3(独山子), 赛湖=8/5(博乐), 那拉提=8/3(伊宁)
+  function renderPlanAnalysis(results, planMode) {
+    // 构建地点名到数据的映射
+    var locMap = {};
+    for (var i = 0; i < results.length; i++) {
+      locMap[results[i].location.name] = results[i];
+    }
+
+    // 方案C关键日期
+    var PLAN_C = [
+      { spot: '独库', day: 'D5', date: '2026-08-06', locName: '独山子' },
+      { spot: '赛湖', day: 'D2', date: '2026-08-03', locName: '博乐' },
+      { spot: '那拉提', day: 'D4', date: '2026-08-05', locName: '伊宁' }
+    ];
+
+    // 方案C-R关键日期
+    var PLAN_CR = [
+      { spot: '独库', day: 'D2', date: '2026-08-03', locName: '独山子' },
+      { spot: '赛湖', day: 'D4', date: '2026-08-05', locName: '博乐' },
+      { spot: '那拉提', day: 'D2', date: '2026-08-03', locName: '伊宁' }
+    ];
+
+    // 获取某方案某关键日的天气数据
+    function getDayWeather(item) {
+      var locData = locMap[item.locName];
+      if (!locData) return null;
+      var daily = locData.data.daily;
+      var idx = daily.time.indexOf(item.date);
+      if (idx === -1) return null;
+      var wmo = daily.weather_code[idx];
+      var wmoInfo = WMO_CODES[wmo] || { label: '未知', emoji: '❓', type: 'neutral' };
+      var maxT = Math.round(daily.temperature_2m_max[idx]);
+      var minT = Math.round(daily.temperature_2m_min[idx]);
+      var precipProb = daily.precipitation_probability_max ? daily.precipitation_probability_max[idx] : null;
+      return {
+        wmoInfo: wmoInfo,
+        maxT: maxT,
+        minT: minT,
+        precipProb: precipProb,
+        type: wmoInfo.type,
+        hasRisk: wmoInfo.type === 'warn' || wmoInfo.type === 'bad'
+      };
+    }
+
+    // 风险评分：good/neutral=0, warn=1, bad=2；降水概率>=50加1，>=80再加1
+    function riskScore(weather) {
+      if (!weather) return 3; // 数据未覆盖视为较高风险
+      var score = 0;
+      if (weather.type === 'warn') score += 1;
+      if (weather.type === 'bad') score += 2;
+      if (weather.precipProb !== null && weather.precipProb >= 80) score += 2;
+      else if (weather.precipProb !== null && weather.precipProb >= 50) score += 1;
+      return score;
+    }
+
+    // 格式化单日天气行
+    function formatDayLine(item, weather) {
+      var str = item.day + item.spot + ': ';
+      if (!weather) {
+        return str + '❓ 数据未覆盖';
+      }
+      str += weather.wmoInfo.emoji + ' ' + weather.wmoInfo.label + ' ' + weather.maxT + '°/' + weather.minT + '°';
+      if (weather.precipProb !== null && weather.precipProb > 0) {
+        str += ' 💧' + weather.precipProb + '%';
+      }
+      str += ' ' + (weather.hasRisk ? '⚠' : '✅');
+      return str;
+    }
+
+    // 渲染单个方案区块
+    function renderPlanBlock(planName, planItems, color) {
+      var lines = [];
+      var totalScore = 0;
+      var riskCount = 0;
+      for (var i = 0; i < planItems.length; i++) {
+        var w = getDayWeather(planItems[i]);
+        totalScore += riskScore(w);
+        if (w && w.hasRisk) riskCount++;
+        lines.push(formatDayLine(planItems[i], w));
+      }
+      var blockHtml = '<div style="margin-bottom:0.5rem;">';
+      blockHtml += '<div style="font-size:0.78rem; color:' + color + '; font-weight:bold; margin-bottom:0.25rem;">方案' + planName + '</div>';
+      blockHtml += '<div style="font-size:0.72rem; line-height:1.7; font-family:\'Mono\',monospace;">';
+      for (var j = 0; j < lines.length; j++) {
+        if (j > 0) blockHtml += ' <span style="color:#D4C4A8;">|</span> ';
+        blockHtml += lines[j];
+      }
+      blockHtml += '</div>';
+      blockHtml += '<div style="font-size:0.65rem; color:#8B7355; margin-top:0.15rem;">风险天数：' + riskCount + '/' + planItems.length + ' · 风险指数：' + totalScore + '</div>';
+      blockHtml += '</div>';
+      return { html: blockHtml, score: totalScore, riskCount: riskCount };
+    }
+
+    var showC = planMode === 'c' || planMode === 'compare';
+    var showCR = planMode === 'cr' || planMode === 'compare';
+
+    var html = '<div style="margin-top:0.8rem; padding:0.8rem; background:#F5F0E5; border-radius:8px; border:1px solid #D4C4A8;">';
+    html += '<div style="font-family:\'NationalPark\',sans-serif; font-size:0.9rem; color:#B8860B; margin-bottom:0.5rem; font-weight:bold;">🗺️ 行程方案天气对比分析</div>';
+
+    var cResult = null, crResult = null;
+    if (showC) {
+      cResult = renderPlanBlock('C', PLAN_C, '#4A7A9B');
+      html += cResult.html;
+    }
+    if (showCR) {
+      crResult = renderPlanBlock('C-R', PLAN_CR, '#B8860B');
+      html += crResult.html;
+    }
+
+    // 建议行
+    if (showC && showCR && cResult && crResult) {
+      var recText = '';
+      var recColor = '#2E7D32';
+      if (cResult.score < crResult.score) {
+        recText = '💡 建议：方案C天气更优（风险指数 ' + cResult.score + ' vs ' + crResult.score + '），方案C的独库/赛湖/那拉提关键日天气风险更低。';
+      } else if (crResult.score < cResult.score) {
+        recText = '💡 建议：方案C-R天气更优（风险指数 ' + crResult.score + ' vs ' + cResult.score + '），方案C-R的独库/赛湖/那拉提关键日天气风险更低。';
+        recColor = '#B8860B';
+      } else {
+        recText = '💡 建议：两方案天气风险相当（风险指数 ' + cResult.score + ' vs ' + crResult.score + '），可结合其他因素（住宿、路况、个人偏好）决策。';
+        recColor = '#1565C0';
+      }
+      html += '<div style="margin-top:0.4rem; padding:0.4rem 0.6rem; background:white; border-radius:4px; font-size:0.72rem; color:' + recColor + '; line-height:1.5;">' + recText + '</div>';
+    } else if (showC && cResult) {
+      html += '<div style="margin-top:0.4rem; padding:0.4rem 0.6rem; background:white; border-radius:4px; font-size:0.72rem; color:#4A7A9B; line-height:1.5;">💡 当前显示方案C天气分析。风险指数：' + cResult.score + '，风险天数：' + cResult.riskCount + '/' + PLAN_C.length + '。</div>';
+    } else if (showCR && crResult) {
+      html += '<div style="margin-top:0.4rem; padding:0.4rem 0.6rem; background:white; border-radius:4px; font-size:0.72rem; color:#B8860B; line-height:1.5;">💡 当前显示方案C-R天气分析。风险指数：' + crResult.score + '，风险天数：' + crResult.riskCount + '/' + PLAN_CR.length + '。</div>';
+    }
+
+    html += '</div>';
     return html;
   }
 
@@ -205,7 +340,7 @@
         '<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.6rem;">' +
           '<div style="display:flex; align-items:center; gap:0.5rem;">' +
             '<span style="background:#2E7D32; color:white; font-size:0.7rem; padding:0.15rem 0.6rem; border-radius:10px; font-family:\'Mono\',monospace;">LIVE · 实时</span>' +
-            '<strong style="color:#2E7D32; font-size:1rem;">实时天气预报 · 7天逐日预报</strong>' +
+            '<strong style="color:#2E7D32; font-size:1rem;">实时天气预报 · 16天逐日预报</strong>' +
           '</div>' +
           '<button class="weather-refresh" style="font-family:\'NationalPark\',sans-serif; font-size:0.78rem; padding:0.25rem 0.8rem; border:1.5px solid #2E7D32; border-radius:14px; background:white; color:#2E7D32; cursor:pointer;">刷新数据</button>' +
         '</div>' +
@@ -220,7 +355,7 @@
         '</div>' +
         '<div style="margin-top:0.5rem; font-size:0.72rem; color:#8B7355; line-height:1.5;">' +
           '数据来源：Open-Meteo（内置中国气象局CMA模型）· 免费无需注册 · 每次打开页面自动获取最新预报<br>' +
-          '<strong>注意：</strong>7天预报仅覆盖未来7天。行程日期（8/2-8/7）进入7天窗口后（约7/26起），此处将显示行程当天实时预报。' +
+          '<strong>注意：</strong>16天预报覆盖行程，越临近精度越高（前10天CMA模型，后6天GFS/ECMWF拼接）。' +
         '</div>';
 
       var loadingEl = container.querySelector('.weather-loading');
@@ -241,6 +376,10 @@
 
         Promise.all(promises).then(function(results) {
           contentEl.innerHTML = renderWeather(results);
+          var planMode = container.getAttribute('data-plan');
+          if (planMode) {
+            contentEl.innerHTML += renderPlanAnalysis(results, planMode);
+          }
           loadingEl.style.display = 'none';
           errorEl.style.display = 'none';
           contentEl.style.display = 'block';

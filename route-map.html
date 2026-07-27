@@ -227,34 +227,70 @@ article.page { padding-right: 130px; }
   margin: 0.8rem 1.2rem;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid var(--rule);
+  border: 2px solid var(--accent3);
   background: var(--paper);
+  box-shadow: 0 2px 8px rgba(74,122,155,0.15);
 }
 .mini-map-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 0.8rem;
-  background: rgba(74,122,155,0.08);
-  border-bottom: 1px solid var(--rule);
+  padding: 0.7rem 1rem;
+  background: linear-gradient(135deg, rgba(74,122,155,0.18), rgba(74,122,155,0.08));
+  border-bottom: 2px solid var(--accent3);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  position: relative;
 }
-.mini-map-header:hover { background: rgba(74,122,155,0.14); }
-.mini-map-header .mm-icon { font-size: 0.9rem; }
+.mini-map-header:hover { background: rgba(74,122,155,0.25); transform: translateX(2px); }
+.mini-map-header .mm-icon { font-size: 1.2rem; }
 .mini-map-header .mm-title {
   font-family: 'NationalPark', sans-serif;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: var(--accent3);
   flex: 1;
+  font-weight: 700;
+}
+.mini-map-header .mm-badge {
+  font-family: 'Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--paper);
+  background: var(--accent3);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  margin-left: 0.3rem;
+  font-weight: 700;
+}
+.mini-map-header .mm-hint {
+  font-family: 'Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--accent3);
+  opacity: 0.7;
+  margin-left: 0.2rem;
 }
 .mini-map-header .mm-toggle {
   font-family: 'Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--muted);
-  transition: transform 0.2s;
+  font-size: 0.78rem;
+  color: var(--accent3);
+  transition: transform 0.3s;
+  font-weight: 700;
 }
 .mini-map-section.open .mm-toggle { transform: rotate(90deg); }
+/* Pulse animation for collapsed mini-maps to draw attention */
+.mini-map-section:not(.open) .mini-map-header::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 rgba(74,122,155,0.4);
+  animation: mmPulse 2.5s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes mmPulse {
+  0% { box-shadow: 0 0 0 0 rgba(74,122,155,0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(74,122,155,0); }
+  100% { box-shadow: 0 0 0 0 rgba(74,122,155,0); }
+}
 .mini-map-container {
   height: 0;
   overflow: hidden;
@@ -352,6 +388,13 @@ article.page { padding-right: 130px; }
   <strong>关于两种模式：</strong>「免Key模式」使用 Leaflet + OpenStreetMap 瓦片，通过 OSRM 公共路线规划服务绘制真实道路路线，提供精确距离、时间和逐步导航指令，页面打开即可使用。「高德导航模式」使用高德地图真实道路路线规划，需配置 API Key 和安全密钥。出行当天建议同时打开高德地图App导航，可获取实时路况和交通管制信息。独库公路段因山路限速，实际行驶时间可能比导航预估多20-30%。
 </div>
 
+<!-- ========== WEATHER WIDGET ========== -->
+<div style="margin: 2rem 0;">
+  <h2 style="font-family:'NationalPark',sans-serif;font-size:1.5rem;color:var(--ink);text-align:center;margin-bottom:0.5rem;">实时天气预报</h2>
+  <p style="text-align:center;font-family:'Hand',cursive;font-size:1.1rem;color:var(--accent3);margin-bottom:1rem;">Live Weather Forecast</p>
+  <div data-weather-widget style="background: rgba(255,255,255,0.9); border: 2px solid #2E7D32; border-radius: 10px; padding: 1.2rem; margin: 0.8rem 0;"></div>
+</div>
+
 <footer>
   <p class="footer-note">Follow the real road</p>
   <div class="footer-links">
@@ -372,6 +415,7 @@ article.page { padding-right: 130px; }
 </article>
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="./_shared/weather-widget.js"></script>
 <script>
 // ===== Global State =====
 var currentMode = 'leaflet';   // 'leaflet' or 'amap'
@@ -1042,9 +1086,9 @@ function destroyCurrentMap() {
 function updateSegmentsHint() {
   var hint = document.getElementById('segmentsHint');
   if (currentMode === 'leaflet') {
-    hint.textContent = '点击每段展开路线详情 · 免Key模式使用OSRM真实道路路线规划';
+    hint.innerHTML = '点击每段展开路线详情 · 每段含 <strong style="color:var(--accent3);">🗺️ 区域导览小地图</strong>（POI 标记）· 免Key模式使用OSRM真实道路路线规划';
   } else {
-    hint.textContent = '点击每段展开导航信息 · 距离/时间由高德地图实时计算';
+    hint.innerHTML = '点击每段展开导航信息 · 每段含 <strong style="color:var(--accent3);">🗺️ 区域导览小地图</strong>（POI 标记）· 距离/时间由高德地图实时计算';
   }
 }
 
@@ -1631,12 +1675,36 @@ function renderSegments(planKey) {
     container.appendChild(card);
   });
 
-  // Add click handlers for expand/collapse
+  // Add click handlers for expand/collapse — auto-open mini-map when segment opens
   document.querySelectorAll('.segment-header').forEach(function(h) {
     h.onclick = function() {
-      h.parentElement.classList.toggle('open');
+      var card = h.parentElement;
+      var wasOpen = card.classList.contains('open');
+      card.classList.toggle('open');
+      // When opening a segment, auto-open its mini-map too
+      if (!wasOpen) {
+        var miniSec = card.querySelector('.mini-map-section');
+        if (miniSec && !miniSec.classList.contains('open')) {
+          var mmIdx = parseInt(miniSec.id.replace('mm-sec-', ''));
+          var areaKey = miniSec.getAttribute('data-area-key');
+          if (areaKey) {
+            setTimeout(function() {
+              toggleMiniMap(mmIdx, areaKey);
+            }, 400);
+          }
+        }
+      }
     };
   });
+
+  // Auto-init first segment's mini-map (it's open by default)
+  var firstSeg = plan.segments[0];
+  var firstAreaKey = getAreaKey(firstSeg);
+  if (firstAreaKey && AREA_POIS[firstAreaKey]) {
+    setTimeout(function() {
+      createMiniMap('mm-map-0', firstAreaKey);
+    }, 500);
+  }
 
   if (currentMode === 'leaflet') {
     // Fetch OSRM for all segments to fill cards
@@ -1699,10 +1767,12 @@ function createSegmentCard(seg, color, idx, mode) {
   var miniMapHtml = '';
   if (areaKey && AREA_POIS[areaKey]) {
     var areaInfo = AREA_POIS[areaKey];
-    miniMapHtml = '<div class="mini-map-section" id="mm-sec-' + idx + '">' +
+    miniMapHtml = '<div class="mini-map-section' + (idx === 0 ? ' open' : '') + '" id="mm-sec-' + idx + '" data-area-key="' + areaKey + '">' +
       '<div class="mini-map-header" onclick="toggleMiniMap(' + idx + ', \'' + areaKey + '\')">' +
       '<span class="mm-icon">&#128506;</span>' +
       '<span class="mm-title">' + areaInfo.title + ' · 区域导览地图</span>' +
+      '<span class="mm-badge">' + areaInfo.pois.length + ' POI</span>' +
+      '<span class="mm-hint">点击展开</span>' +
       '<span class="mm-toggle">&#9654;</span>' +
       '</div>' +
       '<div class="mini-map-container" id="mm-map-' + idx + '"></div>' +
@@ -1951,9 +2021,14 @@ window.addEventListener('load', function() {
   <a href="#seg-0"><span class="nav-day">D2</span>→赛里木湖</a>
   <a href="#seg-1"><span class="nav-day">D3</span>→伊宁</a>
   <a href="#seg-2"><span class="nav-day">D4</span>→那拉提</a>
-  <a href="#seg-3"><span class="nav-day">D5</span>→独库→乌市</a>
+  <a href="#seg-3"><span class="nav-day">D5</span>独库→乌市</a>
   <div class="side-nav-divider"></div>
-  <a href="booking-guide.html"><span class="nav-day">→</span>预约方案</a>
+  <a href="index.html"><span class="nav-day">←</span>首页 · 方案对比</a>
+  <a href="plan-c-detail.html"><span class="nav-day">→</span>方案C详情</a>
+  <a href="plan-c-revert-detail.html"><span class="nav-day">→</span>方案C-R详情</a>
+  <a href="booking-guide.html"><span class="nav-day">→</span>预约指南</a>
+  <a href="accommodation-guide.html"><span class="nav-day">→</span>住宿指南</a>
+  <a href="flexible-playbook.html"><span class="nav-day">→</span>灵活手册</a>
 </nav>
 <script>
 // Side nav active link on scroll

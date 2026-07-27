@@ -60,6 +60,7 @@
   --shadow: rgba(61,43,31,0.1);
   --shadow-strong: rgba(61,43,31,0.18);
   --max: 900px;
+  --warn: #C62828;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -247,6 +248,37 @@ footer .footer-links a.current { border-color: var(--accent); color: var(--accen
 /* Prevent content from being hidden behind nav */
 article.page { padding-right: 130px; }
 @media (max-width: 768px) { article.page { padding-right: 1rem; } }
+
+/* ===== C / C-R Plan Switcher ===== */
+.plan-switcher {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg); padding: 0.8rem 0;
+  border-bottom: 2px solid var(--rule); margin-bottom: 1rem;
+}
+.ps-btns { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+.ps-btn {
+  font-family: 'NationalPark', sans-serif; font-size: 0.92rem;
+  padding: 0.5rem 1.2rem; border: 2px solid var(--rule); border-radius: 10px;
+  background: var(--paper); cursor: pointer; transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative;
+}
+.ps-btn .ps-sub { font-family: 'Mono', monospace; font-size: 0.66rem; color: var(--muted); font-weight: 400; }
+.ps-btn.active { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+.ps-btn.active .ps-sub { color: rgba(255,255,255,0.85); }
+.ps-btn[data-plan="cr"] { border-color: var(--accent2); }
+.ps-btn[data-plan="cr"] .ps-label { color: var(--accent2); }
+.ps-btn[data-plan="cr"].active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+.ps-btn[data-plan="cr"].active .ps-label { color: #fff; }
+.ps-btn[data-plan="cr"].active .ps-sub { color: rgba(255,255,255,0.85); }
+.ps-urgent {
+  position: absolute; top: -6px; right: -6px;
+  background: var(--warn); color: #fff; font-size: 0.58rem;
+  padding: 0.1rem 0.4rem; border-radius: 8px; font-family: 'Mono', monospace;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.plan-content { display: none; }
+.plan-content.active { display: block; }
 </style>
 </head>
 <body>
@@ -265,6 +297,23 @@ article.page { padding-right: 130px; }
     所有价格均为8月旺季参考价（2024-2025实测数据），实际请以携程/美团实时报价为准。
   </p>
 </section>
+
+<!-- ========== C / C-R PLAN SWITCHER ========== -->
+<div class="plan-switcher">
+  <div class="ps-btns">
+    <button class="ps-btn active" data-plan="c" onclick="switchPlan('c')">
+      <span class="ps-label">方案 C</span>
+      <span class="ps-sub">先赛湖后独库 · 那拉提 D4 8/5</span>
+    </button>
+    <button class="ps-btn" data-plan="cr" onclick="switchPlan('cr')">
+      <span class="ps-label">方案 C-R</span>
+      <span class="ps-sub">先独库后赛湖 · 那拉提 D2 8/3</span>
+    </button>
+  </div>
+</div>
+
+<!-- ========== PLAN C CONTENT ========== -->
+<div class="plan-content active" id="content-c">
 
 <!-- ========== BOOKED HOTELS ========== -->
 <div style="background:linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); border:2px solid var(--accent3); border-radius:10px; padding:1.2rem 1.5rem; margin:1rem 0;">
@@ -847,6 +896,175 @@ article.page { padding-right: 130px; }
   豪华型（全住景区门口）：约4000-6000+元 · 不推荐，性价比最低
 </div>
 
+</div><!-- end content-c -->
+
+<!-- ========== PLAN C-R CONTENT ========== -->
+<div class="plan-content" id="content-cr">
+
+<!-- ========== C-R BOOKED HOTELS ========== -->
+<div style="background:linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); border:2px solid var(--accent3); border-radius:10px; padding:1.2rem 1.5rem; margin:1rem 0;">
+  <h3 style="font-family:'NationalPark',sans-serif; font-size:1.1rem; color:var(--accent3); margin-bottom:0.5rem;">C-R 已预订酒店（同酒店 · 不同日期）</h3>
+  <table style="width:100%; border-collapse:collapse; font-size:0.85rem; margin-top:0.5rem;">
+    <thead>
+      <tr style="border-bottom:2px solid var(--accent3);">
+        <th style="text-align:left; padding:0.5rem; font-family:'NationalPark',sans-serif; font-size:0.8rem; color:var(--accent3);">天数</th>
+        <th style="text-align:left; padding:0.5rem; font-family:'NationalPark',sans-serif; font-size:0.8rem; color:var(--accent3);">酒店</th>
+        <th style="text-align:left; padding:0.5rem; font-family:'NationalPark',sans-serif; font-size:0.8rem; color:var(--accent3);">地址</th>
+        <th style="text-align:left; padding:0.5rem; font-family:'NationalPark',sans-serif; font-size:0.8rem; color:var(--accent3);">状态</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #C8E6C9;">
+        <td style="padding:0.5rem; font-family:'Mono',monospace; font-size:0.78rem; color:var(--accent3);">D1/D5</td>
+        <td style="padding:0.5rem; font-weight:bold; color:var(--ink);">乌鲁木齐机场美居酒店</td>
+        <td style="padding:0.5rem; color:var(--muted); font-size:0.8rem;">头屯河区中亚北路138号</td>
+        <td style="padding:0.5rem; font-size:0.8rem; color:var(--accent3);">同方案C · 无需改</td>
+      </tr>
+      <tr style="border-bottom:1px solid #C8E6C9;">
+        <td style="padding:0.5rem; font-family:'Mono',monospace; font-size:0.78rem; color:var(--accent3);">D2</td>
+        <td style="padding:0.5rem; font-weight:bold; color:var(--ink);">那拉提空中草原漫心酒店</td>
+        <td style="padding:0.5rem; color:var(--muted); font-size:0.8rem;">那拉提街220号(G218旁)</td>
+        <td style="padding:0.5rem; font-size:0.8rem; color:var(--warn); font-weight:bold;">需改期 8/5&rarr;8/3</td>
+      </tr>
+      <tr style="border-bottom:1px solid #C8E6C9;">
+        <td style="padding:0.5rem; font-family:'Mono',monospace; font-size:0.78rem; color:var(--accent3);">D3</td>
+        <td style="padding:0.5rem; font-weight:bold; color:var(--ink);">伊宁老城美仑酒店</td>
+        <td style="padding:0.5rem; color:var(--muted); font-size:0.8rem;">斯大林街23号</td>
+        <td style="padding:0.5rem; font-size:0.8rem; color:var(--accent3);">同方案C · 无需改</td>
+      </tr>
+      <tr>
+        <td style="padding:0.5rem; font-family:'Mono',monospace; font-size:0.78rem; color:var(--accent3);">D4</td>
+        <td style="padding:0.5rem; font-weight:bold; color:var(--ink);">精河/博乐（新订）</td>
+        <td style="padding:0.5rem; color:var(--muted); font-size:0.8rem;">赛里木湖东80km</td>
+        <td style="padding:0.5rem; font-size:0.8rem; color:var(--warn); font-weight:bold;">需新订 1 间</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.8rem; color:var(--muted); margin-top:0.8rem; line-height:1.6;">
+    C-R 方案复用方案C已预订的 3 家酒店（美居、漫心、美仑），仅日期调整；D4 需在精河/博乐新订 1 间。星空营地视改期情况决定是否使用。
+  </p>
+</div>
+
+<!-- C-R 改期提醒 -->
+<div class="tip-box warn" style="border-left-color: var(--warn); background: #FFF0ED;">
+  <strong style="color: var(--warn);">C-R 有 2 家已预订酒店需要改期！</strong><br>
+  ① <strong>赛里木湖牧野星空营地</strong>：原 D2(8/3) &rarr; C-R 需 D4(8/5)，须联系平台<strong>改期 8/3&rarr;8/5</strong>。若 8/5 已满，则放弃营地住精河/博乐（见下方 D4 推荐）。<br>
+  ② <strong>那拉提空中草原漫心酒店</strong>：原 D4(8/5) &rarr; C-R 需 D2(8/3)，须联系平台<strong>改期 8/5&rarr;8/3</strong>。8/3 是周一，房源相对宽松，改期成功率高。<br>
+  ③ <strong>乌鲁木齐美居 &amp; 伊宁美仑</strong>：D1/D5 和 D3 日期不变，无需操作。
+</div>
+
+<!-- ========== C-R D2 说明 ========== -->
+<div class="tip-box strategy">
+  <strong>C-R D2(8/3) 住那拉提漫心酒店：</strong>从乌鲁木齐出发走独库南段到达那拉提（约350km），住已改期的漫心酒店。毗邻景区，D2/D3 可用 48h 门票二次入园。
+</div>
+
+<!-- ========== C-R D4 精河/博乐住宿推荐 ========== -->
+<div class="section-header" id="cr-d4">
+  <h2>C-R D4(8/5) 精河/博乐住宿推荐</h2>
+  <p class="hand-note">D4 Near Sayram Lake</p>
+</div>
+
+<div class="tip-box strategy">
+  <strong>C-R D4 路线：</strong>伊宁 &rarr; 赛里木湖环湖 &rarr; 精河/博乐（约200km）。环完湖后东行到精河或博乐住，D5(8/6)从精河走G30高速直达乌鲁木齐。
+</div>
+
+<div class="loc-card">
+  <div class="loc-header" style="background: var(--accent3);">
+    <span class="loc-name">C-R D4 · 精河/博乐（赛里木湖东）</span>
+    <span class="loc-meta">海拔~500m · G30高速枢纽</span>
+  </div>
+  <div class="loc-body">
+    <div class="tier">
+      <div class="tier-label"><span class="tier-tag expensive">景区</span></div>
+      <div>
+        <div class="tier-name">赛里木湖牧野星空营地（若 8/5 可改期）</div>
+        <div class="tier-detail">
+          原已预订 8/3，C-R 需改期到 <strong>8/5</strong>。联系携程/美团客服或酒店前台申请改期。<br>
+          <strong>注意：</strong>8/5 是周三，旺季营地紧俏，改期不一定成功。若无法改期则选下方精河/博乐。
+        </div>
+      </div>
+      <div class="tier-price">
+        <div class="tier-price-num">400-600</div>
+        <div class="tier-price-unit">元/晚</div>
+        <div class="tier-drive">景区内 · 0km</div>
+      </div>
+    </div>
+    <div class="tier">
+      <div class="tier-label"><span class="tier-tag moderate">推荐</span></div>
+      <div>
+        <div class="tier-name">精河县城</div>
+        <div class="tier-detail">
+          <strong>全季酒店</strong>（精河店）· <strong>如家酒店</strong>（精河团结路店）<br>
+          G30高速精河出口旁，距赛湖东门约80km/1h。酒店新、停车方便、配套餐饮<br>
+          D5早上从精河走G30直达乌市（~450km/5h），中午到达
+          <span class="tier-recommend">C-R 首选</span>
+        </div>
+      </div>
+      <div class="tier-price">
+        <div class="tier-price-num">150-250</div>
+        <div class="tier-price-unit">元/晚</div>
+        <div class="tier-drive">距赛湖 80km/1h · 距乌市 450km/5h</div>
+      </div>
+    </div>
+    <div class="tier">
+      <div class="tier-label"><span class="tier-tag budget">经济</span></div>
+      <div>
+        <div class="tier-name">博乐市区</div>
+        <div class="tier-detail">
+          <strong>锦江之星</strong>（博乐店）· <strong>汉庭酒店</strong>（博乐团结路店）<br>
+          博乐距赛湖90km，比精河远10km但酒店选择更多、价格更低。有旅游专线直达赛湖
+        </div>
+      </div>
+      <div class="tier-price">
+        <div class="tier-price-num">120-200</div>
+        <div class="tier-price-unit">元/晚</div>
+        <div class="tier-drive">距赛湖 90km/1.2h · 距乌市 500km/5.5h</div>
+      </div>
+    </div>
+    <div class="tip-box strategy">
+      <strong>省钱策略：</strong>若星空营地 8/5 无法改期，住精河全季（150-250元）比住湖边营地省150-350元，只需多开1小时。精河在G30高速旁，D5直达乌市最顺路。
+    </div>
+  </div>
+</div>
+
+<!-- ========== C-R D5 说明 ========== -->
+<div class="section-header" id="cr-d5">
+  <h2>C-R D5(8/6) 直接返回乌鲁木齐</h2>
+  <p class="hand-note">D5 Early Return</p>
+</div>
+
+<div class="tip-box strategy">
+  <strong>C-R D5 路线：</strong>精河 &rarr; G30高速 &rarr; 乌鲁木齐（约450km/5h），预计14:00到达。<br>
+  住 <strong>乌鲁木齐机场美居酒店</strong>（同 D1，头屯河区中亚北路138号）。D6航班14:50，住机场附近可睡到9:30，从容还车+值机。<br>
+  <strong>与方案C D5的区别：</strong>方案C D5走独库北段住独山子/奎屯；C-R D5已走完独库（D2），直接从精河高速回乌市，无需再绕独库。
+</div>
+
+<div class="quick-answer">
+  <h3>C-R D5(8/6周四) 住哪里？</h3>
+  <p>
+    D5路线：精河 &rarr; G30高速 &rarr; 乌市（~450km，预计14:00到达）<br>
+    <strong>推荐：乌鲁木齐机场美居酒店</strong>（同D1），约250-350元/晚。D6航班14:50，住机场附近可睡到9:30。<br>
+    <strong>备选：独山子/奎屯</strong>（若想中途休息），约200-300元/晚，但C-R已无独库行程，没必要绕路。<br>
+    <strong>不推荐：市中心</strong>（大巴扎附近），距机场20-30km，赶飞机有堵车风险。
+  </p>
+</div>
+
+<div class="tip-box strategy" style="margin-top:1rem;">
+  <strong>C-R 总住宿费估算（5晚）：</strong><br>
+  经济型（精河住县城）：约1100-1650元 · 美居×2 500-700 + 漫心250-400 + 美仑250-400 + 精河150-250<br>
+  混合型（星空营地改期成功+精河备选）：约1900-3000元 · 美居×2 500-700 + 漫心250-400 + 美仑250-400 + 营地400-600<br>
+  注：C-R 比方案C多1间精河新订房（150-250元），但省去独山子1晚，总费用与方案C基本持平。
+</div>
+
+</div><!-- end content-cr -->
+
+<!-- ========== WEATHER WIDGET (shared across plans) ========== -->
+<div class="section-header" id="weather">
+  <h2>实时天气预报 · 方案天气对比</h2>
+  <p class="hand-note">Live Weather &amp; Plan Analysis</p>
+</div>
+<div data-weather-widget data-plan="compare" style="background: rgba(255,255,255,0.9); border: 2px solid #2E7D6F; border-radius: 10px; padding: 1.2rem; margin: 0.8rem 0 2rem;"></div>
+
 <!-- ========== FOOTER ========== -->
 <footer>
   <p class="footer-note">有车就是自由</p>
@@ -876,11 +1094,46 @@ article.page { padding-right: 130px; }
   <a href="#price"><span class="nav-day">04</span>价格总览</a>
   <a href="#tips"><span class="nav-day">05</span>预订技巧</a>
   <a href="#plan-c-daily"><span class="nav-day">06</span>方案C住宿</a>
+  <a href="#weather"><span class="nav-day">☀</span>天气对比</a>
   <div class="side-nav-divider"></div>
-  <a href="route-map.html"><span class="nav-day">→</span>导航地图</a>
-  <a href="booking-guide.html"><span class="nav-day">→</span>预约方案</a>
+  <a href="index.html"><span class="nav-day">←</span>首页 · 方案对比</a>
+  <a href="plan-c-detail.html"><span class="nav-day">→</span>方案C详情</a>
+  <a href="plan-c-revert-detail.html"><span class="nav-day">→</span>方案C-R详情</a>
+  <a href="route-map.html"><span class="nav-day">→</span>路线地图</a>
+  <a href="booking-guide.html"><span class="nav-day">→</span>预约指南</a>
+  <a href="flexible-playbook.html"><span class="nav-day">→</span>灵活手册</a>
 </nav>
 <script>
+// ===== C / C-R Plan Switcher =====
+function switchPlan(plan) {
+  // Toggle buttons
+  document.querySelectorAll('.ps-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-plan') === plan);
+  });
+  // Toggle content sections
+  document.querySelectorAll('.plan-content').forEach(function(content) {
+    content.classList.toggle('active', content.id === 'content-' + plan);
+  });
+  // Persist preference
+  try { localStorage.setItem('accommodation-plan', plan); } catch(e) {}
+  // Update weather widget plan mode if present
+  var weatherWidget = document.querySelector('[data-weather-widget]');
+  if (weatherWidget) {
+    weatherWidget.setAttribute('data-plan', plan === 'c' ? 'c' : (plan === 'cr' ? 'cr' : 'compare'));
+  }
+  // Scroll to top of content
+  window.scrollTo({ top: document.querySelector('.plan-switcher').offsetTop - 20, behavior: 'smooth' });
+}
+
+// Restore saved plan on load
+(function() {
+  var saved;
+  try { saved = localStorage.getItem('accommodation-plan'); } catch(e) {}
+  if (saved === 'cr') {
+    switchPlan('cr');
+  }
+})();
+
 // Side nav active link on scroll
 (function() {
   var nav = document.getElementById('sideNav');

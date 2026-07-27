@@ -592,17 +592,17 @@ article.page { padding-right: 130px; }
 
 <section class="cover" id="cover">
   <h1 class="cover-title">新疆自驾 · 多方案对比</h1>
-  <p class="cover-subtitle">4种节奏规划 · 灵活选择 · 总有一款适合你</p>
+  <p class="cover-subtitle">5种节奏规划 · 灵活选择 · 总有一款适合你</p>
   <p class="cover-dates">2026.08.02(日) — 08.07(五) ｜ 6天5晚 ｜ 乌鲁木齐起止</p>
   <p class="cover-intro">
-    同样的伊犁环线，不同的时间分配策略。4个方案在到达当天安排、赛里木湖游览时机、独库公路走法上各有侧重。
+    同样的伊犁环线，不同的时间分配策略。5个方案在到达当天安排、赛里木湖游览时机、独库公路走法上各有侧重。
     所有方案均保证8/3-8/6全程工作日自驾（核心避堵策略），点击下方标签切换查看。
   </p>
 </section>
 
 <!-- ========== QUICK COMPARISON ========== -->
 <div class="section-header">
-  <h2>四方案速览</h2>
+  <h2>五方案速览</h2>
   <p class="hand-note">At a Glance</p>
 </div>
 
@@ -650,17 +650,29 @@ article.page { padding-right: 130px; }
       <span class="compare-card-stat warn">D2需预约</span>
     </div>
   </div>
+
+  <div class="compare-card" onclick="switchTab('CR')" style="border-color:#6A4C93;">
+    <div class="compare-card-label" style="color:#6A4C93;">方案 C-R · 新增</div>
+    <div class="compare-card-title" style="color:#6A4C93;">反向深度版</div>
+    <div class="compare-card-desc">Plan C的反向：D2先走独库公路南行（保险策略），D4赛里木湖深度环湖住精河。独库封路风险前置解决。</div>
+    <div class="compare-card-stats">
+      <span class="compare-card-stat" style="color:#6A4C93;">1,560km</span>
+      <span class="compare-card-stat" style="color:#6A4C93;">独库D2先走</span>
+      <span class="compare-card-stat warn">赛湖D4深度</span>
+    </div>
+  </div>
 </div>
 
 <!-- ===== Detailed Comparison Table ===== -->
 <div class="table-wrap">
-  <table>
+  <table style="min-width:820px;">
     <thead>
       <tr>
         <th>对比项</th>
         <th>A 经典均衡</th>
         <th>B 紧凑直达</th>
         <th>C 深度草原</th>
+        <th>C-R 反向深度</th>
         <th>D 反向环线</th>
       </tr>
     </thead>
@@ -671,12 +683,14 @@ article.page { padding-right: 130px; }
         <td>乌市→奎屯 240km</td>
         <td>乌鲁木齐休整</td>
         <td>乌鲁木齐休整</td>
+        <td>乌鲁木齐休整</td>
       </tr>
       <tr>
         <td><strong>D2 8/3(一)</strong></td>
         <td>乌市→清水河 560km</td>
         <td>奎屯→赛湖→伊宁 460km</td>
         <td>乌市→赛里木湖 550km</td>
+        <td>乌市→独库→那拉提 480km</td>
         <td>乌市→独库→那拉提 420km</td>
       </tr>
       <tr>
@@ -684,6 +698,7 @@ article.page { padding-right: 130px; }
         <td>清水河→赛湖→伊宁 270km</td>
         <td>伊宁休整一日</td>
         <td>赛湖→果子沟→伊宁 180km</td>
+        <td>那拉提→伊宁 270km</td>
         <td>那拉提全天</td>
       </tr>
       <tr>
@@ -691,6 +706,7 @@ article.page { padding-right: 130px; }
         <td>伊宁→那拉提 270km</td>
         <td>伊宁→那拉提 270km</td>
         <td>伊宁→那拉提 270km</td>
+        <td>伊宁→赛湖→精河 260km</td>
         <td>那拉提→伊宁 270km</td>
       </tr>
       <tr>
@@ -698,17 +714,19 @@ article.page { padding-right: 130px; }
         <td>那拉提→独库→乌市 420km</td>
         <td>那拉提→独库→乌市 420km</td>
         <td>那拉提→独库→乌市 420km</td>
+        <td>精河→乌市 550km</td>
         <td>伊宁→赛湖→乌市 640km</td>
       </tr>
       <tr>
         <td><strong>D6 8/7(五)</strong></td>
-        <td colspan="4" style="text-align:center">乌鲁木齐→机场 14:50航班</td>
+        <td colspan="5" style="text-align:center">乌鲁木齐→机场 14:50航班</td>
       </tr>
       <tr>
         <td><strong>总里程</strong></td>
         <td>~1,650km</td>
         <td>~1,560km</td>
         <td>~1,550km</td>
+        <td>~1,560km</td>
         <td>~1,600km</td>
       </tr>
       <tr>
@@ -716,6 +734,7 @@ article.page { padding-right: 130px; }
         <td>D2 560km</td>
         <td>D2 460km</td>
         <td>D5 640km</td>
+        <td>D5 550km</td>
         <td>D5 640km</td>
       </tr>
       <tr>
@@ -723,6 +742,7 @@ article.page { padding-right: 130px; }
         <td>D3周二清晨</td>
         <td>D2周一下午</td>
         <td>D2周一傍晚+D3上午</td>
+        <td>D4周三下午</td>
         <td>D5周四上午</td>
       </tr>
       <tr>
@@ -731,11 +751,13 @@ article.page { padding-right: 130px; }
         <td>D5周四 8-10点</td>
         <td>D5周四 8-10点</td>
         <td>D2周一 8-10点</td>
+        <td>D2周一 8-10点</td>
       </tr>
       <tr>
         <td><strong>驾驶强度</strong></td>
         <td>中等</td>
         <td>中等偏高</td>
+        <td>中等</td>
         <td>中等</td>
         <td>中等偏高</td>
       </tr>
@@ -744,6 +766,7 @@ article.page { padding-right: 130px; }
         <td>首次新疆·怕累</td>
         <td>老司机·不怕赶路</td>
         <td>摄影控·爱慢游</td>
+        <td>稳妥型·独库优先</td>
         <td>灵活型·想错峰</td>
       </tr>
     </tbody>
@@ -755,7 +778,8 @@ article.page { padding-right: 130px; }
   <button class="tab-btn active" onclick="switchTab('A')">方案A 经典均衡<span class="badge">推荐</span></button>
   <button class="tab-btn" onclick="switchTab('B')">方案B 紧凑直达<span class="badge">1,560km</span></button>
   <button class="tab-btn" onclick="switchTab('C')">方案C 深度草原<span class="badge">赛湖住宿</span></button>
-  <button class="tab-btn" onclick="switchTab('D')">方案D 反向环线<span class="badge">独库先行</span></button>
+  <button class="tab-btn" onclick="switchTab('CR')">方案C-R 反向深度<span class="badge">独库先行</span></button>
+  <button class="tab-btn" onclick="switchTab('D')">方案D 反向环线<span class="badge">赛湖周四</span></button>
 </div>
 
 <!-- ================================================================ -->
@@ -1255,6 +1279,137 @@ article.page { padding-right: 130px; }
   </div>
 </div>
 
+<!-- ================================================================ -->
+<!-- ========== PLAN C-R: 反向深度版 ========== -->
+<!-- ================================================================ -->
+<div class="tab-content" id="planCR">
+  <div class="version-header" style="border-left-color: #6A4C93;">
+    <h3 style="color: #6A4C93;">方案 C-R · 反向深度版</h3>
+    <div class="version-tag">~1,560km ｜ 驾驶强度中等 ｜ 独库D2先走·赛湖D4深度</div>
+    <div class="version-desc">
+      Plan C的反向版本：D2先走独库公路南行到那拉提（精力最充沛时走最难路段），D3那拉提到伊宁，
+      D4伊宁到赛里木湖深度环湖后住精河，D5纯高速返回乌鲁木齐。独库封路风险前置解决，后半程纯享受。
+    </div>
+    <div class="version-pros">
+      <span class="version-pro">独库D2精力最充沛</span>
+      <span class="version-pro">赛湖D4体力好</span>
+      <span class="version-pro">D5纯高速轻松返程</span>
+      <span class="version-pro">体力递减更合理</span>
+      <span class="version-con">D2即需独库预约</span>
+      <span class="version-con">海拔突变可能高反</span>
+    </div>
+  </div>
+
+  <div class="intensity-bar">
+    <div class="intensity-cell intensity-0"><span class="ic-day">D1</span><span class="ic-km">市内</span></div>
+    <div class="intensity-cell intensity-4"><span class="ic-day">D2</span><span class="ic-km">480km</span></div>
+    <div class="intensity-cell intensity-2"><span class="ic-day">D3</span><span class="ic-km">270km</span></div>
+    <div class="intensity-cell intensity-2"><span class="ic-day">D4</span><span class="ic-km">260km</span></div>
+    <div class="intensity-cell intensity-3"><span class="ic-day">D5</span><span class="ic-km">550km</span></div>
+    <div class="intensity-cell intensity-0"><span class="ic-day">D6</span><span class="ic-km">市内</span></div>
+  </div>
+  <div class="intensity-legend">
+    <span>轻松</span><span>中等</span><span>较累</span><span>高强度</span>
+  </div>
+
+  <!-- Day 1 -->
+  <div class="day-row">
+    <div class="day-badge" style="border-color:#6A4C93;color:#6A4C93"><span class="d-num">1</span><span class="d-week">日</span></div>
+    <div class="day-content">
+      <div class="day-route-title">到达乌鲁木齐 → 市区半日游</div>
+      <div class="day-meta"><span class="day-meta-item km">市内</span><span class="day-meta-item road">不赶路</span></div>
+      <div class="day-schedule">
+        14:00 到达，取车（提前APP办手续秒取）→ 15:00 入住<strong>美居酒店</strong> → <strong>15:30 国际大巴扎</strong>（免费，伊斯兰建筑+民族歌舞）→ <strong>17:30 红山公园</strong>（免费，拍乌鲁木齐全景）→ 19:00 领馆巷晚餐（馕坑肉、烤包子）→ 21:00 回酒店采购明天物资
+      </div>
+      <div class="day-highlight warning" style="background:#FFF0E8;border-left-color:#D94F2E"><strong>今晚必做</strong>：预约明天独库公路8:00-10:00时段！"游新疆一码游"小程序，免费，旺季提前3天抢空。同时预约那拉提自驾票。</div>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="day-row">
+    <div class="day-badge" style="border-color:#6A4C93;color:#6A4C93"><span class="d-num">2</span><span class="d-week">一</span></div>
+    <div class="day-content">
+      <div class="day-route-title">乌鲁木齐 → 独山子 → 独库公路南行 → 那拉提</div>
+      <div class="day-meta">
+        <span class="day-meta-item km">480 km</span>
+        <span class="day-meta-item time">约 7-8h</span>
+        <span class="day-meta-item traffic">周一·独库最空</span>
+        <span class="day-meta-item road">G30+独库北段</span>
+      </div>
+      <div class="day-schedule">
+        07:00 出发，G30高速到独山子(250km/3h) → <strong>10:00 凭预约码进独库公路</strong> → <strong>独库北段南行</strong>(185km/4-5h)：独山子→哈希勒根达坂(3390m)→<strong>乔尔玛停留</strong>（烈士纪念馆+百里画廊观景）→那拉提 → 15:00 到达<strong>那拉提镇</strong>，入住<strong>漫心酒店</strong> → 18:00 <strong>傍晚空中草原</strong>（人少时段，搜"自驾入口"）→ 21:30 草原日落 → 哈萨克晚餐
+      </div>
+      <div class="day-highlight strategy"><strong>独库南行的优势</strong>：雪山→草原，渐入佳境。D2是全程精力最充沛的一天，走独库山路集中度最高。周一是一周中车流最少的日子。</div>
+      <div class="day-highlight"><strong>关键提醒</strong>：独库+那拉提自驾票7/27抢票！旺季提前3天抢空。</div>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="day-row">
+    <div class="day-badge" style="border-color:#6A4C93;color:#6A4C93"><span class="d-num">3</span><span class="d-week">二</span></div>
+    <div class="day-content">
+      <div class="day-route-title">那拉提 → 伊宁</div>
+      <div class="day-meta">
+        <span class="day-meta-item km">270 km</span>
+        <span class="day-meta-item time">约 4-5h</span>
+        <span class="day-meta-item traffic">周二·工作日</span>
+        <span class="day-meta-item road">G218国道</span>
+      </div>
+      <div class="day-schedule">
+        08:00 <strong>那拉提空中草原</strong>上午游览（骑马、徒步，光线最佳）→ 12:00 镇上午餐 → 13:00 G218西行到伊宁(270km) → 17:00 到达<strong>伊宁</strong>，入住<strong>美仑酒店</strong> → <strong>17:30 喀赞其民俗区</strong>（蓝色房屋+手工冰淇淋+马车）→ <strong>19:30 六星街</strong>（俄罗斯风情）→ 21:00 晚餐
+      </div>
+      <div class="day-highlight strategy">D2独库山路消耗大，今天上午那拉提深度游后下午国道轻松驾驶到伊宁，体力分配合理。喀赞其蓝色墙壁穿白色衣服拍照效果最佳。</div>
+    </div>
+  </div>
+
+  <!-- Day 4 -->
+  <div class="day-row">
+    <div class="day-badge" style="border-color:#6A4C93;color:#6A4C93"><span class="d-num">4</span><span class="d-week">三</span></div>
+    <div class="day-content">
+      <div class="day-route-title">伊宁 → 赛里木湖 → 精河</div>
+      <div class="day-meta">
+        <span class="day-meta-item km">260 km</span>
+        <span class="day-meta-item time">约 4h</span>
+        <span class="day-meta-item traffic">周三·工作日</span>
+        <span class="day-meta-item road">G30高速+环湖</span>
+      </div>
+      <div class="day-schedule">
+        08:00 出发，G30高速到赛里木湖(180km/2.5h) → <strong>10:30 赛里木湖东门入园</strong>（门票+自驾票145元/人）→ <strong>11:00-15:00 顺时针环湖</strong>：东门→松树头→克勒涌珠→点将台→西海草原→网红S弯→北门出 → 15:30 出景区，<strong>果子沟大桥</strong>观景拍照 → 16:00 G30到精河(80km) → 17:00 到达<strong>精河</strong>入住 → 晚餐休息
+      </div>
+      <div class="day-highlight strategy"><strong>赛湖D4到的优势</strong>：经过前3天驾驶体力已适应，短途后体力充沛环湖更尽兴。周三工作日人少，停车自由。果子沟上坡方向出隧道看赛湖全景更震撼。</div>
+      <div class="day-highlight"><strong>注意</strong>：赛湖自驾票需提前3-7天预约（最晚8/2）！"游新疆一码游"小程序预约。</div>
+    </div>
+  </div>
+
+  <!-- Day 5 -->
+  <div class="day-row">
+    <div class="day-badge" style="border-color:#6A4C93;color:#6A4C93"><span class="d-num">5</span><span class="d-week">四</span></div>
+    <div class="day-content">
+      <div class="day-route-title">精河 → 乌鲁木齐</div>
+      <div class="day-meta">
+        <span class="day-meta-item km">550 km</span>
+        <span class="day-meta-item time">约 6.5h</span>
+        <span class="day-meta-item traffic">周四·工作日</span>
+        <span class="day-meta-item road">G30连霍高速</span>
+      </div>
+      <div class="day-schedule">
+        08:00 出发，G30连霍高速全程返回(550km) → 12:00 精河/奎屯服务区午餐加油 → <strong>14:30 到达乌鲁木齐</strong>，入住<strong>美居酒店</strong>（同D1）→ 15:30 <strong>新疆博物馆</strong>（免费需预约，看楼兰美女干尸）→ 19:00 大巴扎晚餐+伴手礼采购
+      </div>
+      <div class="day-highlight strategy"><strong>D5纯高速返程最轻松</strong>：不用爬山，纯巡航。独库已在D2走完，后面4天没有任何山路压力，心理完全放空。下午还能逛博物馆。</div>
+    </div>
+  </div>
+
+  <!-- Day 6 -->
+  <div class="day-row">
+    <div class="day-badge" style="border-color:#6A4C93;color:#6A4C93"><span class="d-num">6</span><span class="d-week">五</span></div>
+    <div class="day-content">
+      <div class="day-route-title">乌鲁木齐 → 机场</div>
+      <div class="day-meta"><span class="day-meta-item time">14:50航班</span></div>
+      <div class="day-schedule">08:00 烤包子+奶茶早餐 → 09:00 红山公园/金泉商城采购伴手礼 → 10:30 退房 → 11:00 <strong>还车</strong>（提前拍车辆照片）→ 11:30 前往机场 → 12:00 到达机场值机 → <strong>14:50 航班起飞</strong></div>
+    </div>
+  </div>
+</div>
+
 <!-- ========== DECISION GUIDE ========== -->
 <div class="section-header">
   <h2>如何选择</h2>
@@ -1292,6 +1447,11 @@ article.page { padding-right: 130px; }
         <td>独库周一最空，赛湖周四人少</td>
       </tr>
       <tr>
+        <td>想独库先走保险，后半程纯享受</td>
+        <td><strong>C-R 反向深度</strong></td>
+        <td>D2走完独库放下心理负担，D5纯高速返程</td>
+      </tr>
+      <tr>
         <td>带老人/小孩，怕高反</td>
         <td><strong>A 经典均衡</strong></td>
         <td>节奏慢，不赶路，海拔渐进适应</td>
@@ -1309,7 +1469,7 @@ article.page { padding-right: 130px; }
       <tr>
         <td>担心抢不到独库预约</td>
         <td><strong>A、B、C均可</strong></td>
-        <td>独库在D5周四走，有4天时间抢预约</td>
+        <td>独库在D5周四走，有4天时间抢预约（C-R/D需D2走，仅1天抢票）</td>
       </tr>
     </tbody>
   </table>
@@ -1368,8 +1528,9 @@ function switchTab(plan) {
   <div class="side-nav-title">快速跳转</div>
   <a href="#cover"><span class="nav-day">TOP</span>首页</a>
   <div class="side-nav-divider"></div>
-  <a href="index.html"><span class="nav-day">←</span>方案对比</a>
-  <a href="multi-plans.html"><span class="nav-day">≡</span>多方案对比</a>
+  <a href="index.html"><span class="nav-day">←</span>首页 · 方案对比</a>
+  <a href="plan-c-detail.html"><span class="nav-day">→</span>方案C详情</a>
+  <a href="plan-c-revert-detail.html"><span class="nav-day">→</span>方案C-R详情</a>
   <a href="route-map.html"><span class="nav-day">→</span>路线地图</a>
   <a href="accommodation-guide.html"><span class="nav-day">→</span>住宿指南</a>
   <a href="booking-guide.html"><span class="nav-day">→</span>预约指南</a>
