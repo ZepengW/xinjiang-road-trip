@@ -6,11 +6,12 @@
 (function() {
   'use strict';
 
-  // 四个关键地点
+  // 五个关键地点
   var LOCATIONS = [
     { name: '乌鲁木齐', label: 'D1/D6 乌市', lat: 43.82, lon: 87.62, role: '起止城市' },
-    { name: '博乐', label: 'D2 赛湖', lat: 44.85, lon: 82.07, role: '赛里木湖最近城市' },
+    { name: '赛里木湖', label: 'D2 赛湖', lat: 44.51, lon: 81.18, role: '高山冷水湖·海拔2071m' },
     { name: '伊宁', label: 'D3/D4 伊宁', lat: 43.91, lon: 81.32, role: '伊犁河谷' },
+    { name: '那拉提', label: 'D4 那拉提', lat: 43.33, lon: 84.44, role: '空中草原·海拔1800m' },
     { name: '独山子', label: 'D5 独库', lat: 44.33, lon: 84.88, role: '独库北入口' }
   ];
 
@@ -197,8 +198,8 @@
   }
 
   // 行程方案天气对比分析
-  // 方案C: 独库=8/6(独山子), 赛湖=8/3(博乐), 那拉提=8/5(伊宁)
-  // 方案C-R: 独库=8/3(独山子), 赛湖=8/5(博乐), 那拉提=8/3(伊宁)
+  // 方案C: 独库=8/6(独山子), 赛湖=8/3(赛里木湖), 那拉提=8/5(那拉提)
+  // 方案C-R: 独库=8/3(独山子), 赛湖=8/5(赛里木湖), 那拉提=8/3(那拉提)
   function renderPlanAnalysis(results, planMode) {
     // 构建地点名到数据的映射
     var locMap = {};
@@ -209,15 +210,15 @@
     // 方案C关键日期
     var PLAN_C = [
       { spot: '独库', day: 'D5', date: '2026-08-06', locName: '独山子' },
-      { spot: '赛湖', day: 'D2', date: '2026-08-03', locName: '博乐' },
-      { spot: '那拉提', day: 'D4', date: '2026-08-05', locName: '伊宁' }
+      { spot: '赛湖', day: 'D2', date: '2026-08-03', locName: '赛里木湖' },
+      { spot: '那拉提', day: 'D4', date: '2026-08-05', locName: '那拉提' }
     ];
 
     // 方案C-R关键日期
     var PLAN_CR = [
       { spot: '独库', day: 'D2', date: '2026-08-03', locName: '独山子' },
-      { spot: '赛湖', day: 'D4', date: '2026-08-05', locName: '博乐' },
-      { spot: '那拉提', day: 'D2', date: '2026-08-03', locName: '伊宁' }
+      { spot: '赛湖', day: 'D4', date: '2026-08-05', locName: '赛里木湖' },
+      { spot: '那拉提', day: 'D2', date: '2026-08-03', locName: '那拉提' }
     ];
 
     // 获取某方案某关键日的天气数据

@@ -529,6 +529,13 @@ article.page { padding-right: 130px; }
   </p>
 </section>
 
+<!-- ========== LIVE WEATHER (top placement for quick access) ========== -->
+<div id="weather-top" style="background: linear-gradient(135deg, #E8F5E9 0%, #E8F0FE 100%); border-radius: 10px; padding: 1.2rem; margin: 1.5rem 0; border: 2px solid #2E7D32;">
+  <h2 style="font-family: 'NationalPark', sans-serif; font-size: 1.3rem; color: #2E7D32; margin-bottom: 0.2rem; text-align: center;">🌤 实时天气预报 · 动态选方案</h2>
+  <p style="font-family: 'Hand', cursive; font-size: 0.95rem; color: #2E7D32; text-align: center; margin-bottom: 0.6rem;">Live Weather · Choose Your Plan</p>
+  <div data-weather-widget data-plan="compare" style="background: rgba(255,255,255,0.9); border-radius: 8px; padding: 1rem; margin: 0.5rem 0;"></div>
+</div>
+
 <!-- ========== QUICK COMPARISON ========== -->
 <div class="section-header" id="plans">
   <h2>五方案速览</h2>
@@ -814,8 +821,10 @@ article.page { padding-right: 130px; }
   <h2 style="font-family: 'NationalPark', sans-serif; font-size: 1.6rem; color: #1A73E8; margin-bottom: 0.3rem; text-align: center;">天气应对指南</h2>
   <p style="font-family: 'Hand', cursive; font-size: 1.1rem; color: #4A90D9; text-align: center; margin-bottom: 1rem;">Weather Contingency Plan</p>
 
-  <!-- 实时天气预报组件 -->
-  <div data-weather-widget style="background: rgba(255,255,255,0.9); border: 2px solid #2E7D32; border-radius: 10px; padding: 1.2rem; margin: 0.8rem 0;"></div>
+  <!-- 实时天气预报已移至页面顶部，此处保留静态气候指南 -->
+  <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 0.8rem; margin: 0.8rem 0; text-align: center;">
+    <a href="#weather-top" style="font-family: 'NationalPark', sans-serif; color: #2E7D32; font-size: 0.9rem; text-decoration: none;">↑ 返回顶部实时天气预报</a>
+  </div>
 
   <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 1rem; margin: 0.8rem 0;">
     <strong style="color: #1A73E8;">8月初气候概况</strong><br>
@@ -890,6 +899,7 @@ article.page { padding-right: 130px; }
 <nav class="side-nav" id="sideNav">
   <div class="side-nav-title">快速跳转</div>
   <a href="#cover"><span class="nav-day">TOP</span>首页</a>
+  <a href="#weather-top"><span class="nav-day">🌤</span>实时天气</a>
   <a href="#plans"><span class="nav-day">P</span>方案对比</a>
   <a href="#comparison"><span class="nav-day">VS</span>对比表</a>
   <a href="#checklist"><span class="nav-day">★</span>出行清单</a>
